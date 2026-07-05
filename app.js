@@ -21,6 +21,11 @@ const TRIPS_KEY  = 'pumpaTrips';
 const REFUEL_KEY = 'pumpaRefuels';
 const PREF_KEY   = 'pumpaPrefs';
 const MANUAL_PRICE_KEY = 'pumpaManualPrice';
+const PRO_KEY = 'pumpaPro';
+
+/* Free-tier caps apply to what is DISPLAYED only — stored data is never truncated. */
+const FREE_TRIP_LIMIT = 10;
+const FREE_REFUEL_LIMIT = 3;
 
 /* ============================================================
    DOM REFS
@@ -304,7 +309,9 @@ function renderTrips(){
   const total = entries.reduce((sum, entry) => sum + toFiniteNumber(entry.cost), 0);
   tripsTotalEl.textContent = currencySymbol() + total.toFixed(2) + ' total';
   const sorted = [...entries].sort((a,b) => b.ts - a.ts);
-  tripsListEl.innerHTML = sorted.map(e => {
+  const visible = isPro() ? sorted : sorted.slice(0, FREE_TRIP_LIMIT);
+  const hidden = sorted.length - visible.length;
+  tripsListEl.innerHTML = visible.map(e => {
     const u = unitLabels(e.system);
     const cur = escapeHtml(e.currency || '€');
     const d = new Date(e.ts).toLocaleDateString(undefined, {day:'2-digit', month:'short', year:'2-digit'});
@@ -318,7 +325,7 @@ function renderTrips(){
         <button type="button" class="log-del" data-id="${escapeHtml(e.id)}" aria-label="Delete trip">×</button>
       </div>
     </div>`;
-  }).join('');
+  }).join('') + (hidden > 0 ? lockedRowHtml(hidden, hidden === 1 ? 'trip' : 'trips') : '');
   updateExportCounts();
 }
 
@@ -337,6 +344,10 @@ $('saveTripBtn').addEventListener('click', () => {
 });
 
 tripsListEl.addEventListener('click', (ev) => {
+  if (ev.target.closest('[data-pro-cta]')){
+    openProModal('Free plan shows the last ' + FREE_TRIP_LIMIT + ' trips. Your data is safe — unlock to see everything.');
+    return;
+  }
   const btn = ev.target.closest('.log-del');
   if (!btn) return;
   saveTrips(loadTrips().filter(e => e.id !== btn.dataset.id));
@@ -432,7 +443,9 @@ function renderRefuels(){
     refuelListEl.innerHTML = '<div class="log-empty">No fill-ups logged yet.</div>';
     computeReports(); updateExportCounts(); return;
   }
-  refuelListEl.innerHTML = entries.map(e => {
+  const visible = isPro() ? entries : entries.slice(0, FREE_REFUEL_LIMIT);
+  const hidden = entries.length - visible.length;
+  refuelListEl.innerHTML = visible.map(e => {
     const u = unitLabels(e.system);
     const cur = escapeHtml(e.currency || '€');
     const amount = toFiniteNumber(e.amount);
@@ -450,7 +463,7 @@ function renderRefuels(){
         <button type="button" class="log-del" data-id="${escapeHtml(e.id)}" aria-label="Delete fill-up">×</button>
       </div>
     </div>`;
-  }).join('');
+  }).join('') + (hidden > 0 ? lockedRowHtml(hidden, hidden === 1 ? 'fill-up' : 'fill-ups') : '');
   computeReports(); updateExportCounts();
 }
 
@@ -471,6 +484,10 @@ $('refuelSaveBtn').addEventListener('click', () => {
 });
 
 refuelListEl.addEventListener('click', (ev) => {
+  if (ev.target.closest('[data-pro-cta]')){
+    openProModal('Free plan shows the last ' + FREE_REFUEL_LIMIT + ' fill-ups. Your data is safe — unlock to see everything.');
+    return;
+  }
   const btn = ev.target.closest('.log-del');
   if (!btn) return;
   saveRefuels(loadRefuels().filter(e => e.id !== btn.dataset.id));
@@ -487,6 +504,104 @@ $('applyManualPrice').addEventListener('click', () => {
   writeJson(MANUAL_PRICE_KEY, { value: v, system: currentSystem, currency: currentCurrency, ts: Date.now() });
   calc();
   toast('Price applied to calculator ✓');
+});
+
+/* ============================================================
+   PRO ENTITLEMENT
+   ============================================================ */
+let proUnlocked = false;
+let proModalReturnFocus = null;
+
+const PRO_CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+
+function fnv1a(str){
+  let h = 0x811c9dc5;
+  for (const c of str){
+    h ^= c.charCodeAt(0);
+    h = Math.imul(h, 0x01000193) >>> 0;
+  }
+  return h;
+}
+
+/* Placeholder validation — swap this single function for a real
+   license check (Gumroad/Stripe) later. */
+function isValidUnlockCode(raw){
+  const match = String(raw || '').trim().toUpperCase().match(/^PUMPA-([A-Z2-9]{4})-([A-Z2-9]{4})$/);
+  if (!match) return false;
+  let x = fnv1a('PMP/' + match[1] + '/v1');
+  let expected = '';
+  for (let i = 0; i < 4; i++){
+    expected += PRO_CODE_ALPHABET[x % 31];
+    x = Math.floor(x / 31);
+  }
+  return match[2] === expected;
+}
+
+function loadProState(){
+  const saved = readJson(PRO_KEY, null);
+  proUnlocked = !!(saved && typeof saved.code === 'string' && isValidUnlockCode(saved.code));
+}
+
+function isPro(){ return proUnlocked; }
+
+function entitlements(){
+  return { unlimitedHistory: isPro(), pdfExport: isPro(), adFree: isPro() };
+}
+
+function lockedRowHtml(hiddenCount, noun){
+  return `<button type="button" class="log-locked" data-pro-cta>+ ${hiddenCount} more ${escapeHtml(noun)} · Unlock with Pumpa Pro</button>`;
+}
+
+function updateProUi(){
+  const pdfBtn = $('exportPdf');
+  pdfBtn.classList.toggle('locked', !isPro());
+  pdfBtn.textContent = isPro() ? 'PDF' : '🔒 PDF';
+  const badge = $('proBadge');
+  badge.classList.toggle('active', isPro());
+  badge.title = isPro() ? 'Pumpa Pro active' : 'Upgrade to Pumpa Pro';
+}
+
+function openProModal(message){
+  proModalReturnFocus = document.activeElement;
+  $('proModalReason').textContent = message || 'Unlock the full trip computer.';
+  $('proCode').value = '';
+  $('proError').hidden = true;
+  $('proModal').hidden = false;
+  $('proCode').focus();
+}
+
+function closeProModal(){
+  $('proModal').hidden = true;
+  if (proModalReturnFocus && typeof proModalReturnFocus.focus === 'function') proModalReturnFocus.focus();
+  proModalReturnFocus = null;
+}
+
+function attemptUnlock(){
+  const code = $('proCode').value.trim().toUpperCase();
+  if (!isValidUnlockCode(code)){
+    $('proError').hidden = false;
+    $('proCode').focus();
+    return;
+  }
+  writeJson(PRO_KEY, { code, ts: Date.now() });
+  proUnlocked = true;
+  closeProModal();
+  renderTrips();
+  renderRefuels();
+  updateProUi();
+  toast('Pumpa Pro unlocked ✓');
+}
+
+$('proUnlockBtn').addEventListener('click', attemptUnlock);
+$('proCode').addEventListener('keydown', (ev) => { if (ev.key === 'Enter') attemptUnlock(); });
+$('proModalClose').addEventListener('click', closeProModal);
+$('proModal').addEventListener('click', (ev) => { if (ev.target === $('proModal')) closeProModal(); });
+document.addEventListener('keydown', (ev) => {
+  if (ev.key === 'Escape' && !$('proModal').hidden) closeProModal();
+});
+$('proBadge').addEventListener('click', () => {
+  if (isPro()) toast('Pumpa Pro active ✓');
+  else openProModal();
 });
 
 /* ============================================================
@@ -636,7 +751,13 @@ function exportPdf(){
   setTimeout(() => { w.focus(); w.print(); }, 400);
   toast('Opening print dialog…');
 }
-$('exportPdf').addEventListener('click', exportPdf);
+$('exportPdf').addEventListener('click', () => {
+  if (!entitlements().pdfExport){
+    openProModal('PDF reports are a Pumpa Pro feature.');
+    return;
+  }
+  exportPdf();
+});
 
 /* ============================================================
    INIT
@@ -682,6 +803,7 @@ function restoreManualPrice(){
 }
 
 initUnits();
+loadProState();
 restoreManualPrice();
 initRefuelDate();
 activateTab('calc');
@@ -689,4 +811,5 @@ calc();
 renderTrips();
 renderRefuels();
 updateExportCounts();
+updateProUi();
 })();

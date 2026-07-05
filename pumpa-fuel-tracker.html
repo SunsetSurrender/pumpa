@@ -41,6 +41,7 @@
         <option value="custom">…</option>
       </select>
       <input type="text" id="customCurrency" maxlength="4" placeholder="₩" aria-label="Custom currency symbol">
+      <button type="button" id="proBadge" class="pro-badge" title="Upgrade to Pumpa Pro">PRO</button>
     </div>
   </header>
 
@@ -253,6 +254,27 @@
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<div class="modal-backdrop" id="proModal" hidden>
+  <div class="modal card" role="dialog" aria-modal="true" aria-labelledby="proModalTitle">
+    <div class="card-title" id="proModalTitle">Pumpa Pro</div>
+    <p class="modal-lead" id="proModalReason">Unlock the full trip computer.</p>
+    <ul class="pro-perks">
+      <li>Unlimited trip &amp; fill-up history</li>
+      <li>Full PDF report export</li>
+      <li>No ads, ever</li>
+    </ul>
+    <div class="field full">
+      <label for="proCode">Unlock code</label>
+      <input type="text" id="proCode" placeholder="PUMPA-XXXX-XXXX" autocomplete="off" autocapitalize="characters" spellcheck="false">
+    </div>
+    <div class="pro-error" id="proError" hidden>Code not recognised — check and try again.</div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-amber" id="proUnlockBtn">Unlock</button>
+      <button type="button" class="btn btn-ghost" id="proModalClose">Not now</button>
+    </div>
+  </div>
+</div>
 
 <script src="app.js" defer></script>
 </body>

@@ -369,6 +369,54 @@ input[type=number]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0
 }
 .toast.show{ opacity: 1; transform: translateX(-50%) translateY(0); }
 
+/* ---------- Pro ---------- */
+.pro-badge{
+  background: transparent; border: 1px solid var(--amber-dim); color: var(--amber-dim);
+  font-family:'Share Tech Mono', monospace; font-size: 10px; font-weight: 700;
+  letter-spacing: 1.5px; padding: 7px 10px; border-radius: 999px; cursor:pointer;
+  transition: color .15s, border-color .15s, background .15s;
+}
+.pro-badge:hover{ color: var(--amber); border-color: var(--amber); }
+.pro-badge.active{
+  background: var(--amber); border-color: var(--amber); color:#1a1300;
+  box-shadow: 0 0 12px -2px rgba(255,178,56,0.55);
+}
+
+.log-locked{
+  display:block; width: 100%; margin-top: 8px;
+  background: transparent; border: 1px dashed var(--amber-dim); border-radius: 6px;
+  padding: 11px; text-align:center; cursor:pointer;
+  font-family:'Share Tech Mono', monospace; font-size: 10px;
+  letter-spacing: 1.5px; text-transform: uppercase; color: var(--amber-dim);
+  transition: color .15s, border-color .15s;
+}
+.log-locked:hover{ color: var(--amber); border-color: var(--amber); }
+
+.export-btn.locked{
+  background: transparent; border-color: var(--panel-edge); color: var(--text-soft);
+}
+.export-btn.locked:hover{ background: transparent; border-color: var(--amber-dim); color: var(--amber); filter:none; }
+
+.modal-backdrop{
+  position: fixed; inset: 0; z-index: 60;
+  background: rgba(10,13,14,0.72);
+  display:flex; align-items:center; justify-content:center;
+  padding: 16px; animation: fade .2s ease;
+}
+.modal-backdrop[hidden]{ display:none; }
+.modal{ max-width: 360px; width: 100%; margin: 0; }
+.modal-lead{ margin: 0 0 12px; font-size: 12.5px; line-height: 1.5; color: var(--text-bright); }
+.pro-perks{
+  list-style:none; margin: 0 0 16px; padding: 0;
+  display:flex; flex-direction:column; gap: 6px;
+  font-family:'Share Tech Mono', monospace; font-size: 11px; color: var(--green-lcd);
+}
+.pro-perks li::before{ content:'» '; color: var(--amber-dim); }
+.pro-error{
+  margin-top: 8px;
+  font-family:'Share Tech Mono', monospace; font-size: 10.5px; color: var(--red-warn);
+}
+
 @media (max-width: 420px){
   .brand-text .tag{ display:none; }
   .rc-value{ font-size: 17px; }

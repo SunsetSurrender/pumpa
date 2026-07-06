@@ -1,9 +1,9 @@
-/* Behavioural test suite for public/app.js (60 assertions).
+/* Behavioural test suite for public/app.js (81 assertions).
    Runs the real IIFE against a stubbed DOM in JavaScriptCore — no
    browser or Node needed:  osascript -l JavaScript tests/app-behaviour.jxa.js
    Covers: Pro gating + unlock flow, tamper resistance, free-tier caps,
    EV calculator math + unit conversion, mixed-kind history, CSV export.
-   All PASS lines + a final "== N/60 passed ==" summary. */
+   All PASS lines + a final "== N/81 passed ==" summary. */
 ObjC.import('Foundation');
 const APP_SRC = $.NSString.stringWithContentsOfFileEncodingError(
   '/Users/thegoldenhour/Desktop/DragonsAreNotGiantLizards/WebDevforaliving/Pumpa/public/app.js',
@@ -247,6 +247,101 @@ try {
   ok('mixed cap: total sums all 12', E5('tripsTotal').textContent.includes((3*12 + 66).toFixed(2)));
   ok('old prefs (no vehicle field): boots petrol mode, no error', !E5('calcFuelCard').hidden && E5('calcEvCard').hidden);
 } catch (e) { ok('mixed-cap scenario ran', false); results.push('ERR: ' + e.message + ' line ' + e.line); }
+
+
+/* ---------- Scenario F: trip plan (budget road-trip estimator) ---------- */
+try {
+  const env6 = runApp({ pumpaTrips: [], pumpaRefuels: [] });
+  const E6 = env6.getEl;
+  const setVal = (id, v) => { E6(id).value = String(v); E6(id).fire('input'); };
+  const clickBtnIn = (id, datasetObj) =>
+    E6(id).fire('click', { target: { closest: (sel) => sel === 'button' ? { dataset: datasetObj } : null } });
+
+  // one leg of 100 km
+  E6('planLegs').fire('input', { target: { value: '100', dataset: { index: '0' } } });
+  ok('plan: leg input drives total distance', E6('planDistTotal').textContent === '100 km');
+
+  // petrol side: 5 L/100km @ 2 -> 10.00; REUSE equality vs the live petrol calculator
+  setVal('planFuelCons', 5); setVal('planFuelPrice', 2);
+  setVal('distance', 100); setVal('consumption', 5); setVal('price', 2);
+  ok('plan: fuel cost equals petrol calculator output (same math)',
+     E6('planEnergyCost').textContent === '€10.00' && E6('tripCost').textContent === '€10.00');
+
+  // tolls + extras in the breakdown and total
+  setVal('planTolls', 8); setVal('planExtras', 2);
+  ok('plan: total = fuel + tolls + extras (20.00)', E6('planTotal').textContent === '€20.00');
+  ok('plan: breakdown rows', E6('planTollsCost').textContent === '€8.00' && E6('planExtrasCost').textContent === '€2.00');
+
+  // EV side: 16 kWh/100km @ 0.25 -> 4.00; REUSE equality vs the live EV calculator
+  setVal('planEvCons', 16); setVal('planEvPrice', 0.25);
+  setVal('evDistance', 100); setVal('evConsumption', 16); setVal('evPrice', 0.25);
+  ok('plan: EV cost equals EV calculator output (same math)', E6('evTripCost').textContent === '€4.00');
+
+  // comparison, petrol selected -> shows the EV alternative
+  ok('plan compare (petrol selected): EV total + "less"',
+     !E6('planCompare').hidden
+     && E6('planCompareText').textContent.includes('by EV: €14.00')
+     && E6('planCompareText').textContent.includes('€6.00 less'));
+
+  // comparison, EV selected -> shows the petrol alternative (bidirectional)
+  clickBtnIn('planVehicleToggle', { vehicle: 'ev' });
+  ok('plan: EV selected -> total 14.00, label Energy',
+     E6('planTotal').textContent === '€14.00' && E6('planEnergyLabel').textContent === 'Energy');
+  ok('plan compare (EV selected): petrol total + "more"',
+     E6('planCompareText').textContent.includes('by petrol: €20.00')
+     && E6('planCompareText').textContent.includes('€6.00 more'));
+
+  // legs add/remove
+  E6('planAddLeg').fire('click');
+  E6('planLegs').fire('input', { target: { value: '50', dataset: { index: '1' } } });
+  ok('plan: second leg sums (150 km, EV total 16.00)',
+     E6('planDistTotal').textContent === '150 km' && E6('planTotal').textContent === '€16.00');
+  E6('planLegs').fire('click', { target: { closest: (sel) => sel === '.leg-del' ? { dataset: { index: '1' } } : null } });
+  ok('plan: leg removed (back to 100 km / 14.00)',
+     E6('planDistTotal').textContent === '100 km' && E6('planTotal').textContent === '€14.00');
+
+  // unit switch converts plan fields; kWh price untouched
+  clickBtnIn('unitToggle', { system: 'us' });
+  ok('plan switch: petrol cons 5 L/100km -> 47 MPG', Math.abs(Number(E6('planFuelCons').value) - 47) < 0.11);
+  ok('plan switch: EV cons 16 -> 3.9 mi/kWh', Math.abs(Number(E6('planEvCons').value) - 3.9) < 0.05);
+  ok('plan switch: kWh price NOT converted', Number(E6('planEvPrice').value) === 0.25);
+  ok('plan switch: total roughly preserved (~14)', Math.abs(Number(E6('planTotal').textContent.slice(1)) - 14) < 0.2);
+  clickBtnIn('unitToggle', { system: 'metric' });
+
+  // draft persisted under the new additive key
+  const draft = JSON.parse(env6.store.get('pumpaTripPlan') || 'null');
+  ok('plan draft: saved with vehicle/system/currency stamp',
+     !!draft && draft.vehicle === 'ev' && draft.system === 'metric' && draft.currency === '€' && Array.isArray(draft.legs));
+
+  // no key sprawl, existing keys untouched
+  const keys = [...env6.store.keys()].sort().join(',');
+  ok('plan: store holds ONLY the expected keys', keys === 'pumpaPrefs,pumpaRefuels,pumpaTripPlan,pumpaTrips');
+  ok('plan: pumpaTrips untouched by plan usage', env6.store.get('pumpaTrips') === '[]');
+  ok('plan: pumpaRefuels untouched', env6.store.get('pumpaRefuels') === '[]');
+} catch (e) { ok('trip-plan scenario ran', false); results.push('ERR: ' + e.message + ' line ' + e.line); }
+
+/* ---------- Scenario G: trip plan draft restore + mismatch ---------- */
+try {
+  const draft = { legs: ['200'], tolls: '5', extras: '', vehicle: 'ev',
+                  fuel: { cons: '6', price: '2' }, ev: { cons: '20', price: '0.5' },
+                  system: 'metric', currency: '€', ts: 1 };
+  const env7 = runApp({ pumpaTrips: [], pumpaRefuels: [],
+                        pumpaPrefs: { system: 'metric', currency: '€', vehicle: 'fuel' },
+                        pumpaTripPlan: draft });
+  const E7 = env7.getEl;
+  ok('draft restore: EV total 200km*20kWh/100km*0.5 + 5 tolls = 25.00',
+     E7('planTotal').textContent === '€25.00' && E7('planEnergyLabel').textContent === 'Energy');
+  ok('draft restore: bidirectional compare vs petrol (24+5=29, 4.00 more)',
+     E7('planCompareText').textContent.includes('by petrol: €29.00')
+     && E7('planCompareText').textContent.includes('€4.00 more'));
+
+  const env8 = runApp({ pumpaTrips: [], pumpaRefuels: [],
+                        pumpaPrefs: { system: 'metric', currency: '€', vehicle: 'fuel' },
+                        pumpaTripPlan: Object.assign({}, draft, { system: 'us' }) });
+  const E8 = env8.getEl;
+  ok('draft mismatch (us draft, metric prefs): ignored, prefill path used',
+     E8('planTolls').value === '' && E8('planEnergyLabel').textContent === 'Fuel');
+} catch (e) { ok('trip-plan draft scenario ran', false); results.push('ERR: ' + e.message + ' line ' + e.line); }
 
 const fails = results.filter(r => r.startsWith('FAIL')).length;
 results.join('\n') + '\n== ' + (results.length - fails) + '/' + results.filter(r => /^(PASS|FAIL)/.test(r)).length + ' passed ==';

@@ -51,6 +51,9 @@ the tool living at `/calculator`.
   - `pumpaPro` — Pro-unlock entitlement `{ code, ts }`
   - `pumpaTheme` — theme mode (`dark` | `light` | `contrast`), written only when the
     user toggles; first visit falls back to `prefers-contrast` then `prefers-color-scheme`
+  - `pumpaTripPlan` — single Trip Plan draft (legs, tolls/extras, both vehicles'
+    values, selected vehicle), stamped with system+currency and restored only when
+    they match (pumpaManualPrice precedent). Not a log — one draft, overwritten.
 - **Unit system:** Metric / US / UK. Switching live-CONVERTS current values, it does
   not just relabel. Conversions pivot through km / L-per-100km / price-per-liter.
   MPG↔L/100km is INVERSE, not linear — keep that intact.
@@ -72,16 +75,17 @@ the tool living at `/calculator`.
 
 Calculate · Trips · Fuel Log · Prices · Export. These are the tool's INTERNAL nav.
 The site-level nav (Home / Calculator / Tips / About) is a SEPARATE outer layer —
-these tabs stay inside the calculator page. Within Calculate, a Petrol / Electric
-segmented toggle switches between the two peer calculators; both log into the same
-Trips history.
+these tabs stay inside the calculator page (plus Trip Plan, the manual road-trip
+estimator — its cost math is DELEGATED to computeTrip/computeEvTrip, never forked).
+Within Calculate, a Petrol / Electric segmented toggle switches between the two peer
+calculators; both log into the same Trips history.
 
 ## Tests
 
-`tests/app-behaviour.jxa.js` — 60-assertion behavioural suite that runs the real
+`tests/app-behaviour.jxa.js` — 81-assertion behavioural suite that runs the real
 `public/app.js` against a stubbed DOM in JavaScriptCore (no browser/Node needed):
 `osascript -l JavaScript tests/app-behaviour.jxa.js`. Run it after ANY change to
-app.js and keep it at 60/60; extend it when adding behaviour.
+app.js and keep it green; extend it when adding behaviour.
 
 ## Visual identity — the 2026 redesign direction
 

@@ -1,0 +1,13 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import CalculatorPage from '../../components/pages/CalculatorPage.astro';
+import { useT } from '../../i18n/ui';
+const t = useT('es');
+---
+<SiteLayout title={t.calc.metaTitle} description={t.calc.metaDescription} locale="es" container={false}>
+  <Fragment slot="head">
+    <meta name="theme-color" content="#14181a">
+    <link rel="stylesheet" href="/app.css">
+  </Fragment>
+  <CalculatorPage />
+</SiteLayout>

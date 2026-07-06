@@ -1,0 +1,9 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import PrivacyPage from '../../components/pages/PrivacyPage.astro';
+import { useT } from '../../i18n/ui';
+const t = useT('it');
+---
+<SiteLayout title={t.privacy.metaTitle} description={t.privacy.metaDescription} locale="it" surface="reading">
+  <PrivacyPage locale="it" />
+</SiteLayout>

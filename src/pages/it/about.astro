@@ -1,0 +1,9 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import AboutPage from '../../components/pages/AboutPage.astro';
+import { useT } from '../../i18n/ui';
+const t = useT('it');
+---
+<SiteLayout title={t.about.metaTitle} description={t.about.metaDescription} locale="it" surface="reading">
+  <AboutPage locale="it" />
+</SiteLayout>

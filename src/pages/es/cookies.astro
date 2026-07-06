@@ -1,0 +1,9 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import CookiesPage from '../../components/pages/CookiesPage.astro';
+import { useT } from '../../i18n/ui';
+const t = useT('es');
+---
+<SiteLayout title={t.cookies.metaTitle} description={t.cookies.metaDescription} locale="es" surface="reading">
+  <CookiesPage locale="es" />
+</SiteLayout>

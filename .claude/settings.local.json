@@ -5,7 +5,13 @@
       "Bash(python3 -)",
       "Bash(osascript -l JavaScript '/private/tmp/claude-501/-Users-thegoldenhour-Desktop-DragonsAreNotGiantLizards-WebDevforaliving-Pumpa/14deb8c7-97f9-40fb-bf73-09d504134713/scratchpad/jxa-test.js')",
       "Bash(rm -rf /tmp/cdtest1 /tmp/cdtest2 /tmp/cdtest3 '/private/tmp/claude-501/-Users-thegoldenhour-Desktop-DragonsAreNotGiantLizards-WebDevforaliving-Pumpa/14deb8c7-97f9-40fb-bf73-09d504134713/scratchpad'/chrome*-harness-*)",
-      "Bash(open '/Users/thegoldenhour/Desktop/DragonsAreNotGiantLizards/WebDevforaliving/Pumpa/pumpa-fuel-tracker.html')"
+      "Bash(open '/Users/thegoldenhour/Desktop/DragonsAreNotGiantLizards/WebDevforaliving/Pumpa/pumpa-fuel-tracker.html')",
+      "Bash(git -C '/Users/thegoldenhour/Desktop/DragonsAreNotGiantLizards/WebDevforaliving/Pumpa' log --oneline -5)",
+      "Bash(git -C '/Users/thegoldenhour/Desktop/DragonsAreNotGiantLizards/WebDevforaliving/Pumpa' status --short)",
+      "Bash(which brew *)",
+      "Read(//Users/thegoldenhour/**)",
+      "Bash(brew install *)",
+      "Bash(npm --version)"
     ]
   }
 }

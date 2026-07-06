@@ -1,0 +1,45 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+---
+<SiteLayout
+  title="About Pumpa"
+  description="Why Pumpa exists: an honest, private fuel cost tracker that runs entirely in your browser."
+>
+  <div class="page-head">
+    <p class="mono-label">About</p>
+    <h1>A trip computer for the rest of us.</h1>
+    <p class="lede">
+      Most cars tell you how much fuel you're burning. Very few tell you what it
+      costs — in your money, for your commute, over a month of real driving.
+    </p>
+  </div>
+
+  <div class="prose">
+    <p>
+      Pumpa started as a single question: <em>“what does this drive actually cost
+      me?”</em> Answering it shouldn't need an account, an app store or a data-hungry
+      service. So Pumpa is a plain web tool: open it, type three numbers, get an
+      answer. Log your trips and fill-ups and it becomes a running record of what
+      your driving costs — with reports, real-consumption stats and exports.
+    </p>
+    <h2>Private by architecture</h2>
+    <p>
+      Everything you enter is stored in your browser's local storage, on your
+      device. There is no server, no account and no sync — which means nobody can
+      lose, sell or leak your data, including us. Use the CSV or PDF export to take
+      your data anywhere.
+    </p>
+    <h2>Units and currencies, done properly</h2>
+    <p>
+      Metric, US and UK measurement systems are fully supported and independent of
+      currency — kilometres priced in dollars or miles in złoty, whatever matches
+      how you actually drive and pay. Switching systems converts your numbers
+      correctly, including the inverse MPG ↔ L/100km relationship.
+    </p>
+    <h2 id="contact">Contact</h2>
+    <p>
+      Questions, bug reports, ideas — email
+      <a href="mailto:mat.zandonella@gmail.com">mat.zandonella@gmail.com</a>.
+    </p>
+  </div>
+</SiteLayout>

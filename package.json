@@ -1,0 +1,26 @@
+{
+  "name": "pumpa",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SunsetSurrender/pumpa.git"
+  },
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/SunsetSurrender/pumpa/issues"
+  },
+  "homepage": "https://github.com/SunsetSurrender/pumpa#readme",
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^7.0.6"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true
+  },
+  "private": true
+}

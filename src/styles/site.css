@@ -1,0 +1,198 @@
+/* ============================================================
+   Pumpa site chrome — shared by all pages OUTSIDE the tool.
+   The calculator's own styles live in /public/app.css; the
+   design tokens below are kept in sync with its :root block.
+   ============================================================ */
+:root{
+  --dash-bg: #14181a;
+  --panel: #1c2224;
+  --panel-2: #0f1314;
+  --panel-edge: #2b3336;
+  --amber: #ffb238;
+  --amber-dim: #7a5a1f;
+  --green-lcd: #8fffb0;
+  --green-lcd-dim: #2f5c3f;
+  --red-warn: #ff5a4e;
+  --text-soft: #9fb0ac;
+  --text-bright: #e7ecea;
+  --site-max: 1140px;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin:0; padding:0; }
+
+body{
+  background: var(--dash-bg);
+  background-image: radial-gradient(ellipse at top, rgba(255,255,255,0.04), transparent 60%);
+  font-family: 'Space Grotesk', sans-serif;
+  color: var(--text-soft);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a{ color: var(--amber); }
+a:focus-visible, button:focus-visible{ outline: 2px solid var(--amber); outline-offset: 2px; }
+
+.site-main{ flex: 1; width: 100%; }
+
+.container{
+  max-width: var(--site-max);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.mono-label{
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--amber-dim);
+}
+
+/* ---------- Top nav ---------- */
+.site-nav{
+  border-bottom: 1px solid var(--panel-edge);
+  background: rgba(20,24,26,0.92);
+  backdrop-filter: blur(6px);
+  position: sticky; top: 0; z-index: 40;
+}
+.site-nav .container{
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap;
+  padding-top: 12px; padding-bottom: 12px;
+}
+.nav-brand{
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none;
+}
+.nav-mark{
+  width: 34px; height: 34px; border-radius: 8px;
+  background: linear-gradient(160deg, var(--amber), var(--amber-dim));
+  color: #1a1300; font-family: 'Share Tech Mono', monospace;
+  font-size: 19px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.nav-word{
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 16px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--text-bright);
+}
+.nav-links{
+  display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
+  list-style: none; margin: 0; padding: 0;
+}
+.nav-links a{
+  display: block; padding: 8px 12px; border-radius: 6px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--text-soft); text-decoration: none;
+  border: 1px solid transparent;
+  transition: color .15s, border-color .15s;
+}
+.nav-links a:hover{ color: var(--amber); }
+.nav-links a[aria-current="page"]{
+  color: var(--amber);
+  border-color: var(--amber-dim);
+  background: rgba(255,178,56,0.06);
+}
+
+/* ---------- Footer ---------- */
+.site-footer{
+  border-top: 1px solid var(--panel-edge);
+  background: var(--panel-2);
+  margin-top: 64px;
+}
+.site-footer .container{
+  display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 32px;
+  padding-top: 36px; padding-bottom: 28px;
+}
+.footer-col h4{
+  margin: 0 0 10px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--amber-dim);
+}
+.footer-col p{ margin: 0; font-size: 12.5px; line-height: 1.7; }
+.footer-col ul{ list-style: none; margin: 0; padding: 0; }
+.footer-col li{ margin-bottom: 8px; }
+.footer-col a{
+  color: var(--text-soft); text-decoration: none; font-size: 12.5px;
+}
+.footer-col a:hover{ color: var(--amber); }
+.footer-bottom{
+  border-top: 1px solid var(--panel-edge);
+}
+.footer-bottom .container{
+  display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  padding-top: 14px; padding-bottom: 14px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--amber-dim);
+}
+
+/* ---------- Shared page building blocks ---------- */
+.page-head{ padding: 48px 0 8px; }
+.page-head h1{
+  margin: 0 0 10px; font-size: clamp(26px, 4vw, 38px);
+  color: var(--text-bright); letter-spacing: -0.5px;
+}
+.page-head .lede{ max-width: 640px; font-size: 15px; line-height: 1.7; margin: 0; }
+
+.prose{ max-width: 680px; font-size: 14.5px; line-height: 1.8; }
+.prose h2{ color: var(--text-bright); font-size: 20px; margin: 36px 0 10px; }
+.prose h3{ color: var(--text-bright); font-size: 16px; margin: 28px 0 8px; }
+.prose code{
+  font-family: 'Share Tech Mono', monospace; font-size: 13px;
+  background: var(--panel-2); border: 1px solid var(--panel-edge);
+  border-radius: 4px; padding: 1px 5px; color: var(--green-lcd);
+}
+.prose a{ color: var(--amber); }
+.prose blockquote{
+  margin: 20px 0; padding: 10px 18px;
+  border-left: 2px solid var(--amber-dim);
+  background: var(--panel-2); color: var(--text-soft);
+}
+
+.site-card{
+  background: var(--panel);
+  border: 1px solid var(--panel-edge);
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset, 0 10px 30px -18px rgba(0,0,0,0.8);
+}
+
+.btn-link{
+  display: inline-block; text-decoration: none; text-align: center;
+  border-radius: 6px; padding: 13px 26px; cursor: pointer;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+  transition: filter .15s, border-color .15s, color .15s;
+}
+.btn-link.amber{ background: var(--amber); color: #1a1300; }
+.btn-link.amber:hover{ filter: brightness(1.08); }
+.btn-link.ghost{
+  background: transparent; border: 1px solid var(--panel-edge);
+  color: var(--text-soft); font-weight: 400;
+}
+.btn-link.ghost:hover{ border-color: var(--amber-dim); color: var(--amber); }
+
+.section-title{
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--amber-dim);
+  margin: 56px 0 18px;
+  display: flex; align-items: center; gap: 14px;
+}
+.section-title::after{
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--panel-edge), transparent);
+}
+
+@media (max-width: 760px){
+  .site-footer .container{ grid-template-columns: 1fr; gap: 24px; }
+  .page-head{ padding-top: 32px; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation: none !important; transition: none !important; }
+}

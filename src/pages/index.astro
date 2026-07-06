@@ -1,5 +1,10 @@
 ---
+import { getCollection } from 'astro:content';
 import SiteLayout from '../layouts/SiteLayout.astro';
+
+const latestTips = (await getCollection('tips', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
 ---
 <SiteLayout
   title="Pumpa — know what every trip really costs"
@@ -53,10 +58,14 @@ import SiteLayout from '../layouts/SiteLayout.astro';
 
   <h2 class="section-title">From the tips</h2>
   <section class="tips-teaser">
-    <p class="teaser-blurb">
-      Short, practical reads on squeezing more distance out of every tank —
-      consumption myths, pricing quirks and commute math.
-    </p>
+    <div class="teaser-grid">
+      {latestTips.map((post) => (
+        <a class="site-card teaser-card" href={`/tips/${post.id}/`}>
+          <h3>{post.data.title}</h3>
+          <p>{post.data.description}</p>
+        </a>
+      ))}
+    </div>
     <a class="btn-link ghost" href="/tips/">Browse all tips</a>
   </section>
 
@@ -126,11 +135,14 @@ import SiteLayout from '../layouts/SiteLayout.astro';
   .step h3{ margin: 0 0 8px; color: var(--text-bright); font-size: 16px; }
   .step p{ margin: 0; font-size: 13px; line-height: 1.7; }
 
-  .tips-teaser{
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 24px; flex-wrap: wrap;
+  .teaser-grid{
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 18px; margin-bottom: 20px;
   }
-  .teaser-blurb{ margin: 0; max-width: 560px; font-size: 14px; line-height: 1.7; }
+  .teaser-card{ display: block; text-decoration: none; transition: border-color .15s; }
+  .teaser-card:hover{ border-color: var(--amber-dim); }
+  .teaser-card h3{ margin: 0 0 8px; font-size: 15px; line-height: 1.4; color: var(--text-bright); }
+  .teaser-card p{ margin: 0; font-size: 12.5px; line-height: 1.65; color: var(--text-soft); }
 
   .pro-strip{
     display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
@@ -151,6 +163,7 @@ import SiteLayout from '../layouts/SiteLayout.astro';
     .hero{ grid-template-columns: 1fr; gap: 32px; padding-top: 44px; }
     .hero-demo{ max-width: 420px; }
     .steps{ grid-template-columns: 1fr; }
+    .teaser-grid{ grid-template-columns: 1fr; }
     .pro-strip{ grid-template-columns: 1fr; }
   }
 </style>

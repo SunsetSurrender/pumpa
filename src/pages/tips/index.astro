@@ -1,16 +1,72 @@
 ---
+import { getCollection } from 'astro:content';
 import SiteLayout from '../../layouts/SiteLayout.astro';
+
+const posts = (await getCollection('tips', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 ---
 <SiteLayout
   title="Tips — Pumpa"
-  description="Practical articles on fuel economy, fuel prices and commute costs."
+  description="Practical articles on fuel economy, fuel prices and commute costs — the math behind cheaper driving."
 >
   <div class="page-head">
     <p class="mono-label">Tips</p>
     <h1>Drive the same. Pay less.</h1>
     <p class="lede">
-      The article index arrives in phase 3 — each tip gets its own page, written
-      for humans and indexable by search engines.
+      Short, practical reads on fuel economy, pricing quirks and commute math —
+      each one something you can act on before your next fill-up.
     </p>
   </div>
+
+  <div class="tips-list">
+    {posts.map((post) => (
+      <a class="site-card tip-card" href={`/tips/${post.id}/`}>
+        <div class="tip-meta">
+          <time datetime={post.data.pubDate.toISOString()}>{fmt(post.data.pubDate)}</time>
+          {post.data.tags.map((tag) => <span class="tip-tag">{tag}</span>)}
+        </div>
+        <h2>{post.data.title}</h2>
+        <p>{post.data.description}</p>
+        <span class="tip-more">Read →</span>
+      </a>
+    ))}
+  </div>
 </SiteLayout>
+
+<style>
+  .tips-list{
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 18px; margin-top: 28px;
+  }
+  .tip-card{
+    display: block; text-decoration: none; color: inherit;
+    transition: border-color .15s;
+  }
+  .tip-card:hover{ border-color: var(--amber-dim); }
+  .tip-meta{
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--amber-dim); margin-bottom: 10px;
+  }
+  .tip-tag{
+    border: 1px solid var(--panel-edge); border-radius: 999px;
+    padding: 2px 8px; color: var(--text-soft);
+  }
+  .tip-card h2{
+    margin: 0 0 8px; font-size: 18px; line-height: 1.35;
+    color: var(--text-bright);
+  }
+  .tip-card p{ margin: 0 0 14px; font-size: 13px; line-height: 1.7; color: var(--text-soft); }
+  .tip-more{
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--amber);
+  }
+  @media (max-width: 760px){
+    .tips-list{ grid-template-columns: 1fr; }
+  }
+</style>

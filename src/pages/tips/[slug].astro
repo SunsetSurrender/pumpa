@@ -1,0 +1,53 @@
+---
+import { getCollection, render } from 'astro:content';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('tips', ({ data }) => !data.draft);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
+---
+<SiteLayout title={`${post.data.title} — Pumpa Tips`} description={post.data.description}>
+  <article class="tip-article">
+    <div class="page-head">
+      <p class="mono-label">
+        <a href="/tips/" class="crumb">Tips</a> ·
+        <time datetime={post.data.pubDate.toISOString()}>{fmt(post.data.pubDate)}</time>
+      </p>
+      <h1>{post.data.title}</h1>
+      <p class="lede">{post.data.description}</p>
+    </div>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <aside class="tip-cta site-card">
+      <div>
+        <h2>Put it to the numbers</h2>
+        <p>The calculator prices your trips, logs fill-ups and computes your real
+          consumption — free, in your browser, stored on your device.</p>
+      </div>
+      <a class="btn-link amber" href="/calculator/">Open the calculator</a>
+    </aside>
+  </article>
+</SiteLayout>
+
+<style>
+  .crumb{ color: var(--amber-dim); text-decoration: none; }
+  .crumb:hover{ color: var(--amber); }
+  .tip-article :global(.prose){ margin-top: 8px; }
+  .tip-cta{
+    margin: 48px 0 8px; max-width: 680px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 24px; flex-wrap: wrap;
+  }
+  .tip-cta h2{ margin: 0 0 6px; font-size: 16px; color: var(--text-bright); }
+  .tip-cta p{ margin: 0; font-size: 13px; line-height: 1.7; max-width: 420px; }
+</style>

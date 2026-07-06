@@ -1,6 +1,12 @@
 ---
-/* The tool, verbatim. All behaviour lives in /public/app.js (single IIFE);
-   static strings localise in the i18n tool pass. */
+/* The tool. All behaviour lives in /public/app.js (single IIFE); static
+   labels come from toolUi, runtime strings are injected via PUMPA_I18N. */
+import { toolUi, toolRuntime, type Locale } from '../../i18n/ui';
+
+interface Props { locale?: Locale; }
+const { locale = 'en' } = Astro.props;
+const tt = toolUi[locale];
+const i18nPayload = JSON.stringify({ locale, strings: toolRuntime[locale] });
 ---
 
 <!-- ============================================================
@@ -17,16 +23,16 @@
       <div class="brand-mark">P</div>
       <div class="brand-text">
         <h1>Pumpa</h1>
-        <div class="tag">Fuel · Commute · Cost</div>
+        <div class="tag">{tt.tag}</div>
       </div>
     </div>
     <div class="settings">
-      <div class="unit-seg" id="unitToggle" aria-label="Unit system">
-        <button type="button" data-system="metric" class="active" aria-pressed="true">Metric</button>
+      <div class="unit-seg" id="unitToggle" aria-label={tt.unitSeg}>
+        <button type="button" data-system="metric" class="active" aria-pressed="true">{tt.metric}</button>
         <button type="button" data-system="us" aria-pressed="false">US</button>
         <button type="button" data-system="uk" aria-pressed="false">UK</button>
       </div>
-      <select id="currencySelect" title="Currency" aria-label="Currency">
+      <select id="currencySelect" title={tt.currencyLabel} aria-label={tt.currencyLabel}>
         <option value="€">€</option>
         <option value="$">$</option>
         <option value="£">£</option>
@@ -37,19 +43,19 @@
         <option value="zł">zł</option>
         <option value="custom">…</option>
       </select>
-      <input type="text" id="customCurrency" maxlength="4" placeholder="₩" aria-label="Custom currency symbol">
-      <button type="button" id="proBadge" class="pro-badge" title="Upgrade to Pumpa Pro">PRO</button>
+      <input type="text" id="customCurrency" maxlength="4" placeholder="₩" aria-label={tt.customCurrency}>
+      <button type="button" id="proBadge" class="pro-badge" title={tt.proBadgeTitle}>PRO</button>
     </div>
   </header>
 
   <!-- TABS -->
-  <nav class="tabs" id="tabs" aria-label="Tool sections" role="tablist">
-    <button type="button" class="tab-btn active" id="tab-calc" data-tab="calc" role="tab" aria-controls="panel-calc" aria-selected="true">Calculate</button>
-    <button type="button" class="tab-btn" id="tab-plan" data-tab="plan" role="tab" aria-controls="panel-plan" aria-selected="false">Trip Plan</button>
-    <button type="button" class="tab-btn" id="tab-trips" data-tab="trips" role="tab" aria-controls="panel-trips" aria-selected="false">Trips</button>
-    <button type="button" class="tab-btn" id="tab-fuel" data-tab="fuel" role="tab" aria-controls="panel-fuel" aria-selected="false">Fuel Log</button>
-    <button type="button" class="tab-btn" id="tab-prices" data-tab="prices" role="tab" aria-controls="panel-prices" aria-selected="false">Prices</button>
-    <button type="button" class="tab-btn" id="tab-export" data-tab="export" role="tab" aria-controls="panel-export" aria-selected="false">Export</button>
+  <nav class="tabs" id="tabs" aria-label={tt.tabsLabel} role="tablist">
+    <button type="button" class="tab-btn active" id="tab-calc" data-tab="calc" role="tab" aria-controls="panel-calc" aria-selected="true">{tt.tabs.calc}</button>
+    <button type="button" class="tab-btn" id="tab-plan" data-tab="plan" role="tab" aria-controls="panel-plan" aria-selected="false">{tt.tabs.plan}</button>
+    <button type="button" class="tab-btn" id="tab-trips" data-tab="trips" role="tab" aria-controls="panel-trips" aria-selected="false">{tt.tabs.trips}</button>
+    <button type="button" class="tab-btn" id="tab-fuel" data-tab="fuel" role="tab" aria-controls="panel-fuel" aria-selected="false">{tt.tabs.fuel}</button>
+    <button type="button" class="tab-btn" id="tab-prices" data-tab="prices" role="tab" aria-controls="panel-prices" aria-selected="false">{tt.tabs.prices}</button>
+    <button type="button" class="tab-btn" id="tab-export" data-tab="export" role="tab" aria-controls="panel-export" aria-selected="false">{tt.tabs.export}</button>
   </nav>
 
   <main>
@@ -57,34 +63,34 @@
   <!-- ========== CALCULATE ========== -->
   <section class="panel-view active" id="panel-calc" data-panel="calc" role="tabpanel" aria-labelledby="tab-calc">
 
-    <div class="vehicle-seg" id="vehicleToggle" aria-label="Vehicle type">
-      <button type="button" data-vehicle="fuel" class="active" aria-pressed="true">Petrol</button>
-      <button type="button" data-vehicle="ev" aria-pressed="false">Electric</button>
+    <div class="vehicle-seg" id="vehicleToggle" aria-label={tt.vehicleSeg}>
+      <button type="button" data-vehicle="fuel" class="active" aria-pressed="true">{tt.petrol}</button>
+      <button type="button" data-vehicle="ev" aria-pressed="false">{tt.electric}</button>
     </div>
 
     <div class="card" id="calcFuelCard">
-      <div class="card-title">Trip Cost Readout</div>
+      <div class="card-title">{tt.readoutTitle}</div>
 
       <div class="odometer">
-        <div class="odo-label">Fuel Used</div>
+        <div class="odo-label">{tt.fuelUsed}</div>
         <div class="odo-value"><span id="fuelUsedValue">0.00</span><span class="sub" id="fuelUnitLabel">L</span></div>
       </div>
 
       <div class="fields">
         <div class="field">
-          <label for="distance">Distance <span class="unit-suffix" id="distUnitLabel">km</span></label>
+          <label for="distance">{tt.distance} <span class="unit-suffix" id="distUnitLabel">km</span></label>
           <input type="number" id="distance" value="70.5" min="0" step="0.1" inputmode="decimal">
         </div>
         <div class="field">
-          <label for="consumption">Consumption <span class="unit-suffix" id="consUnitLabel">L/100km</span></label>
+          <label for="consumption">{tt.consumption} <span class="unit-suffix" id="consUnitLabel">L/100km</span></label>
           <input type="number" id="consumption" value="3.4" min="0" step="0.1" inputmode="decimal">
         </div>
         <div class="field">
-          <label for="price">Fuel price <span class="unit-suffix" id="priceUnitLabel">€/L</span></label>
+          <label for="price">{tt.fuelPrice} <span class="unit-suffix" id="priceUnitLabel">€/L</span></label>
           <input type="number" id="price" value="1.777" min="0" step="0.001" inputmode="decimal">
         </div>
         <div class="field">
-          <label for="baseline">Usual distance <span class="unit-suffix" id="baselineUnitLabel">km</span></label>
+          <label for="baseline">{tt.usualDistance} <span class="unit-suffix" id="baselineUnitLabel">km</span></label>
           <input type="number" id="baseline" value="64" min="0" step="0.1" inputmode="decimal">
         </div>
       </div>
@@ -92,45 +98,45 @@
       <div class="divider"></div>
 
       <div class="readout">
-        <div class="readout-label">Trip Cost</div>
+        <div class="readout-label">{tt.tripCost}</div>
         <div class="readout-value" id="tripCost">€0.00</div>
       </div>
       <div class="baseline-note">
-        <span>Usual trip cost</span>
+        <span>{tt.usualTripCost}</span>
         <span id="baselineCost">€0.00</span>
       </div>
       <div class="delta" id="deltaRow">
-        <span>Difference</span>
+        <span>{tt.difference}</span>
         <span id="deltaValue">€0.00</span>
       </div>
 
-      <button type="button" class="btn btn-amber" id="saveTripBtn">+ Log this trip</button>
-      <button type="button" class="btn btn-ghost" id="resetBtn">Reset values</button>
+      <button type="button" class="btn btn-amber" id="saveTripBtn">{tt.logTrip}</button>
+      <button type="button" class="btn btn-ghost" id="resetBtn">{tt.resetValues}</button>
     </div>
 
     <div class="card" id="calcEvCard" hidden>
-      <div class="card-title">Trip Cost Readout</div>
+      <div class="card-title">{tt.readoutTitle}</div>
 
       <div class="odometer">
-        <div class="odo-label">Energy Used</div>
+        <div class="odo-label">{tt.energyUsed}</div>
         <div class="odo-value"><span id="energyUsedValue">0.00</span><span class="sub" id="energyUnitLabel">kWh</span></div>
       </div>
 
       <div class="fields">
         <div class="field">
-          <label for="evDistance">Distance <span class="unit-suffix" id="evDistUnitLabel">km</span></label>
+          <label for="evDistance">{tt.distance} <span class="unit-suffix" id="evDistUnitLabel">km</span></label>
           <input type="number" id="evDistance" value="70.5" min="0" step="0.1" inputmode="decimal">
         </div>
         <div class="field">
-          <label for="evConsumption">Consumption <span class="unit-suffix" id="evConsUnitLabel">kWh/100km</span></label>
+          <label for="evConsumption">{tt.consumption} <span class="unit-suffix" id="evConsUnitLabel">kWh/100km</span></label>
           <input type="number" id="evConsumption" value="16" min="0" step="0.1" inputmode="decimal">
         </div>
         <div class="field">
-          <label for="evPrice">Energy price <span class="unit-suffix" id="evPriceUnitLabel">€/kWh</span></label>
+          <label for="evPrice">{tt.energyPrice} <span class="unit-suffix" id="evPriceUnitLabel">€/kWh</span></label>
           <input type="number" id="evPrice" value="0.25" min="0" step="0.001" inputmode="decimal">
         </div>
         <div class="field">
-          <label for="evBaseline">Usual distance <span class="unit-suffix" id="evBaselineUnitLabel">km</span></label>
+          <label for="evBaseline">{tt.usualDistance} <span class="unit-suffix" id="evBaselineUnitLabel">km</span></label>
           <input type="number" id="evBaseline" value="64" min="0" step="0.1" inputmode="decimal">
         </div>
       </div>
@@ -138,83 +144,83 @@
       <div class="divider"></div>
 
       <div class="readout">
-        <div class="readout-label">Trip Cost</div>
+        <div class="readout-label">{tt.tripCost}</div>
         <div class="readout-value" id="evTripCost">€0.00</div>
       </div>
       <div class="baseline-note">
-        <span>Usual trip cost</span>
+        <span>{tt.usualTripCost}</span>
         <span id="evBaselineCost">€0.00</span>
       </div>
       <div class="delta" id="evDeltaRow">
-        <span>Difference</span>
+        <span>{tt.difference}</span>
         <span id="evDeltaValue">€0.00</span>
       </div>
 
-      <button type="button" class="btn btn-amber" id="evSaveTripBtn">+ Log this trip</button>
-      <button type="button" class="btn btn-ghost" id="evResetBtn">Reset values</button>
+      <button type="button" class="btn btn-amber" id="evSaveTripBtn">{tt.logTrip}</button>
+      <button type="button" class="btn btn-ghost" id="evResetBtn">{tt.resetValues}</button>
     </div>
   </section>
 
   <!-- ========== TRIP PLAN ========== -->
   <section class="panel-view" id="panel-plan" data-panel="plan" role="tabpanel" aria-labelledby="tab-plan" hidden>
     <div class="card">
-      <div class="card-title">Plan a Trip</div>
+      <div class="card-title">{tt.planTitle}</div>
       <div class="plan-legs" id="planLegs"></div>
-      <button type="button" class="btn btn-ghost plan-add-leg" id="planAddLeg">+ Add leg</button>
+      <button type="button" class="btn btn-ghost plan-add-leg" id="planAddLeg">{tt.addLeg}</button>
       <div class="plan-total-distance">
-        <span>Total distance</span>
+        <span>{tt.totalDistance}</span>
         <span id="planDistTotal">0 km</span>
       </div>
       <div class="divider"></div>
       <div class="fields">
         <div class="field">
-          <label for="planTolls">Tolls <span class="unit-suffix" id="planTollsLabel">€</span></label>
+          <label for="planTolls">{tt.tolls} <span class="unit-suffix" id="planTollsLabel">€</span></label>
           <input type="number" id="planTolls" min="0" step="0.01" inputmode="decimal" placeholder="0">
         </div>
         <div class="field">
-          <label for="planExtras">Other costs <span class="unit-suffix" id="planExtrasLabel">€</span></label>
+          <label for="planExtras">{tt.otherCosts} <span class="unit-suffix" id="planExtrasLabel">€</span></label>
           <input type="number" id="planExtras" min="0" step="0.01" inputmode="decimal" placeholder="0">
         </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">Vehicles</div>
+      <div class="card-title">{tt.vehiclesTitle}</div>
       <div class="fields">
         <div class="field">
-          <label for="planFuelCons">Petrol consumption <span class="unit-suffix" id="planFuelConsLabel">L/100km</span></label>
+          <label for="planFuelCons">{tt.petrolConsumption} <span class="unit-suffix" id="planFuelConsLabel">L/100km</span></label>
           <input type="number" id="planFuelCons" min="0" step="0.1" inputmode="decimal">
         </div>
         <div class="field">
-          <label for="planFuelPrice">Fuel price <span class="unit-suffix" id="planFuelPriceLabel">€/L</span></label>
+          <label for="planFuelPrice">{tt.fuelPrice} <span class="unit-suffix" id="planFuelPriceLabel">€/L</span></label>
           <input type="number" id="planFuelPrice" min="0" step="0.001" inputmode="decimal">
         </div>
         <div class="field">
-          <label for="planEvCons">EV consumption <span class="unit-suffix" id="planEvConsLabel">kWh/100km</span></label>
+          <label for="planEvCons">{tt.evConsumption} <span class="unit-suffix" id="planEvConsLabel">kWh/100km</span></label>
           <input type="number" id="planEvCons" min="0" step="0.1" inputmode="decimal">
         </div>
         <div class="field">
-          <label for="planEvPrice">Energy price <span class="unit-suffix" id="planEvPriceLabel">€/kWh</span></label>
+          <label for="planEvPrice">{tt.energyPrice} <span class="unit-suffix" id="planEvPriceLabel">€/kWh</span></label>
           <input type="number" id="planEvPrice" min="0" step="0.001" inputmode="decimal">
         </div>
       </div>
-      <div class="tips-note">Prefilled from your Calculate tab values — adjust freely for this trip.</div>
+      <div class="tips-note">{tt.planNote}</div>
     </div>
 
     <div class="card">
-      <div class="card-title">Cost Estimate</div>
-      <div class="vehicle-seg" id="planVehicleToggle" aria-label="Vehicle for this estimate">
-        <button type="button" data-vehicle="fuel" class="active" aria-pressed="true">Petrol</button>
-        <button type="button" data-vehicle="ev" aria-pressed="false">Electric</button>
+      <div class="card-title">{tt.estimateTitle}</div>
+      <div class="vehicle-seg" id="planVehicleToggle" aria-label={tt.planVehicleSeg}>
+        <button type="button" data-vehicle="fuel" class="active" aria-pressed="true">{tt.petrol}</button>
+        <button type="button" data-vehicle="ev" aria-pressed="false">{tt.electric}</button>
       </div>
       <div class="readout">
-        <div class="readout-label">Trip Total</div>
+        <div class="readout-label">{tt.tripTotal}</div>
         <div class="readout-value" id="planTotal">€0.00</div>
       </div>
       <div class="plan-breakdown">
-        <div class="pb-row"><span id="planEnergyLabel">Fuel</span><span id="planEnergyCost">€0.00</span></div>
-        <div class="pb-row"><span>Tolls</span><span id="planTollsCost">€0.00</span></div>
-        <div class="pb-row"><span>Other</span><span id="planExtrasCost">€0.00</span></div>
+        <div class="pb-row"><span id="planEnergyLabel">{tt.fuel}</span><span id="planEnergyCost">€0.00</span></div>
+        <div class="pb-row"><span>{tt.tollsRow}</span><span id="planTollsCost">€0.00</span></div>
+        <div class="pb-row"><span>{tt.otherRow}</span><span id="planExtrasCost">€0.00</span></div>
       </div>
       <div class="plan-compare" id="planCompare" hidden>
         <span id="planCompareText"></span>
@@ -226,77 +232,77 @@
   <section class="panel-view" id="panel-trips" data-panel="trips" role="tabpanel" aria-labelledby="tab-trips" hidden>
     <div class="card">
       <div class="list-head">
-        <div class="card-title">Trip History</div>
-        <div class="list-total" id="tripsTotal">€0.00 total</div>
+        <div class="card-title">{tt.tripHistory}</div>
+        <div class="list-total" id="tripsTotal">{tt.totalZero}</div>
       </div>
       <div class="log-list" id="tripsList">
-        <div class="log-empty">No trips logged yet.<br>Log one from the Calculate tab.</div>
+        <div class="log-empty">{tt.emptyTrips}<br>{tt.emptyTripsHint}</div>
       </div>
-      <button type="button" class="btn btn-ghost" id="exportTripsCsv">Export trips CSV</button>
+      <button type="button" class="btn btn-ghost" id="exportTripsCsv">{tt.exportTripsCsv}</button>
     </div>
   </section>
 
   <!-- ========== FUEL LOG ========== -->
   <section class="panel-view" id="panel-fuel" data-panel="fuel" role="tabpanel" aria-labelledby="tab-fuel" hidden>
     <div class="card">
-      <div class="card-title">Log a Fill-up</div>
+      <div class="card-title">{tt.logFillup}</div>
       <div class="fields">
         <div class="field">
-          <label for="refuelAmount">Amount filled <span class="unit-suffix" id="refuelAmountLabel">L</span></label>
+          <label for="refuelAmount">{tt.amountFilled} <span class="unit-suffix" id="refuelAmountLabel">L</span></label>
           <input type="number" id="refuelAmount" min="0" step="0.01" inputmode="decimal" placeholder="42.5">
         </div>
         <div class="field">
-          <label for="refuelCost">Total paid <span class="unit-suffix" id="refuelCostLabel">€</span></label>
+          <label for="refuelCost">{tt.totalPaid} <span class="unit-suffix" id="refuelCostLabel">€</span></label>
           <input type="number" id="refuelCost" min="0" step="0.01" inputmode="decimal" placeholder="75.50">
         </div>
         <div class="field">
-          <label for="refuelOdo">Odometer <span class="unit-suffix" id="refuelOdoLabel">km</span></label>
-          <input type="number" id="refuelOdo" min="0" step="1" inputmode="decimal" placeholder="optional">
+          <label for="refuelOdo">{tt.odometer} <span class="unit-suffix" id="refuelOdoLabel">km</span></label>
+          <input type="number" id="refuelOdo" min="0" step="1" inputmode="decimal" placeholder={tt.optional}>
         </div>
         <div class="field">
-          <label for="refuelDate">Date</label>
+          <label for="refuelDate">{tt.date}</label>
           <input type="date" id="refuelDate">
         </div>
       </div>
-      <button type="button" class="btn btn-green refuel-save" id="refuelSaveBtn">+ Log fill-up</button>
+      <button type="button" class="btn btn-green refuel-save" id="refuelSaveBtn">{tt.logFillupBtn}</button>
     </div>
 
     <div class="card">
-      <div class="card-title">Reports</div>
+      <div class="card-title">{tt.reports}</div>
       <div class="reports-grid">
         <div class="report-card">
-          <div class="rc-label">This month</div>
+          <div class="rc-label">{tt.thisMonth}</div>
           <div class="rc-value" id="rptMonthSpend">€0.00</div>
-          <div class="rc-sub" id="rptMonthSub">0 fill-ups</div>
+          <div class="rc-sub" id="rptMonthSub">{tt.zeroFillups}</div>
         </div>
         <div class="report-card">
-          <div class="rc-label">Avg / fill-up</div>
+          <div class="rc-label">{tt.avgFill}</div>
           <div class="rc-value" id="rptAvgFill">€0.00</div>
-          <div class="rc-sub">all time</div>
+          <div class="rc-sub">{tt.allTime}</div>
         </div>
         <div class="report-card">
-          <div class="rc-label">Real consumption</div>
+          <div class="rc-label">{tt.realConsumption}</div>
           <div class="rc-value" id="rptRealCons">—</div>
-          <div class="rc-sub" id="rptRealConsSub">needs 2+ odometer</div>
+          <div class="rc-sub" id="rptRealConsSub">{tt.needsOdo}</div>
         </div>
         <div class="report-card">
-          <div class="rc-label">Days between</div>
+          <div class="rc-label">{tt.daysBetween}</div>
           <div class="rc-value" id="rptDaysBetween">—</div>
-          <div class="rc-sub">avg refuel gap</div>
+          <div class="rc-sub">{tt.avgGap}</div>
         </div>
       </div>
-      <div class="mc-title">Monthly spend</div>
-      <div class="mc-bars" id="monthlyBars" aria-label="Fuel spending for the last six months"></div>
+      <div class="mc-title">{tt.monthlySpend}</div>
+      <div class="mc-bars" id="monthlyBars" aria-label={tt.chartLabel}></div>
     </div>
 
     <div class="card">
       <div class="list-head">
-        <div class="card-title">Fill-up History</div>
+        <div class="card-title">{tt.fillupHistory}</div>
       </div>
       <div class="log-list" id="refuelList">
-        <div class="log-empty">No fill-ups logged yet.</div>
+        <div class="log-empty">{tt.emptyFillups}</div>
       </div>
-      <button type="button" class="btn btn-ghost" id="exportFuelCsv">Export fuel log CSV</button>
+      <button type="button" class="btn btn-ghost" id="exportFuelCsv">{tt.exportFuelCsv}</button>
     </div>
   </section>
 
@@ -304,29 +310,29 @@
   <section class="panel-view" id="panel-prices" data-panel="prices" role="tabpanel" aria-labelledby="tab-prices" hidden>
     <div class="card">
       <div class="price-hero">
-        <div class="badge">Coming soon</div>
-        <h2>Live station prices near you</h2>
-        <p>We'll pull real-time pump prices from official government open-data feeds (Germany, France, Italy, Spain, UK &amp; more) and show the cheapest stations on a map.</p>
+        <div class="badge">{tt.comingSoon}</div>
+        <h2>{tt.pricesH}</h2>
+        <p>{tt.pricesP}</p>
       </div>
 
-      <div class="card-title">Your local price</div>
+      <div class="card-title">{tt.localPrice}</div>
       <div class="manual-price">
         <div class="field">
-          <label for="manualPrice">Set price manually <span class="unit-suffix" id="manualPriceLabel">€/L</span></label>
+          <label for="manualPrice">{tt.setPriceManually} <span class="unit-suffix" id="manualPriceLabel">€/L</span></label>
           <input type="number" id="manualPrice" min="0" step="0.001" inputmode="decimal" placeholder="1.777">
         </div>
-        <button type="button" class="btn btn-green" id="applyManualPrice">Use</button>
+        <button type="button" class="btn btn-green" id="applyManualPrice">{tt.use}</button>
       </div>
       <div class="price-note">
-        Spotted a price that's fresher than the official feed? Set it here — it fills into the calculator and gets remembered. Community corrections like this keep prices accurate between government updates.
+        {tt.priceNote}
       </div>
 
       <div class="divider"></div>
 
-      <div class="card-title">Station map</div>
+      <div class="card-title">{tt.stationMap}</div>
       <div class="map-placeholder">
         <div class="pin">📍</div>
-        <div>MAP — WIRED UP IN PHASE 2</div>
+        <div>{tt.mapPlaceholder}</div>
       </div>
     </div>
   </section>
@@ -334,34 +340,34 @@
   <!-- ========== EXPORT ========== -->
   <section class="panel-view" id="panel-export" data-panel="export" role="tabpanel" aria-labelledby="tab-export" hidden>
     <div class="card">
-      <div class="card-title">Export your data</div>
+      <div class="card-title">{tt.exportTitle}</div>
 
       <div class="export-item">
         <div class="ei-info">
-          <h3>Trips (CSV)</h3>
-          <p id="exportTripsCount">0 trips logged</p>
+          <h3>{tt.tripsCsv}</h3>
+          <p id="exportTripsCount">{tt.zeroTrips}</p>
         </div>
         <button type="button" class="export-btn" id="exportTripsCsv2">CSV</button>
       </div>
 
       <div class="export-item">
         <div class="ei-info">
-          <h3>Fuel log (CSV)</h3>
-          <p id="exportFuelCount">0 fill-ups logged</p>
+          <h3>{tt.fuelCsv}</h3>
+          <p id="exportFuelCount">{tt.zeroFills}</p>
         </div>
         <button type="button" class="export-btn" id="exportFuelCsv2">CSV</button>
       </div>
 
       <div class="export-item">
         <div class="ei-info">
-          <h3>Full report (PDF)</h3>
-          <p>Summary, reports &amp; both logs in one document</p>
+          <h3>{tt.fullReport}</h3>
+          <p>{tt.fullReportSub}</p>
         </div>
         <button type="button" class="export-btn pdf" id="exportPdf">PDF</button>
       </div>
 
       <div class="tips-note">
-        Everything is stored locally on this device. Exports let you keep a backup or move your data elsewhere.
+        {tt.exportNote}
       </div>
     </div>
   </section>
@@ -374,23 +380,22 @@
 
 <div class="modal-backdrop" id="proModal" hidden>
   <div class="modal card" role="dialog" aria-modal="true" aria-labelledby="proModalTitle">
-    <div class="card-title" id="proModalTitle">Pumpa Pro</div>
-    <p class="modal-lead" id="proModalReason">Unlock the full trip computer.</p>
+    <div class="card-title" id="proModalTitle">{tt.proTitle}</div>
+    <p class="modal-lead" id="proModalReason">{tt.proLead}</p>
     <ul class="pro-perks">
-      <li>Unlimited trip &amp; fill-up history</li>
-      <li>Full PDF report export</li>
-      <li>No ads, ever</li>
+      {tt.proPerks.map((perk) => <li>{perk}</li>)}
     </ul>
     <div class="field full">
-      <label for="proCode">Unlock code</label>
+      <label for="proCode">{tt.unlockCode}</label>
       <input type="text" id="proCode" placeholder="PUMPA-XXXX-XXXX" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="proError">
     </div>
-    <div class="pro-error" id="proError" hidden>Code not recognised — check and try again.</div>
+    <div class="pro-error" id="proError" hidden>{tt.proError}</div>
     <div class="modal-actions">
-      <button type="button" class="btn btn-amber" id="proUnlockBtn">Unlock</button>
-      <button type="button" class="btn btn-ghost" id="proModalClose">Not now</button>
+      <button type="button" class="btn btn-amber" id="proUnlockBtn">{tt.unlock}</button>
+      <button type="button" class="btn btn-ghost" id="proModalClose">{tt.notNow}</button>
     </div>
   </div>
 </div>
 
+<script is:inline set:html={`window.PUMPA_I18N = ${i18nPayload};`}></script>
 <script is:inline src="/app.js" defer></script>

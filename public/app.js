@@ -32,6 +32,28 @@ const MANUAL_PRICE_KEY = 'pumpaManualPrice';
 const PRO_KEY = 'pumpaPro';
 const TRIP_PLAN_KEY = 'pumpaTripPlan';   /* single draft, additive — see restorePlanDraft */
 
+/* ---- i18n (display layer ONLY) ----
+   window.PUMPA_I18N = { locale, strings } is injected per-locale by the
+   calculator page BEFORE this script. t() falls back to the English
+   literal at its call site, so the tool runs standalone (and in the test
+   harness) without injection. fmt() localises DISPLAYED numbers only —
+   never input values, storage, or CSV, which stay dot-decimal machine
+   format (see CLAUDE.md comma-decimal watch-out). Language never touches
+   units, currency or any stored data. */
+const I18N = (typeof window !== 'undefined' && window.PUMPA_I18N) || {};
+const LOCALE = I18N.locale || 'en';
+const STR = I18N.strings || {};
+function t(key, fallback, params){
+  let out = Object.prototype.hasOwnProperty.call(STR, key) ? STR[key] : fallback;
+  if (params) for (const k in params) out = out.split('{' + k + '}').join(params[k]);
+  return out;
+}
+function fmt(value, decimals){
+  const v = Number(value) || 0;
+  try { return v.toLocaleString(LOCALE, { minimumFractionDigits: decimals, maximumFractionDigits: decimals }); }
+  catch { return v.toFixed(decimals); }
+}
+
 /* Free-tier caps apply to what is DISPLAYED only — stored data is never truncated. */
 const FREE_TRIP_LIMIT = 10;
 const FREE_REFUEL_LIMIT = 3;
@@ -335,14 +357,14 @@ function calc(){
   const base = computeTrip(baseline, consumption, price, currentSystem);
   const delta = trip.cost - base.cost;
 
-  fuelUsedValueEl.textContent = trip.fuelUsedNative.toFixed(2);
-  tripCostEl.textContent = cur + trip.cost.toFixed(2);
-  baselineCostEl.textContent = cur + base.cost.toFixed(2);
+  fuelUsedValueEl.textContent = fmt(trip.fuelUsedNative, 2);
+  tripCostEl.textContent = cur + fmt(trip.cost, 2);
+  baselineCostEl.textContent = cur + fmt(base.cost, 2);
 
   deltaRowEl.classList.remove('up','down');
-  if (Math.abs(delta) < 0.005){ deltaValueEl.textContent = cur + '0.00'; }
-  else if (delta > 0){ deltaRowEl.classList.add('up'); deltaValueEl.textContent = '+' + cur + delta.toFixed(2); }
-  else { deltaRowEl.classList.add('down'); deltaValueEl.textContent = '−' + cur + Math.abs(delta).toFixed(2); }
+  if (Math.abs(delta) < 0.005){ deltaValueEl.textContent = cur + fmt(0, 2); }
+  else if (delta > 0){ deltaRowEl.classList.add('up'); deltaValueEl.textContent = '+' + cur + fmt(delta, 2); }
+  else { deltaRowEl.classList.add('down'); deltaValueEl.textContent = '−' + cur + fmt(Math.abs(delta), 2); }
 }
 
 [distanceEl, consumptionEl, priceEl, baselineEl].forEach(el => el.addEventListener('input', calc));
@@ -378,14 +400,14 @@ function evCalc(){
   const base = computeEvTrip(baseline, consumption, price, currentSystem);
   const delta = trip.cost - base.cost;
 
-  energyUsedValueEl.textContent = trip.energyUsed.toFixed(2);
-  evTripCostEl.textContent = cur + trip.cost.toFixed(2);
-  evBaselineCostEl.textContent = cur + base.cost.toFixed(2);
+  energyUsedValueEl.textContent = fmt(trip.energyUsed, 2);
+  evTripCostEl.textContent = cur + fmt(trip.cost, 2);
+  evBaselineCostEl.textContent = cur + fmt(base.cost, 2);
 
   evDeltaRowEl.classList.remove('up','down');
-  if (Math.abs(delta) < 0.005){ evDeltaValueEl.textContent = cur + '0.00'; }
-  else if (delta > 0){ evDeltaRowEl.classList.add('up'); evDeltaValueEl.textContent = '+' + cur + delta.toFixed(2); }
-  else { evDeltaRowEl.classList.add('down'); evDeltaValueEl.textContent = '−' + cur + Math.abs(delta).toFixed(2); }
+  if (Math.abs(delta) < 0.005){ evDeltaValueEl.textContent = cur + fmt(0, 2); }
+  else if (delta > 0){ evDeltaRowEl.classList.add('up'); evDeltaValueEl.textContent = '+' + cur + fmt(delta, 2); }
+  else { evDeltaRowEl.classList.add('down'); evDeltaValueEl.textContent = '−' + cur + fmt(Math.abs(delta), 2); }
 }
 
 [evDistanceEl, evConsumptionEl, evPriceEl, evBaselineEl].forEach(el => el.addEventListener('input', evCalc));
@@ -451,10 +473,10 @@ function renderPlanLegs(){
   const distUnit = escapeHtml(unitLabels(currentSystem).dist);
   planLegsEl.innerHTML = planLegs.map((value, i) => `
     <div class="leg-row">
-      <label class="leg-label" for="planLeg${i}">Leg ${i + 1}</label>
+      <label class="leg-label" for="planLeg${i}">${escapeHtml(t('legLabel', 'Leg {n}', { n: i + 1 }))}</label>
       <input type="number" id="planLeg${i}" data-index="${i}" min="0" step="0.1" inputmode="decimal" value="${escapeHtml(value)}">
       <span class="leg-unit">${distUnit}</span>
-      ${planLegs.length > 1 ? `<button type="button" class="leg-del" data-index="${i}" aria-label="Remove leg ${i + 1}">×</button>` : ''}
+      ${planLegs.length > 1 ? `<button type="button" class="leg-del" data-index="${i}" aria-label="${escapeHtml(t('ariaRemoveLeg', 'Remove leg {n}', { n: i + 1 }))}">×</button>` : ''}
     </div>`).join('');
 }
 
@@ -472,12 +494,12 @@ function planCalc(){
   const other = isEv ? fuelCost : evCost;
   const chosenTotal = chosen + tolls + extras;
 
-  planDistTotalEl.textContent = round(distance, 1) + ' ' + unitLabels(currentSystem).dist;
-  planEnergyLabelEl.textContent = isEv ? 'Energy' : 'Fuel';
-  planEnergyCostEl.textContent = cur + chosen.toFixed(2);
-  planTollsCostEl.textContent = cur + tolls.toFixed(2);
-  planExtrasCostEl.textContent = cur + extras.toFixed(2);
-  planTotalEl.textContent = cur + chosenTotal.toFixed(2);
+  planDistTotalEl.textContent = fmt(round(distance, 1), round(distance, 1) % 1 ? 1 : 0) + ' ' + unitLabels(currentSystem).dist;
+  planEnergyLabelEl.textContent = isEv ? t('planEnergy', 'Energy') : t('planFuel', 'Fuel');
+  planEnergyCostEl.textContent = cur + fmt(chosen, 2);
+  planTollsCostEl.textContent = cur + fmt(tolls, 2);
+  planExtrasCostEl.textContent = cur + fmt(extras, 2);
+  planTotalEl.textContent = cur + fmt(chosenTotal, 2);
 
   /* Bidirectional, neutral comparison against the vehicle NOT selected,
      using the values the user entered (tolls/extras apply to both). */
@@ -487,11 +509,12 @@ function planCalc(){
   if (distance > 0 && otherReady){
     const otherTotal = other + tolls + extras;
     const diff = otherTotal - chosenTotal;
-    const otherName = isEv ? 'petrol' : 'EV';
-    let text = `Same trip by ${otherName}: ${cur}${otherTotal.toFixed(2)}`;
-    if (Math.abs(diff) < 0.005) text += ' — about the same';
-    else if (diff > 0) text += ` — ${cur}${diff.toFixed(2)} more`;
-    else text += ` — ${cur}${Math.abs(diff).toFixed(2)} less`;
+    /* parameterised so translated word order is free */
+    const otherName = isEv ? t('vehiclePetrol', 'petrol') : t('vehicleEv', 'EV');
+    let text = t('compareBase', 'Same trip by {vehicle}: {total}', { vehicle: otherName, total: cur + fmt(otherTotal, 2) });
+    if (Math.abs(diff) < 0.005) text += t('compareSame', ' — about the same');
+    else if (diff > 0) text += t('compareMore', ' — {diff} more', { diff: cur + fmt(diff, 2) });
+    else text += t('compareLess', ' — {diff} less', { diff: cur + fmt(Math.abs(diff), 2) });
     planCompareTextEl.textContent = text;
     planCompareEl.hidden = false;
   } else {
@@ -592,13 +615,13 @@ function saveTrips(entries){ writeJson(TRIPS_KEY, entries); }
 function renderTrips(){
   const entries = loadTrips();
   if (entries.length === 0){
-    tripsListEl.innerHTML = '<div class="log-empty">No trips logged yet.<br>Log one from the Calculate tab.</div>';
-    tripsTotalEl.textContent = currencySymbol() + '0.00 total';
+    tripsListEl.innerHTML = '<div class="log-empty">' + t('emptyTrips', 'No trips logged yet.<br>Log one from the Calculate tab.') + '</div>';
+    tripsTotalEl.textContent = currencySymbol() + fmt(0, 2) + t('totalSuffix', ' total');
     updateExportCounts();
     return;
   }
   const total = entries.reduce((sum, entry) => sum + toFiniteNumber(entry.cost), 0);
-  tripsTotalEl.textContent = currencySymbol() + total.toFixed(2) + ' total';
+  tripsTotalEl.textContent = currencySymbol() + fmt(total, 2) + t('totalSuffix', ' total');
   const sorted = [...entries].sort((a,b) => b.ts - a.ts);
   const visible = isPro() ? sorted : sorted.slice(0, FREE_TRIP_LIMIT);
   const hidden = sorted.length - visible.length;
@@ -606,18 +629,18 @@ function renderTrips(){
     const u = unitLabels(e.system);
     const isEv = e.kind === 'ev';
     const cur = escapeHtml(e.currency || '€');
-    const d = new Date(e.ts).toLocaleDateString(undefined, {day:'2-digit', month:'short', year:'2-digit'});
+    const d = new Date(e.ts).toLocaleDateString(LOCALE, {day:'2-digit', month:'short', year:'2-digit'});
     return `<div class="log-row" data-id="${escapeHtml(e.id)}">
       <div class="log-info">
         <div class="log-date">${escapeHtml(d)}${isEv ? ' <span class="log-kind">EV</span>' : ''}</div>
         <div class="log-detail">${escapeHtml(e.distance)} ${u.dist} · ${escapeHtml(e.consumption)} ${isEv ? u.evCons : u.cons}</div>
       </div>
       <div class="log-right">
-        <div class="log-cost">${cur}${toFiniteNumber(e.cost).toFixed(2)}</div>
-        <button type="button" class="log-del" data-id="${escapeHtml(e.id)}" aria-label="Delete trip">×</button>
+        <div class="log-cost">${cur}${fmt(toFiniteNumber(e.cost), 2)}</div>
+        <button type="button" class="log-del" data-id="${escapeHtml(e.id)}" aria-label="${escapeHtml(t('ariaDeleteTrip', 'Delete trip'))}">×</button>
       </div>
     </div>`;
-  }).join('') + (hidden > 0 ? lockedRowHtml(hidden, hidden === 1 ? 'trip' : 'trips') : '');
+  }).join('') + (hidden > 0 ? lockedRowHtml(hidden, hidden === 1 ? t('nounTrip', 'trip') : t('nounTrips', 'trips')) : '');
   updateExportCounts();
 }
 
@@ -632,7 +655,7 @@ $('saveTripBtn').addEventListener('click', () => {
   });
   saveTrips(entries);
   renderTrips();
-  toast('Trip logged ✓');
+  toast(t('tripLogged', 'Trip logged ✓'));
 });
 
 /* EV trips share pumpaTrips; kind:'ev' is the only difference.
@@ -653,7 +676,7 @@ $('evSaveTripBtn').addEventListener('click', () => {
 
 tripsListEl.addEventListener('click', (ev) => {
   if (ev.target.closest('[data-pro-cta]')){
-    openProModal('Free plan shows the last ' + FREE_TRIP_LIMIT + ' trips. Your data is safe — unlock to see everything.');
+    openProModal(t('proMsgTrips', 'Free plan shows the last {n} trips. Your data is safe — unlock to see everything.', { n: FREE_TRIP_LIMIT }));
     return;
   }
   const btn = ev.target.closest('.log-del');
@@ -684,13 +707,13 @@ function computeReports(){
   let monthSpend = 0, monthCount = 0;
   entries.forEach(e => { if (e.date.slice(0,7) === monthKey){ monthSpend += toFiniteNumber(e.cost); monthCount++; } });
   rptMonthSpendEl.textContent = currentCurrency + monthSpend.toFixed(2);
-  rptMonthSubEl.textContent = monthCount + (monthCount === 1 ? ' fill-up' : ' fill-ups');
+  rptMonthSubEl.textContent = monthCount + ' ' + (monthCount === 1 ? t('nounFillup', 'fill-up') : t('nounFillups', 'fill-ups'));
 
   if (entries.length){
     const total = entries.reduce((sum, entry) => sum + toFiniteNumber(entry.cost), 0);
     rptAvgFillEl.textContent = currentCurrency + (total / entries.length).toFixed(2);
   } else {
-    rptAvgFillEl.textContent = currentCurrency + '0.00';
+    rptAvgFillEl.textContent = currentCurrency + fmt(0, 2);
   }
 
   const withOdo = entries.filter(e => e.odo != null && !Number.isNaN(Number(e.odo)));
@@ -714,8 +737,8 @@ function computeReports(){
         rptRealConsEl.textContent = ((fuelLiters / distanceKm) * 100).toFixed(1);
         rptRealConsSubEl.textContent = 'L/100km';
       }
-    } else { rptRealConsEl.textContent = '—'; rptRealConsSubEl.textContent = 'check odometer'; }
-  } else { rptRealConsEl.textContent = '—'; rptRealConsSubEl.textContent = 'needs 2+ odometer'; }
+    } else { rptRealConsEl.textContent = '—'; rptRealConsSubEl.textContent = t('checkOdometer', 'check odometer'); }
+  } else { rptRealConsEl.textContent = '—'; rptRealConsSubEl.textContent = t('needsOdometer', 'needs 2+ odometer'); }
 
   if (entries.length >= 2){
     const days = (new Date(entries[entries.length-1].date) - new Date(entries[0].date)) / (864e5);
@@ -731,7 +754,7 @@ function renderMonthlyChart(entries){
   for (let i = 5; i >= 0; i--){
     const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
     months.push({ key: d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'),
-                  label: d.toLocaleDateString(undefined,{month:'short'}), total: 0 });
+                  label: d.toLocaleDateString(LOCALE,{month:'short'}), total: 0 });
   }
   entries.forEach(e => { const m = months.find(mm => mm.key === e.date.slice(0,7)); if (m) m.total += toFiniteNumber(e.cost); });
   const max = Math.max(...months.map(m => m.total), 1);
@@ -748,7 +771,7 @@ function renderMonthlyChart(entries){
 function renderRefuels(){
   const entries = loadRefuels().slice().sort((a,b) => new Date(b.date) - new Date(a.date));
   if (entries.length === 0){
-    refuelListEl.innerHTML = '<div class="log-empty">No fill-ups logged yet.</div>';
+    refuelListEl.innerHTML = '<div class="log-empty">' + t('emptyFillups', 'No fill-ups logged yet.') + '</div>';
     computeReports(); updateExportCounts(); return;
   }
   const visible = isPro() ? entries : entries.slice(0, FREE_REFUEL_LIMIT);
@@ -759,26 +782,26 @@ function renderRefuels(){
     const amount = toFiniteNumber(e.amount);
     const cost = toFiniteNumber(e.cost);
     const per = amount > 0 ? (cost / amount) : 0;
-    const d = new Date(e.date).toLocaleDateString(undefined,{day:'2-digit',month:'short',year:'2-digit'});
+    const d = new Date(e.date).toLocaleDateString(LOCALE,{day:'2-digit',month:'short',year:'2-digit'});
     return `<div class="log-row" data-id="${escapeHtml(e.id)}">
       <div class="log-info">
         <div class="log-date">${escapeHtml(d)}</div>
-        <div class="log-detail">${amount} ${u.fuel} · ${cur}${per.toFixed(3)}/${u.fuel}</div>
+        <div class="log-detail">${fmt(amount, amount % 1 ? 2 : 0)} ${u.fuel} · ${cur}${fmt(per, 3)}/${u.fuel}</div>
         ${e.odo != null ? `<div class="log-eff">odo ${escapeHtml(e.odo)} ${u.dist}</div>` : ''}
       </div>
       <div class="log-right">
-        <div class="log-cost">${cur}${cost.toFixed(2)}</div>
-        <button type="button" class="log-del" data-id="${escapeHtml(e.id)}" aria-label="Delete fill-up">×</button>
+        <div class="log-cost">${cur}${fmt(cost, 2)}</div>
+        <button type="button" class="log-del" data-id="${escapeHtml(e.id)}" aria-label="${escapeHtml(t('ariaDeleteFillup', 'Delete fill-up'))}">×</button>
       </div>
     </div>`;
-  }).join('') + (hidden > 0 ? lockedRowHtml(hidden, hidden === 1 ? 'fill-up' : 'fill-ups') : '');
+  }).join('') + (hidden > 0 ? lockedRowHtml(hidden, hidden === 1 ? t('nounFillup', 'fill-up') : t('nounFillups', 'fill-ups')) : '');
   computeReports(); updateExportCounts();
 }
 
 $('refuelSaveBtn').addEventListener('click', () => {
   const amount = Number.parseFloat(refuelAmountEl.value), cost = Number.parseFloat(refuelCostEl.value),
         odoRaw = Number.parseFloat(refuelOdoEl.value), date = refuelDateEl.value || formatLocalISODate(new Date());
-  if (Number.isNaN(amount) || Number.isNaN(cost) || amount <= 0){ toast('Enter amount + cost'); return; }
+  if (Number.isNaN(amount) || Number.isNaN(cost) || amount <= 0){ toast(t('enterAmountCost', 'Enter amount + cost')); return; }
   const entries = loadRefuels();
   entries.push({
     id: createId(),
@@ -788,12 +811,12 @@ $('refuelSaveBtn').addEventListener('click', () => {
   saveRefuels(entries);
   renderRefuels();
   refuelAmountEl.value = ''; refuelCostEl.value = ''; refuelOdoEl.value = '';
-  toast('Fill-up logged ✓');
+  toast(t('fillupLogged', 'Fill-up logged ✓'));
 });
 
 refuelListEl.addEventListener('click', (ev) => {
   if (ev.target.closest('[data-pro-cta]')){
-    openProModal('Free plan shows the last ' + FREE_REFUEL_LIMIT + ' fill-ups. Your data is safe — unlock to see everything.');
+    openProModal(t('proMsgFillups', 'Free plan shows the last {n} fill-ups. Your data is safe — unlock to see everything.', { n: FREE_REFUEL_LIMIT }));
     return;
   }
   const btn = ev.target.closest('.log-del');
@@ -807,11 +830,11 @@ refuelListEl.addEventListener('click', (ev) => {
    ============================================================ */
 $('applyManualPrice').addEventListener('click', () => {
   const v = Number.parseFloat(manualPriceEl.value);
-  if (Number.isNaN(v) || v <= 0){ toast('Enter a valid price'); return; }
+  if (Number.isNaN(v) || v <= 0){ toast(t('enterValidPrice', 'Enter a valid price')); return; }
   priceEl.value = round(v, 3);
   writeJson(MANUAL_PRICE_KEY, { value: v, system: currentSystem, currency: currentCurrency, ts: Date.now() });
   calc();
-  toast('Price applied to calculator ✓');
+  toast(t('priceApplied', 'Price applied to calculator ✓'));
 });
 
 /* ============================================================
@@ -857,21 +880,21 @@ function entitlements(){
 }
 
 function lockedRowHtml(hiddenCount, noun){
-  return `<button type="button" class="log-locked" data-pro-cta>+ ${hiddenCount} more ${escapeHtml(noun)} · Unlock with Pumpa Pro</button>`;
+  return `<button type="button" class="log-locked" data-pro-cta>${escapeHtml(t('lockedRow', '+ {n} more {noun} · Unlock with Pumpa Pro', { n: hiddenCount, noun }))}</button>`;
 }
 
 function updateProUi(){
   const pdfBtn = $('exportPdf');
   pdfBtn.classList.toggle('locked', !isPro());
-  pdfBtn.textContent = isPro() ? 'PDF' : '🔒 PDF';
+  pdfBtn.textContent = isPro() ? t('pdfLabel', 'PDF') : t('pdfLocked', '🔒 PDF');
   const badge = $('proBadge');
   badge.classList.toggle('active', isPro());
-  badge.title = isPro() ? 'Pumpa Pro active' : 'Upgrade to Pumpa Pro';
+  badge.title = isPro() ? t('proBadgeActive', 'Pumpa Pro active') : t('proBadgeUpgrade', 'Upgrade to Pumpa Pro');
 }
 
 function openProModal(message){
   proModalReturnFocus = document.activeElement;
-  $('proModalReason').textContent = message || 'Unlock the full trip computer.';
+  $('proModalReason').textContent = message || t('proMsgDefault', 'Unlock the full trip computer.');
   $('proCode').value = '';
   $('proError').hidden = true;
   $('proModal').hidden = false;
@@ -897,7 +920,7 @@ function attemptUnlock(){
   renderTrips();
   renderRefuels();
   updateProUi();
-  toast('Pumpa Pro unlocked ✓');
+  toast(t('proUnlocked', 'Pumpa Pro unlocked ✓'));
 }
 
 $('proUnlockBtn').addEventListener('click', attemptUnlock);
@@ -908,7 +931,7 @@ document.addEventListener('keydown', (ev) => {
   if (ev.key === 'Escape' && !$('proModal').hidden) closeProModal();
 });
 $('proBadge').addEventListener('click', () => {
-  if (isPro()) toast('Pumpa Pro active ✓');
+  if (isPro()) toast(t('proActive', 'Pumpa Pro active ✓'));
   else openProModal();
 });
 
@@ -972,7 +995,7 @@ function downloadFile(filename, content, type){
 
 function exportTripsCsv(){
   const entries = loadTrips().slice().sort((a,b) => a.ts - b.ts);
-  if (!entries.length){ toast('No trips to export'); return; }
+  if (!entries.length){ toast(t('noTripsExport', 'No trips to export')); return; }
   /* 'Type' is appended last so pre-EV consumers of this CSV keep their column order. */
   const header = ['Date','Distance','Distance unit','Consumption','Consumption unit','Fuel price','Currency','Cost','Type'];
   const rows = entries.map(e => {
@@ -982,12 +1005,12 @@ function exportTripsCsv(){
              e.price, e.currency || '€', toFiniteNumber(e.cost).toFixed(2), isEv ? 'EV' : 'Petrol' ].map(csvEscape).join(',');
   });
   downloadFile('pumpa-trips.csv', [header.join(','), ...rows].join('\n'), 'text/csv');
-  toast('Trips CSV downloaded ✓');
+  toast(t('tripsCsvDone', 'Trips CSV downloaded ✓'));
 }
 
 function exportFuelCsv(){
   const entries = loadRefuels().slice().sort((a,b) => new Date(a.date) - new Date(b.date));
-  if (!entries.length){ toast('No fill-ups to export'); return; }
+  if (!entries.length){ toast(t('noFillupsExport', 'No fill-ups to export')); return; }
   const header = ['Date','Amount','Amount unit','Total cost','Currency','Price per unit','Odometer','Odometer unit'];
   const rows = entries.map(e => {
     const u = unitLabels(e.system);
@@ -998,7 +1021,7 @@ function exportFuelCsv(){
              e.odo == null ? '' : e.odo, u.dist ].map(csvEscape).join(',');
   });
   downloadFile('pumpa-fuel-log.csv', [header.join(','), ...rows].join('\n'), 'text/csv');
-  toast('Fuel log CSV downloaded ✓');
+  toast(t('fuelCsvDone', 'Fuel log CSV downloaded ✓'));
 }
 
 $('exportTripsCsv').addEventListener('click', exportTripsCsv);
@@ -1007,10 +1030,10 @@ $('exportFuelCsv').addEventListener('click', exportFuelCsv);
 $('exportFuelCsv2').addEventListener('click', exportFuelCsv);
 
 function updateExportCounts(){
-  const t = loadTrips().length, f = loadRefuels().length;
+  const tripsN = loadTrips().length, fillupsN = loadRefuels().length;
   const te = $('exportTripsCount'), fe = $('exportFuelCount');
-  if (te) te.textContent = t + (t === 1 ? ' trip logged' : ' trips logged');
-  if (fe) fe.textContent = f + (f === 1 ? ' fill-up logged' : ' fill-ups logged');
+  if (te) te.textContent = tripsN === 1 ? t('tripsCountOne', '{n} trip logged', { n: tripsN }) : t('tripsCountMany', '{n} trips logged', { n: tripsN });
+  if (fe) fe.textContent = fillupsN === 1 ? t('fillupsCountOne', '{n} fill-up logged', { n: fillupsN }) : t('fillupsCountMany', '{n} fill-ups logged', { n: fillupsN });
 }
 
 function exportPdf(){
@@ -1027,44 +1050,44 @@ function exportPdf(){
 
   const tripRows = trips.map(e => {
     const u = unitLabels(e.system);
-    return `<tr><td>${new Date(e.ts).toISOString().slice(0,10)}</td><td>${escapeHtml(e.distance)} ${u.dist}</td><td>${escapeHtml(e.consumption)} ${u.cons}</td><td>${escapeHtml(e.currency || '€')}${toFiniteNumber(e.cost).toFixed(2)}</td></tr>`;
-  }).join('') || '<tr><td colspan="4" class="muted">No trips logged</td></tr>';
+    return `<tr><td>${new Date(e.ts).toISOString().slice(0,10)}</td><td>${escapeHtml(e.distance)} ${u.dist}</td><td>${escapeHtml(e.consumption)} ${u.cons}</td><td>${escapeHtml(e.currency || '€')}${fmt(toFiniteNumber(e.cost), 2)}</td></tr>`;
+  }).join('') || ('<tr><td colspan="4" class="muted">' + t('reportNoTrips', 'No trips logged') + '</td></tr>');
 
   const fuelRows = refuels.map(e => {
     const u = unitLabels(e.system);
     const odometer = e.odo == null ? '—' : `${e.odo} ${u.dist}`;
-    return `<tr><td>${escapeHtml(e.date)}</td><td>${toFiniteNumber(e.amount)} ${u.fuel}</td><td>${escapeHtml(odometer)}</td><td>${escapeHtml(e.currency || '€')}${toFiniteNumber(e.cost).toFixed(2)}</td></tr>`;
-  }).join('') || '<tr><td colspan="4" class="muted">No fill-ups logged</td></tr>';
+    return `<tr><td>${escapeHtml(e.date)}</td><td>${fmt(toFiniteNumber(e.amount), 2)} ${u.fuel}</td><td>${escapeHtml(odometer)}</td><td>${escapeHtml(e.currency || '€')}${fmt(toFiniteNumber(e.cost), 2)}</td></tr>`;
+  }).join('') || ('<tr><td colspan="4" class="muted">' + t('reportNoFillups', 'No fill-ups logged') + '</td></tr>');
 
   // Root-absolute: the tool page lives at /calculator/ while report.css stays at the site root.
   const reportStylesUrl = new URL('/report.css', document.baseURI).href;
-  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Pumpa Report</title>
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${t('reportTitle', 'Pumpa Report')}</title>
   <link rel="stylesheet" href="${reportStylesUrl}"></head><body>
-    <h1>Pumpa — Fuel &amp; Commute Report</h1>
-    <div class="sub">Generated ${now.toLocaleDateString(undefined,{day:'numeric',month:'long',year:'numeric'})}</div>
+    <h1>${t('reportHeading', 'Pumpa — Fuel &amp; Commute Report')}</h1>
+    <div class="sub">${t('reportGenerated','Generated {date}',{date: now.toLocaleDateString(LOCALE,{day:'numeric',month:'long',year:'numeric'})})}</div>
     <div class="cards">
-      <div class="c"><div class="l">This month fuel</div><div class="v">${escapeHtml(cur)}${monthSpend.toFixed(2)}</div></div>
-      <div class="c"><div class="l">Total fuel spend</div><div class="v">${escapeHtml(cur)}${totalFuel.toFixed(2)}</div></div>
-      <div class="c"><div class="l">Avg / fill-up</div><div class="v">${escapeHtml(cur)}${avgFill.toFixed(2)}</div></div>
-      <div class="c"><div class="l">Logged trip cost</div><div class="v">${escapeHtml(cur)}${totalTrips.toFixed(2)}</div></div>
+      <div class="c"><div class="l">${t('reportMonthFuel', 'This month fuel')}</div><div class="v">${escapeHtml(cur)}${fmt(monthSpend, 2)}</div></div>
+      <div class="c"><div class="l">${t('reportTotalFuel', 'Total fuel spend')}</div><div class="v">${escapeHtml(cur)}${fmt(totalFuel, 2)}</div></div>
+      <div class="c"><div class="l">${t('reportAvgFill', 'Avg / fill-up')}</div><div class="v">${escapeHtml(cur)}${fmt(avgFill, 2)}</div></div>
+      <div class="c"><div class="l">${t('reportTripCost', 'Logged trip cost')}</div><div class="v">${escapeHtml(cur)}${fmt(totalTrips, 2)}</div></div>
     </div>
-    <h2>Fill-up log (${refuels.length})</h2>
-    <table><thead><tr><th>Date</th><th>Amount</th><th>Odometer</th><th>Cost</th></tr></thead><tbody>${fuelRows}</tbody></table>
-    <h2>Trip log (${trips.length})</h2>
-    <table><thead><tr><th>Date</th><th>Distance</th><th>Consumption</th><th>Cost</th></tr></thead><tbody>${tripRows}</tbody></table>
-    <div class="foot">Pumpa — data stored locally on your device</div>
+    <h2>${t('reportFillupLog', 'Fill-up log')} (${refuels.length})</h2>
+    <table><thead><tr><th>${t('thDate', 'Date')}</th><th>${t('thAmount', 'Amount')}</th><th>${t('thOdometer', 'Odometer')}</th><th>${t('thCost', 'Cost')}</th></tr></thead><tbody>${fuelRows}</tbody></table>
+    <h2>${t('reportTripLog', 'Trip log')} (${trips.length})</h2>
+    <table><thead><tr><th>${t('thDate', 'Date')}</th><th>${t('thDistance', 'Distance')}</th><th>${t('thConsumption', 'Consumption')}</th><th>${t('thCost', 'Cost')}</th></tr></thead><tbody>${tripRows}</tbody></table>
+    <div class="foot">${t('reportFooter', 'Pumpa — data stored locally on your device')}</div>
   </body></html>`;
 
   const w = window.open('', '_blank');
-  if (!w){ toast('Allow pop-ups to export PDF'); return; }
+  if (!w){ toast(t('allowPopups', 'Allow pop-ups to export PDF')); return; }
   w.document.write(html);
   w.document.close();
   setTimeout(() => { w.focus(); w.print(); }, 400);
-  toast('Opening print dialog…');
+  toast(t('openingPrint', 'Opening print dialog…'));
 }
 $('exportPdf').addEventListener('click', () => {
   if (!entitlements().pdfExport){
-    openProModal('PDF reports are a Pumpa Pro feature.');
+    openProModal(t('proMsgPdf', 'PDF reports are a Pumpa Pro feature.'));
     return;
   }
   exportPdf();

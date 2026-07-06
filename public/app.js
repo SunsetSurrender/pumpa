@@ -8,14 +8,22 @@ const KM_PER_MILE = 1.60934;
 const L_PER_US_GAL = 3.78541;
 const L_PER_UK_GAL = 4.54609;
 
+/* EV consumption pivot. c kWh/100km means 100 km uses c kWh, and
+   100 km = 100 / 1.60934 = 62.137 mi — so mi/kWh = MI_PER_100KM / c.
+   Worked example: 20 kWh/100km → 62.137 / 20 = 3.107 mi/kWh.
+   Like MPG ↔ L/100km, the relationship is INVERSE, and the same
+   formula converts both directions. */
+const MI_PER_100KM = 100 / KM_PER_MILE;
+
 const UNIT_LABELS = {
-  metric: { dist: 'km', cons: 'L/100km', fuel: 'L',   priceSuffix: '/L' },
-  us:     { dist: 'mi', cons: 'MPG',      fuel: 'gal', priceSuffix: '/gal' },
-  uk:     { dist: 'mi', cons: 'MPG',      fuel: 'L',   priceSuffix: '/L' }
+  metric: { dist: 'km', cons: 'L/100km', fuel: 'L',   priceSuffix: '/L',   evCons: 'kWh/100km', energy: 'kWh', evPriceSuffix: '/kWh' },
+  us:     { dist: 'mi', cons: 'MPG',      fuel: 'gal', priceSuffix: '/gal', evCons: 'mi/kWh',    energy: 'kWh', evPriceSuffix: '/kWh' },
+  uk:     { dist: 'mi', cons: 'MPG',      fuel: 'L',   priceSuffix: '/L',   evCons: 'mi/kWh',    energy: 'kWh', evPriceSuffix: '/kWh' }
 };
 
 let currentSystem = 'metric';
 let currentCurrency = '€';
+let currentVehicle = 'fuel';
 
 const TRIPS_KEY  = 'pumpaTrips';
 const REFUEL_KEY = 'pumpaRefuels';
@@ -55,6 +63,16 @@ const rptMonthSpendEl = $('rptMonthSpend'), rptMonthSubEl = $('rptMonthSub'),
       monthlyBarsEl = $('monthlyBars');
 
 const manualPriceEl = $('manualPrice'), manualPriceLabelEl = $('manualPriceLabel');
+
+const vehicleToggleEl = $('vehicleToggle');
+const calcFuelCardEl = $('calcFuelCard'), calcEvCardEl = $('calcEvCard');
+const evDistanceEl = $('evDistance'), evConsumptionEl = $('evConsumption'),
+      evPriceEl = $('evPrice'), evBaselineEl = $('evBaseline');
+const energyUsedValueEl = $('energyUsedValue'), energyUnitLabelEl = $('energyUnitLabel');
+const evTripCostEl = $('evTripCost'), evBaselineCostEl = $('evBaselineCost');
+const evDeltaRowEl = $('evDeltaRow'), evDeltaValueEl = $('evDeltaValue');
+const evDistUnitLabelEl = $('evDistUnitLabel'), evConsUnitLabelEl = $('evConsUnitLabel'),
+      evPriceUnitLabelEl = $('evPriceUnitLabel'), evBaselineUnitLabelEl = $('evBaselineUnitLabel');
 
 /* ============================================================
    UTILITIES
@@ -129,6 +147,19 @@ function l100kmToConsumption(l, s){
 function priceToPerLiter(v, s){ return s === 'us' ? v / L_PER_US_GAL : v; }
 function priceFromPerLiter(p, s){ return s === 'us' ? p * L_PER_US_GAL : p; }
 
+/* EV: kWh/100km ↔ mi/kWh (inverse — see MI_PER_100KM above).
+   Energy price is per kWh in every system, so it never converts. */
+function evConsumptionToKwh100km(v, s){
+  if (s === 'metric') return v;
+  if (v <= 0) return 0;
+  return MI_PER_100KM / v;
+}
+function kwh100kmToEvConsumption(l, s){
+  if (s === 'metric') return l;
+  if (l <= 0) return 0;
+  return MI_PER_100KM / l;
+}
+
 /* ============================================================
    PREFS + LOCALE
    ============================================================ */
@@ -167,11 +198,13 @@ function normalizePrefs(prefs){
   const currency = prefs && typeof prefs.currency === 'string' && prefs.currency.trim()
     ? prefs.currency.trim()
     : DEFAULT_PREFS.currency;
-  return { system, currency };
+  /* vehicle is additive + optional: prefs saved before the EV feature lack it. */
+  const vehicle = prefs && prefs.vehicle === 'ev' ? 'ev' : 'fuel';
+  return { system, currency, vehicle };
 }
 
 function loadPrefs(){ return readJson(PREF_KEY, null); }
-function savePrefs(){ writeJson(PREF_KEY, { system: currentSystem, currency: currentCurrency }); }
+function savePrefs(){ writeJson(PREF_KEY, { system: currentSystem, currency: currentCurrency, vehicle: currentVehicle }); }
 
 /* ============================================================
    LABELS
@@ -187,6 +220,12 @@ function updateLabels(){
   refuelCostLabelEl.textContent = currentCurrency;
   refuelOdoLabelEl.textContent = u.dist;
   manualPriceLabelEl.textContent = currentCurrency + u.priceSuffix;
+
+  evDistUnitLabelEl.textContent = u.dist;
+  evBaselineUnitLabelEl.textContent = u.dist;
+  evConsUnitLabelEl.textContent = u.evCons;
+  evPriceUnitLabelEl.textContent = currentCurrency + u.evPriceSuffix;
+  energyUnitLabelEl.textContent = u.energy;
 }
 
 function updateUnitToggle(){
@@ -200,6 +239,7 @@ function updateUnitToggle(){
 function refreshUi(){
   updateLabels();
   calc();
+  evCalc();
   renderTrips();
   renderRefuels();
 }
@@ -215,6 +255,11 @@ function switchSystem(newSystem){
   baselineEl.value = round(kmToDistance(distanceToKm(num(baselineEl), oldSystem), newSystem), 1);
   consumptionEl.value = round(l100kmToConsumption(consumptionToL100km(num(consumptionEl), oldSystem), newSystem), 1);
   priceEl.value = round(priceFromPerLiter(priceToPerLiter(num(priceEl), oldSystem), newSystem), 3);
+
+  evDistanceEl.value = round(kmToDistance(distanceToKm(num(evDistanceEl), oldSystem), newSystem), 1);
+  evBaselineEl.value = round(kmToDistance(distanceToKm(num(evBaselineEl), oldSystem), newSystem), 1);
+  evConsumptionEl.value = round(kwh100kmToEvConsumption(evConsumptionToKwh100km(num(evConsumptionEl), oldSystem), newSystem), 1);
+  /* evPrice: per kWh everywhere — no conversion */
 
   currentSystem = newSystem;
   updateUnitToggle();
@@ -290,6 +335,68 @@ $('resetBtn').addEventListener('click', () => {
   consumptionEl.value = round(l100kmToConsumption(3.4, currentSystem), 1);
   priceEl.value = round(priceFromPerLiter(1.777, currentSystem), 3);
   calc();
+});
+
+/* ============================================================
+   EV TRIP CALCULATOR
+   Peer of the petrol calculator: same units/currency machinery,
+   energy in kWh, price per kWh (never converted between systems).
+   ============================================================ */
+function computeEvTrip(distance, consumption, price, system){
+  if (system === 'metric'){
+    const kwh = distance * consumption / 100;         /* kWh/100km */
+    return { energyUsed: kwh, cost: kwh * price };
+  }
+  const kwh = consumption > 0 ? distance / consumption : 0;  /* mi/kWh */
+  return { energyUsed: kwh, cost: kwh * price };
+}
+
+function evCalc(){
+  const distance = num(evDistanceEl), consumption = num(evConsumptionEl),
+        price = num(evPriceEl), baseline = num(evBaselineEl);
+  const cur = currencySymbol();
+
+  const trip = computeEvTrip(distance, consumption, price, currentSystem);
+  const base = computeEvTrip(baseline, consumption, price, currentSystem);
+  const delta = trip.cost - base.cost;
+
+  energyUsedValueEl.textContent = trip.energyUsed.toFixed(2);
+  evTripCostEl.textContent = cur + trip.cost.toFixed(2);
+  evBaselineCostEl.textContent = cur + base.cost.toFixed(2);
+
+  evDeltaRowEl.classList.remove('up','down');
+  if (Math.abs(delta) < 0.005){ evDeltaValueEl.textContent = cur + '0.00'; }
+  else if (delta > 0){ evDeltaRowEl.classList.add('up'); evDeltaValueEl.textContent = '+' + cur + delta.toFixed(2); }
+  else { evDeltaRowEl.classList.add('down'); evDeltaValueEl.textContent = '−' + cur + Math.abs(delta).toFixed(2); }
+}
+
+[evDistanceEl, evConsumptionEl, evPriceEl, evBaselineEl].forEach(el => el.addEventListener('input', evCalc));
+
+$('evResetBtn').addEventListener('click', () => {
+  evDistanceEl.value = round(kmToDistance(70.5, currentSystem), 1);
+  evBaselineEl.value = round(kmToDistance(64, currentSystem), 1);
+  evConsumptionEl.value = round(kwh100kmToEvConsumption(16, currentSystem), 1);
+  evPriceEl.value = 0.25;
+  evCalc();
+});
+
+function switchVehicle(mode){
+  if (mode !== 'fuel' && mode !== 'ev') return;
+  currentVehicle = mode;
+  calcFuelCardEl.hidden = mode !== 'fuel';
+  calcEvCardEl.hidden = mode !== 'ev';
+  vehicleToggleEl.querySelectorAll('button').forEach((button) => {
+    const isActive = button.dataset.vehicle === mode;
+    button.classList.toggle('active', isActive);
+    button.setAttribute('aria-pressed', String(isActive));
+  });
+}
+
+vehicleToggleEl.addEventListener('click', (ev) => {
+  const btn = ev.target.closest('button');
+  if (!btn) return;
+  switchVehicle(btn.dataset.vehicle);
+  savePrefs();
 });
 
 /* ============================================================
@@ -772,9 +879,13 @@ function initUnits(){
     baselineEl.value = round(kmToDistance(distanceToKm(num(baselineEl),'metric'), prefs.system), 1);
     consumptionEl.value = round(l100kmToConsumption(consumptionToL100km(num(consumptionEl),'metric'), prefs.system), 1);
     priceEl.value = round(priceFromPerLiter(priceToPerLiter(num(priceEl),'metric'), prefs.system), 3);
+    evDistanceEl.value = round(kmToDistance(distanceToKm(num(evDistanceEl),'metric'), prefs.system), 1);
+    evBaselineEl.value = round(kmToDistance(distanceToKm(num(evBaselineEl),'metric'), prefs.system), 1);
+    evConsumptionEl.value = round(kwh100kmToEvConsumption(evConsumptionToKwh100km(num(evConsumptionEl),'metric'), prefs.system), 1);
   }
   currentSystem = prefs.system;
   currentCurrency = prefs.currency;
+  switchVehicle(prefs.vehicle);
 
   updateUnitToggle();
 
@@ -809,6 +920,7 @@ restoreManualPrice();
 initRefuelDate();
 activateTab('calc');
 calc();
+evCalc();
 renderTrips();
 renderRefuels();
 updateExportCounts();

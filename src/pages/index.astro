@@ -15,9 +15,10 @@ const latestTips = (await getCollection('tips', ({ data }) => !data.draft))
       <p class="mono-label">Fuel · Commute · Cost</p>
       <h1>Know what every trip <em>really</em> costs.</h1>
       <p class="lede">
-        Distance, consumption, fuel price — Pumpa turns them into a number you can
-        act on. Log trips and fill-ups, watch monthly spending, switch freely between
-        metric, US and UK units. No account, no upload: everything stays in your browser.
+        Enter your distance, your car's consumption and the price at the pump — Pumpa
+        turns them into a number you can actually act on. Log trips and fill-ups, watch
+        what you spend each month, and switch freely between metric, US and UK units.
+        No account, no upload: everything stays on your device.
       </p>
       <div class="hero-actions">
         <a class="btn-link amber" href="/calculator/">Open the calculator</a>
@@ -89,9 +90,9 @@ const latestTips = (await getCollection('tips', ({ data }) => !data.draft))
 
 <style>
   .hero{
-    display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    gap: 48px; align-items: center;
-    padding: 72px 0 24px;
+    display: grid; grid-template-columns: minmax(0, 55fr) minmax(0, 45fr);
+    gap: 3rem; align-items: center;
+    padding: 4rem 0 1.5rem;
   }
   .hero h1{
     margin: 0.75rem 0 1rem;

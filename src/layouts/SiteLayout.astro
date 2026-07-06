@@ -50,10 +50,15 @@ const isCurrent = (href) =>
   <slot name="head" />
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-nav">
     <div class="container">
       <a class="nav-brand" href="/" aria-label="Pumpa home">
-        <span class="nav-mark">P</span>
+        <svg class="nav-gauge" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
+          <path d="M6 22 A 11 11 0 1 1 26 22" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          <line x1="16" y1="21" x2="22.5" y2="11.5" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="16" cy="21" r="2.6" fill="var(--accent)"/>
+        </svg>
         <span class="nav-word">Pumpa</span>
       </a>
       <nav aria-label="Site">
@@ -96,21 +101,18 @@ const isCurrent = (href) =>
     })();
   </script>
 
-  <main class="site-main">
+  <main class="site-main" id="main">
     {container ? <div class="container"><slot /></div> : <slot />}
   </main>
 
   <footer class="site-footer">
     <div class="container">
-      <div class="footer-col">
-        <h4>Pumpa</h4>
-        <p>
-          A fuel &amp; commute cost tracker that lives in your browser. Trip costs,
-          fill-up logs and spending reports — stored on your device, never on a server.
-        </p>
+      <div class="footer-col footer-about">
+        <p class="footer-brand">Pumpa</p>
+        <p>A fuel &amp; commute cost tracker that lives in your browser — nothing uploaded, nothing to sign up for.</p>
       </div>
       <div class="footer-col">
-        <h4>Site</h4>
+        <h4>Product</h4>
         <ul>
           <li><a href="/calculator/">Calculator</a></li>
           <li><a href="/tips/">Tips</a></li>
@@ -118,17 +120,16 @@ const isCurrent = (href) =>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Contact &amp; legal</h4>
+        <h4>Legal</h4>
         <ul>
-          <li><a href="/about/#contact">Contact</a></li>
           <li><a href="/privacy/">Privacy</a></li>
+          <li><a href="/cookies/">Cookies</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
       <div class="container">
-        <span>© {new Date().getFullYear()} Pumpa</span>
-        <span>All data stays on your device</span>
+        <span>© Pumpa. Made for people who'd rather keep their fuel money.</span>
       </div>
     </div>
   </footer>

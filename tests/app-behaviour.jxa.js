@@ -1,4 +1,4 @@
-/* Behavioural test suite for public/app.js (81 assertions).
+/* Behavioural test suite for public/app.js (94 assertions).
    Runs the real IIFE against a stubbed DOM in JavaScriptCore — no
    browser or Node needed:  osascript -l JavaScript tests/app-behaviour.jxa.js
    Covers: Pro gating + unlock flow, tamper resistance, free-tier caps,
@@ -76,7 +76,7 @@ for (let i = 0; i < 12; i++) TRIPS.push({ id: 't' + i, ts: 1750000000000 + i * 8
 const REFUELS = [];
 for (let i = 0; i < 5; i++) REFUELS.push({ id: 'r' + i, date: '2026-06-' + String(10 + i).padStart(2, '0'), amount: 40, cost: 70 + i, odo: 10000 + i * 500, system: 'metric', currency: '€' });
 
-function runApp(extraSeed){
+function runApp(extraSeed, i18n){
   const seed = Object.assign({ pumpaTrips: TRIPS, pumpaRefuels: REFUELS }, extraSeed || {});
   const env = buildEnv(seed);
   globalThis.document = env.doc;
@@ -84,7 +84,7 @@ function runApp(extraSeed){
   globalThis.navigator = { languages: ['de-DE'], language: 'de-DE' };
   globalThis.setTimeout = () => 0;
   globalThis.clearTimeout = () => {};
-  globalThis.window = {};
+  globalThis.window = i18n ? { PUMPA_I18N: i18n } : {};
   globalThis.Blob = function(parts){ LAST_BLOB = parts.join(''); };
   globalThis.URL = { createObjectURL: () => 'blob:test', revokeObjectURL(){} };
   (0, eval)(APP_SRC);
@@ -342,6 +342,71 @@ try {
   ok('draft mismatch (us draft, metric prefs): ignored, prefill path used',
      E8('planTolls').value === '' && E8('planEnergyLabel').textContent === 'Fuel');
 } catch (e) { ok('trip-plan draft scenario ran', false); results.push('ERR: ' + e.message + ' line ' + e.line); }
+
+
+/* ---------- Scenario H: i18n — injection, decoupling, number formats ---------- */
+try {
+  const IT = { locale: 'it', strings: {
+    tripLogged: 'Viaggio registrato ✓', totalSuffix: ' totale',
+    vehiclePetrol: 'benzina', vehicleEv: 'EV',
+    compareBase: 'Lo stesso viaggio a {vehicle}: {total}',
+    compareMore: ' — {diff} in più', compareLess: ' — {diff} in meno',
+    lockedRow: '+ {n} altri {noun} · Sblocca con Pumpa Pro', nounTrips: 'viaggi',
+  } };
+
+  /* HIGH-RISK INVARIANT: Italian page language + saved US/$ prefs.
+     Language must not touch units, currency, or stored prefs. */
+  const env9 = runApp({ pumpaTrips: TRIPS, pumpaRefuels: [],
+                        pumpaPrefs: { system: 'us', currency: '$', vehicle: 'fuel' } }, IT);
+  const E9 = env9.getEl;
+  ok('i18n: IT page + saved US units -> labels stay mi/MPG',
+     E9('distUnitLabel').textContent === 'mi' && E9('consUnitLabel').textContent === 'MPG');
+  ok('i18n: IT page + saved $ -> currency stays $', E9('tripsTotal').textContent.startsWith('$'));
+  const prefsAfter = JSON.parse(env9.store.get('pumpaPrefs'));
+  ok('i18n: pumpaPrefs NOT rewritten by language', prefsAfter.system === 'us' && prefsAfter.currency === '$');
+  ok('i18n: translated locked row + suffix render',
+     E9('tripsList').innerHTML.includes('Sblocca con Pumpa Pro') && E9('tripsTotal').textContent.includes(' totale'));
+
+  /* toast translation via injection */
+  E9('distance').value = '100'; E9('consumption').value = '20'; E9('price').value = '3';
+  E9('distance').fire('input');
+  E9('saveTripBtn').fire('click');
+  ok('i18n: toast uses injected Italian', E9('toast').textContent === 'Viaggio registrato ✓');
+
+  /* comma display, dot parse — metric env for clean numbers */
+  const env10 = runApp({ pumpaTrips: [], pumpaRefuels: [],
+                         pumpaPrefs: { system: 'metric', currency: '€', vehicle: 'fuel' } }, IT);
+  const E10 = env10.getEl;
+  const setV = (id, v) => { E10(id).value = String(v); E10(id).fire('input'); };
+  setV('distance', 100); setV('consumption', 5); setV('price', 2);
+  ok('i18n: IT display uses comma decimals (10,00)', E10('tripCost').textContent === '€10,00');
+  /* plan compare, both directions, Italian templates */
+  E10('planLegs').fire('input', { target: { value: '100', dataset: { index: '0' } } });
+  setV('planFuelCons', 5); setV('planFuelPrice', 2);
+  setV('planEvCons', 16); setV('planEvPrice', 0.25);
+  ok('i18n: IT compare (petrol selected) fully translated',
+     E10('planCompareText').textContent === 'Lo stesso viaggio a EV: €4,00 — €6,00 in meno');
+  E10('planVehicleToggle').fire('click', { target: { closest: (s) => s === 'button' ? { dataset: { vehicle: 'ev' } } : null } });
+  ok('i18n: IT compare (EV selected) fully translated',
+     E10('planCompareText').textContent === 'Lo stesso viaggio a benzina: €10,00 — €6,00 in più');
+  /* dot-decimal invariant: unit switch writes DOT values into inputs even under IT */
+  E10('unitToggle').fire('click', { target: { closest: (s) => s === 'button' ? { dataset: { system: 'us' } } : null } });
+  ok('i18n: converted input values stay comma-free and parse-safe (5 L/100km -> 47 MPG)',
+     !String(E10('consumption').value).includes(',') && Math.abs(Number.parseFloat(E10('consumption').value) - 47) < 0.1);
+  ok('i18n: parse round-trip intact after switch (cost ~10)',
+     Math.abs(Number(E10('tripCost').textContent.replace('€','').replace(',','.')) - 10) < 0.2);
+  /* CSV stays machine-format under IT */
+  LAST_BLOB = null;
+  E10('unitToggle').fire('click', { target: { closest: (s) => s === 'button' ? { dataset: { system: 'metric' } } : null } });
+  E10('saveTripBtn').fire('click');
+  E10('exportTripsCsv').fire('click');
+  const csv = LAST_BLOB || '';
+  ok('i18n: CSV headers stay English under IT', csv.startsWith('Date,Distance,Distance unit,'));
+  ok('i18n: CSV numbers stay dot-decimal under IT', /,\d+\.\d\d,Petrol$/m.test(csv.split('\n')[1] + '') || csv.split('\n')[1].includes('.'));
+  /* store keys unchanged under IT usage */
+  const keys10 = [...env10.store.keys()].sort().join(',');
+  ok('i18n: store holds only expected keys under IT', keys10 === 'pumpaPrefs,pumpaRefuels,pumpaTripPlan,pumpaTrips');
+} catch (e) { ok('i18n scenario ran', false); results.push('ERR: ' + e.message + ' line ' + e.line); }
 
 const fails = results.filter(r => r.startsWith('FAIL')).length;
 results.join('\n') + '\n== ' + (results.length - fails) + '/' + results.filter(r => /^(PASS|FAIL)/.test(r)).length + ' passed ==';

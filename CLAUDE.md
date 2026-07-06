@@ -27,8 +27,8 @@ the tool living at `/calculator`.
   Tips / About), footer, head/meta
 - `src/styles/site.css` — site chrome styles; its `:root` tokens mirror
   `public/app.css` — keep them in sync
-- `src/pages/` — `index` (home), `calculator` (the tool markup, wrapped in the site
-  layout), `about`, `privacy`, `tips/index` + `tips/[slug]` (blog)
+- `src/pages/` — thin per-locale wrappers (`/`, `/it`, `/es`) around shared page
+  components in `src/components/pages/`; `src/i18n/ui.ts` holds the dictionaries
 - `src/content/tips/*.md` — blog articles (content collection; schema in
   `src/content.config.ts`). Each article = its own page + sitemap entry (SEO).
 - `public/theme.css` — color tokens for all three themes (single source of color
@@ -71,6 +71,30 @@ the tool living at `/calculator`.
   Gumroad/Stripe later — the current checksum unlock is throwaway scaffolding, treat it
   as a speed bump, not real security.
 
+## Internationalisation (EN / IT / ES)
+
+- **Per-locale routing:** EN at the unprefixed URLs (unchanged, already indexed);
+  IT/ES under `/it`, `/es`. Astro i18n config in astro.config.mjs. Every page sets
+  `<html lang>`, per-locale canonical and hreflang alternates (+ x-default -> EN).
+- **Dictionaries:** `src/i18n/ui.ts` — EN is the source; IT/ES are typed against it
+  (missing key = build error). Page content lives in shared components under
+  `src/components/pages/` with thin per-locale wrappers. Tips articles live in
+  `src/content/tips/{en,it,es}/` — same filename = linked translation; slugs stay
+  stable across locales. Untranslated articles: hreflang omitted, language switcher
+  falls back to that locale's /tips/ index.
+- **Tool runtime strings:** the calculator page injects `window.PUMPA_I18N` before
+  app.js; `t(key, fallback)` in app.js falls back to the English literal at the call
+  site (EN injects an empty map — the fallbacks ARE the EN source). `fmt()` localises
+  DISPLAYED numbers only.
+- **HARD RULES:** language is display-layer only — it never touches units, currency,
+  pumpaPrefs or any stored data (browser-region detect still owns first-visit unit
+  defaults; the switcher is pure navigation). Inputs, storage, conversions and CSV
+  stay dot-decimal machine format — never put Intl-formatted numbers into an input
+  value or a parse path. Unit notation (km, L/100km, MPG, kWh) and CSV headers/Type
+  values are never translated.
+- Translation review status: Italian pending owner review; Spanish pending native
+  review before launch.
+
 ## The tool's tabs (in-app navigation)
 
 Calculate · Trips · Fuel Log · Prices · Export. These are the tool's INTERNAL nav.
@@ -82,7 +106,7 @@ calculators; both log into the same Trips history.
 
 ## Tests
 
-`tests/app-behaviour.jxa.js` — 81-assertion behavioural suite that runs the real
+`tests/app-behaviour.jxa.js` — 94-assertion behavioural suite that runs the real
 `public/app.js` against a stubbed DOM in JavaScriptCore (no browser/Node needed):
 `osascript -l JavaScript tests/app-behaviour.jxa.js`. Run it after ANY change to
 app.js and keep it green; extend it when adding behaviour.

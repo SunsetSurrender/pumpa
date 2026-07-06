@@ -6,9 +6,11 @@ interface Props {
   description: string;
   /** Set false on pages that bring their own <main> wrapper (the calculator). */
   container?: boolean;
+  /** "reading" = warm paper surface for long-form pages (tips/about/privacy). */
+  surface?: 'default' | 'reading';
 }
 
-const { title, description, container = true } = Astro.props;
+const { title, description, container = true, surface = 'default' } = Astro.props;
 
 const navItems = [
   { href: '/', label: 'Home' },
@@ -101,7 +103,7 @@ const isCurrent = (href) =>
     })();
   </script>
 
-  <main class="site-main" id="main">
+  <main class:list={['site-main', { 'surface-reading': surface === 'reading' }]} id="main">
     {container ? <div class="container"><slot /></div> : <slot />}
   </main>
 

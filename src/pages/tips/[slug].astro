@@ -13,7 +13,7 @@ const { Content } = await render(post);
 const fmt = (d: Date) =>
   d.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
 ---
-<SiteLayout title={`${post.data.title} — Pumpa Tips`} description={post.data.description}>
+<SiteLayout title={`${post.data.title} — Pumpa Tips`} description={post.data.description} surface="reading">
   <article class="tip-article">
     <div class="page-head">
       <p class="mono-label">
@@ -40,14 +40,14 @@ const fmt = (d: Date) =>
 </SiteLayout>
 
 <style>
-  .crumb{ color: var(--amber-dim); text-decoration: none; }
-  .crumb:hover{ color: var(--amber); }
+  .crumb{ color: var(--reading-link); text-decoration: none; }
+  .crumb:hover{ text-decoration: underline; }
   .tip-article :global(.prose){ margin-top: 8px; }
   .tip-cta{
     margin: 48px 0 8px; max-width: 680px;
     display: flex; align-items: center; justify-content: space-between;
     gap: 24px; flex-wrap: wrap;
   }
-  .tip-cta h2{ margin: 0 0 6px; font-size: 16px; color: var(--text-bright); }
-  .tip-cta p{ margin: 0; font-size: 13px; line-height: 1.7; max-width: 420px; }
+  .tip-cta h2{ margin: 0 0 6px; font-size: 1.25rem; color: var(--text-hi); }
+  .tip-cta p{ margin: 0; font-size: 0.9375rem; line-height: 1.6; max-width: 420px; color: var(--text-mid); }
 </style>

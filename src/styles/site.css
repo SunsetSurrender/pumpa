@@ -211,3 +211,29 @@ a:focus-visible, button:focus-visible{ outline: 2px solid var(--focus); outline-
 @media (prefers-reduced-motion: reduce){
   *{ animation: none !important; transition: none !important; }
 }
+
+/* ---------- Reading surface (warm paper for long-form pages) ----------
+   Dark chrome, light reading — deliberate split per the design brief.
+   In contrast mode the reading tokens resolve to high-contrast dark. */
+.surface-reading{
+  background: var(--reading-bg);
+  color: var(--reading-text-mid);
+  padding-bottom: 4rem;
+}
+.surface-reading .page-head h1,
+.surface-reading h2,
+.surface-reading h3{ color: var(--reading-text); }
+.surface-reading .mono-label{ color: var(--reading-text-mid); }
+.surface-reading .lede{ color: var(--reading-text-mid); }
+.surface-reading .prose{ color: var(--reading-text); }
+.surface-reading .prose a{ color: var(--reading-link); }
+.surface-reading .prose code{
+  background: var(--reading-surface);
+  border-color: var(--reading-border);
+  color: var(--reading-text);
+}
+.surface-reading .prose blockquote{
+  border-left-color: var(--reading-border);
+  background: var(--reading-surface);
+  color: var(--reading-text-mid);
+}

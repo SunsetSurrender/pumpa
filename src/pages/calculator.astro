@@ -53,6 +53,7 @@ import SiteLayout from '../layouts/SiteLayout.astro';
   <!-- TABS -->
   <nav class="tabs" id="tabs" aria-label="Tool sections" role="tablist">
     <button type="button" class="tab-btn active" id="tab-calc" data-tab="calc" role="tab" aria-controls="panel-calc" aria-selected="true">Calculate</button>
+    <button type="button" class="tab-btn" id="tab-plan" data-tab="plan" role="tab" aria-controls="panel-plan" aria-selected="false">Trip Plan</button>
     <button type="button" class="tab-btn" id="tab-trips" data-tab="trips" role="tab" aria-controls="panel-trips" aria-selected="false">Trips</button>
     <button type="button" class="tab-btn" id="tab-fuel" data-tab="fuel" role="tab" aria-controls="panel-fuel" aria-selected="false">Fuel Log</button>
     <button type="button" class="tab-btn" id="tab-prices" data-tab="prices" role="tab" aria-controls="panel-prices" aria-selected="false">Prices</button>
@@ -159,6 +160,73 @@ import SiteLayout from '../layouts/SiteLayout.astro';
 
       <button type="button" class="btn btn-amber" id="evSaveTripBtn">+ Log this trip</button>
       <button type="button" class="btn btn-ghost" id="evResetBtn">Reset values</button>
+    </div>
+  </section>
+
+  <!-- ========== TRIP PLAN ========== -->
+  <section class="panel-view" id="panel-plan" data-panel="plan" role="tabpanel" aria-labelledby="tab-plan" hidden>
+    <div class="card">
+      <div class="card-title">Plan a Trip</div>
+      <div class="plan-legs" id="planLegs"></div>
+      <button type="button" class="btn btn-ghost plan-add-leg" id="planAddLeg">+ Add leg</button>
+      <div class="plan-total-distance">
+        <span>Total distance</span>
+        <span id="planDistTotal">0 km</span>
+      </div>
+      <div class="divider"></div>
+      <div class="fields">
+        <div class="field">
+          <label for="planTolls">Tolls <span class="unit-suffix" id="planTollsLabel">€</span></label>
+          <input type="number" id="planTolls" min="0" step="0.01" inputmode="decimal" placeholder="0">
+        </div>
+        <div class="field">
+          <label for="planExtras">Other costs <span class="unit-suffix" id="planExtrasLabel">€</span></label>
+          <input type="number" id="planExtras" min="0" step="0.01" inputmode="decimal" placeholder="0">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Vehicles</div>
+      <div class="fields">
+        <div class="field">
+          <label for="planFuelCons">Petrol consumption <span class="unit-suffix" id="planFuelConsLabel">L/100km</span></label>
+          <input type="number" id="planFuelCons" min="0" step="0.1" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="planFuelPrice">Fuel price <span class="unit-suffix" id="planFuelPriceLabel">€/L</span></label>
+          <input type="number" id="planFuelPrice" min="0" step="0.001" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="planEvCons">EV consumption <span class="unit-suffix" id="planEvConsLabel">kWh/100km</span></label>
+          <input type="number" id="planEvCons" min="0" step="0.1" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="planEvPrice">Energy price <span class="unit-suffix" id="planEvPriceLabel">€/kWh</span></label>
+          <input type="number" id="planEvPrice" min="0" step="0.001" inputmode="decimal">
+        </div>
+      </div>
+      <div class="tips-note">Prefilled from your Calculate tab values — adjust freely for this trip.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Cost Estimate</div>
+      <div class="vehicle-seg" id="planVehicleToggle" aria-label="Vehicle for this estimate">
+        <button type="button" data-vehicle="fuel" class="active" aria-pressed="true">Petrol</button>
+        <button type="button" data-vehicle="ev" aria-pressed="false">Electric</button>
+      </div>
+      <div class="readout">
+        <div class="readout-label">Trip Total</div>
+        <div class="readout-value" id="planTotal">€0.00</div>
+      </div>
+      <div class="plan-breakdown">
+        <div class="pb-row"><span id="planEnergyLabel">Fuel</span><span id="planEnergyCost">€0.00</span></div>
+        <div class="pb-row"><span>Tolls</span><span id="planTollsCost">€0.00</span></div>
+        <div class="pb-row"><span>Other</span><span id="planExtrasCost">€0.00</span></div>
+      </div>
+      <div class="plan-compare" id="planCompare" hidden>
+        <span id="planCompareText"></span>
+      </div>
     </div>
   </section>
 

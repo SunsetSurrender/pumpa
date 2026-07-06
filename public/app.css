@@ -250,6 +250,53 @@ input[type=number]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0
 }
 .btn-ghost:hover{ border-color: var(--border-strong); color: var(--accent-text); }
 
+/* ---------- Trip plan ---------- */
+.plan-legs{ display:flex; flex-direction:column; gap: 10px; margin-bottom: 12px; }
+.leg-row{ display:flex; align-items:center; gap: 10px; }
+.leg-label{ flex: 0 0 auto; min-width: 48px; font-size: 0.875rem; color: var(--text-soft); }
+.leg-row input{
+  flex: 1; min-width: 0;
+  background: var(--panel-2);
+  border: 1px solid var(--panel-edge);
+  border-radius: 6px;
+  padding: 10px;
+  font-family:'Share Tech Mono', monospace; font-variant-numeric: tabular-nums;
+  font-size: 1rem; color: var(--text-hi);
+  outline:none; transition: border-color .15s;
+}
+.leg-row input:focus{ border-color: var(--focus); }
+.leg-unit{ flex: 0 0 auto; font-size: 0.875rem; color: var(--amber-dim); }
+.leg-del{
+  flex: 0 0 auto; width: 44px; height: 44px;
+  background: transparent; border: 1px solid var(--panel-edge); border-radius: 6px;
+  color: var(--text-soft); font-size: 1.125rem; cursor: pointer;
+  transition: color .15s, border-color .15s;
+}
+.leg-del:hover{ color: var(--red-warn); border-color: var(--red-warn); }
+.plan-add-leg{ margin-top: 0; }
+.plan-total-distance{
+  display:flex; justify-content:space-between; align-items:baseline;
+  margin-top: 12px; font-size: 0.875rem; color: var(--text-soft);
+}
+.plan-total-distance span:last-child{
+  font-family:'Share Tech Mono', monospace; font-variant-numeric: tabular-nums;
+  font-size: 1rem; color: var(--text-hi);
+}
+.plan-breakdown{ margin-top: 12px; }
+.pb-row{
+  display:flex; justify-content:space-between;
+  font-size: 0.875rem; color: var(--text-soft); margin-top: 8px;
+}
+.pb-row span:last-child{
+  font-family:'Share Tech Mono', monospace; font-variant-numeric: tabular-nums;
+  color: var(--text-hi);
+}
+.plan-compare{
+  margin-top: 16px; padding: 12px 14px;
+  border: 1px dashed var(--border-strong); border-radius: 8px;
+  font-size: 0.875rem; line-height: 1.5; color: var(--text-mid);
+}
+
 /* ---------- Lists (trips & fuel) ---------- */
 .log-list{ display:flex; flex-direction:column; gap: 6px; }
 .log-empty{

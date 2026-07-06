@@ -226,6 +226,13 @@ function updateLabels(){
   evConsUnitLabelEl.textContent = u.evCons;
   evPriceUnitLabelEl.textContent = currentCurrency + u.evPriceSuffix;
   energyUnitLabelEl.textContent = u.energy;
+
+  planTollsLabelEl.textContent = currentCurrency;
+  planExtrasLabelEl.textContent = currentCurrency;
+  planFuelConsLabelEl.textContent = u.cons;
+  planFuelPriceLabelEl.textContent = currentCurrency + u.priceSuffix;
+  planEvConsLabelEl.textContent = u.evCons;
+  planEvPriceLabelEl.textContent = currentCurrency + u.evPriceSuffix;
 }
 
 function updateUnitToggle(){
@@ -240,6 +247,7 @@ function refreshUi(){
   updateLabels();
   calc();
   evCalc();
+  planCalc();
   renderTrips();
   renderRefuels();
 }
@@ -398,6 +406,143 @@ vehicleToggleEl.addEventListener('click', (ev) => {
   switchVehicle(btn.dataset.vehicle);
   savePrefs();
 });
+
+/* ============================================================
+   TRIP PLAN (budget road-trip estimator)
+   Manual entry only — no routing, no external calls. All cost
+   math is delegated to computeTrip / computeEvTrip; this section
+   only sums legs and adds tolls/extras.
+   ============================================================ */
+const planLegsEl = $('planLegs'), planAddLegBtn = $('planAddLeg'),
+      planDistTotalEl = $('planDistTotal'),
+      planTollsEl = $('planTolls'), planExtrasEl = $('planExtras'),
+      planFuelConsEl = $('planFuelCons'), planFuelPriceEl = $('planFuelPrice'),
+      planEvConsEl = $('planEvCons'), planEvPriceEl = $('planEvPrice'),
+      planVehicleToggleEl = $('planVehicleToggle'),
+      planTotalEl = $('planTotal'), planEnergyLabelEl = $('planEnergyLabel'),
+      planEnergyCostEl = $('planEnergyCost'), planTollsCostEl = $('planTollsCost'),
+      planExtrasCostEl = $('planExtrasCost'),
+      planCompareEl = $('planCompare'), planCompareTextEl = $('planCompareText');
+const planTollsLabelEl = $('planTollsLabel'), planExtrasLabelEl = $('planExtrasLabel'),
+      planFuelConsLabelEl = $('planFuelConsLabel'), planFuelPriceLabelEl = $('planFuelPriceLabel'),
+      planEvConsLabelEl = $('planEvConsLabel'), planEvPriceLabelEl = $('planEvPriceLabel');
+
+let planLegs = [''];          /* leg distances as entered (strings) */
+let planVehicle = 'fuel';
+
+function planLegsTotal(){
+  return planLegs.reduce((sum, v) => {
+    const n = Number.parseFloat(v);
+    return sum + (Number.isFinite(n) && n > 0 ? n : 0);
+  }, 0);
+}
+
+function renderPlanLegs(){
+  const distUnit = escapeHtml(unitLabels(currentSystem).dist);
+  planLegsEl.innerHTML = planLegs.map((value, i) => `
+    <div class="leg-row">
+      <label class="leg-label" for="planLeg${i}">Leg ${i + 1}</label>
+      <input type="number" id="planLeg${i}" data-index="${i}" min="0" step="0.1" inputmode="decimal" value="${escapeHtml(value)}">
+      <span class="leg-unit">${distUnit}</span>
+      ${planLegs.length > 1 ? `<button type="button" class="leg-del" data-index="${i}" aria-label="Remove leg ${i + 1}">×</button>` : ''}
+    </div>`).join('');
+}
+
+function planCalc(){
+  const distance = planLegsTotal();
+  const cur = currencySymbol();
+  const tolls = num(planTollsEl), extras = num(planExtrasEl);
+
+  /* the reuse seam: identical math to the two calculators */
+  const fuelCost = computeTrip(distance, num(planFuelConsEl), num(planFuelPriceEl), currentSystem).cost;
+  const evCost = computeEvTrip(distance, num(planEvConsEl), num(planEvPriceEl), currentSystem).cost;
+
+  const isEv = planVehicle === 'ev';
+  const chosen = isEv ? evCost : fuelCost;
+  const other = isEv ? fuelCost : evCost;
+  const chosenTotal = chosen + tolls + extras;
+
+  planDistTotalEl.textContent = round(distance, 1) + ' ' + unitLabels(currentSystem).dist;
+  planEnergyLabelEl.textContent = isEv ? 'Energy' : 'Fuel';
+  planEnergyCostEl.textContent = cur + chosen.toFixed(2);
+  planTollsCostEl.textContent = cur + tolls.toFixed(2);
+  planExtrasCostEl.textContent = cur + extras.toFixed(2);
+  planTotalEl.textContent = cur + chosenTotal.toFixed(2);
+
+  /* Bidirectional, neutral comparison against the vehicle NOT selected,
+     using the values the user entered (tolls/extras apply to both). */
+  const otherReady = isEv
+    ? (num(planFuelConsEl) > 0 && num(planFuelPriceEl) > 0)
+    : (num(planEvConsEl) > 0 && num(planEvPriceEl) > 0);
+  if (distance > 0 && otherReady){
+    const otherTotal = other + tolls + extras;
+    const diff = otherTotal - chosenTotal;
+    const otherName = isEv ? 'petrol' : 'EV';
+    let text = `Same trip by ${otherName}: ${cur}${otherTotal.toFixed(2)}`;
+    if (Math.abs(diff) < 0.005) text += ' — about the same';
+    else if (diff > 0) text += ` — ${cur}${diff.toFixed(2)} more`;
+    else text += ` — ${cur}${Math.abs(diff).toFixed(2)} less`;
+    planCompareTextEl.textContent = text;
+    planCompareEl.hidden = false;
+  } else {
+    planCompareEl.hidden = true;
+  }
+}
+
+function switchPlanVehicle(mode){
+  if (mode !== 'fuel' && mode !== 'ev') return;
+  planVehicle = mode;
+  planVehicleToggleEl.querySelectorAll('button').forEach((button) => {
+    const isActive = button.dataset.vehicle === mode;
+    button.classList.toggle('active', isActive);
+    button.setAttribute('aria-pressed', String(isActive));
+  });
+  planCalc();
+}
+
+planLegsEl.addEventListener('input', (ev) => {
+  const idx = ev.target && ev.target.dataset ? ev.target.dataset.index : undefined;
+  if (idx === undefined) return;
+  planLegs[Number(idx)] = ev.target.value;
+  planCalc();
+});
+
+planLegsEl.addEventListener('click', (ev) => {
+  const btn = ev.target.closest('.leg-del');
+  if (!btn) return;
+  planLegs.splice(Number(btn.dataset.index), 1);
+  if (!planLegs.length) planLegs = [''];
+  renderPlanLegs();
+  planCalc();
+});
+
+planAddLegBtn.addEventListener('click', () => {
+  planLegs.push('');
+  renderPlanLegs();
+  planCalc();
+  $('planLeg' + (planLegs.length - 1)).focus();
+});
+
+[planTollsEl, planExtrasEl, planFuelConsEl, planFuelPriceEl, planEvConsEl, planEvPriceEl]
+  .forEach(el => el.addEventListener('input', planCalc));
+
+planVehicleToggleEl.addEventListener('click', (ev) => {
+  const btn = ev.target.closest('button');
+  if (!btn) return;
+  switchPlanVehicle(btn.dataset.vehicle);
+});
+
+function initPlan(){
+  /* prefill from the two calculators' current values */
+  planLegs = [distanceEl.value];
+  planFuelConsEl.value = consumptionEl.value;
+  planFuelPriceEl.value = priceEl.value;
+  planEvConsEl.value = evConsumptionEl.value;
+  planEvPriceEl.value = evPriceEl.value;
+  switchPlanVehicle(currentVehicle);
+  renderPlanLegs();
+  planCalc();
+}
 
 /* ============================================================
    TRIPS STORE
@@ -936,6 +1081,7 @@ function restoreManualPrice(){
 initUnits();
 loadProState();
 restoreManualPrice();
+initPlan();
 initRefuelDate();
 activateTab('calc');
 calc();

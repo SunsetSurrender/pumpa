@@ -94,46 +94,47 @@ const latestTips = (await getCollection('tips', ({ data }) => !data.draft))
     padding: 72px 0 24px;
   }
   .hero h1{
-    margin: 10px 0 16px;
-    font-size: clamp(30px, 4.6vw, 50px);
-    line-height: 1.08; letter-spacing: -1px;
-    color: var(--text-bright);
+    margin: 0.75rem 0 1rem;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    line-height: 1.05; letter-spacing: -0.02em;
   }
-  .hero h1 em{ font-style: normal; color: var(--amber); }
-  .lede{ font-size: 15.5px; line-height: 1.75; max-width: 540px; margin: 0 0 26px; }
+  .hero h1 em{ font-style: normal; color: var(--accent); }
+  .lede{ font-size: 1.125rem; line-height: 1.6; max-width: 34rem; margin: 0 0 2rem; }
   .hero-actions{ display: flex; gap: 12px; flex-wrap: wrap; }
 
   .demo-panel{
     background: linear-gradient(180deg, var(--lcd-bg), var(--lcd-bg-2));
     border: 1px solid var(--lcd-edge); border-radius: 14px;
-    padding: 28px 26px;
+    padding: 2rem 1.5rem;
     box-shadow: var(--lcd-halo);
-    font-family: 'Share Tech Mono', monospace;
   }
   .demo-label{
-    font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase;
-    color: var(--amber-dim); margin-bottom: 8px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem; letter-spacing: 2.5px; text-transform: uppercase;
+    color: var(--lcd-meta); margin-bottom: 0.5rem;
   }
   .demo-value{
-    font-size: 52px; color: var(--lcd-value);
+    font-family: 'Share Tech Mono', monospace; font-variant-numeric: tabular-nums;
+    font-size: clamp(3rem, 6vw, 5rem); line-height: 1.1;
+    color: var(--lcd-value);
     text-shadow: var(--lcd-glow);
-    margin-bottom: 14px;
+    margin-bottom: 0.75rem;
   }
   .demo-row{
-    display: flex; gap: 8px; flex-wrap: wrap;
-    font-size: 12px; color: var(--text-soft); margin-bottom: 14px;
+    display: flex; gap: 0.5rem; flex-wrap: wrap;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8125rem; color: var(--lcd-meta); margin-bottom: 1rem;
   }
-  .demo-sub{ font-size: 11px; color: var(--text-soft); }
-  .demo-delta{ color: var(--red-warn); }
+  .demo-sub{ font-size: 0.875rem; color: var(--lcd-meta); }
+  .demo-delta{ font-family: 'Share Tech Mono', monospace; color: var(--negative); }
 
   .steps{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
   .step-num{
-    font-family: 'Share Tech Mono', monospace;
-    color: var(--amber-dim); font-size: 12px; letter-spacing: 2px;
-    margin-bottom: 10px;
+    color: var(--text-lo); font-size: 0.875rem; font-weight: 600;
+    margin-bottom: 0.75rem;
   }
-  .step h3{ margin: 0 0 8px; color: var(--text-bright); font-size: 16px; }
-  .step p{ margin: 0; font-size: 13px; line-height: 1.7; }
+  .step h3{ margin: 0 0 0.5rem; }
+  .step p{ margin: 0; font-size: 1rem; line-height: 1.6; }
 
   .teaser-grid{
     display: grid; grid-template-columns: repeat(3, 1fr);
@@ -141,23 +142,22 @@ const latestTips = (await getCollection('tips', ({ data }) => !data.draft))
   }
   .teaser-card{ display: block; text-decoration: none; transition: border-color .15s; }
   .teaser-card:hover{ border-color: var(--amber-dim); }
-  .teaser-card h3{ margin: 0 0 8px; font-size: 15px; line-height: 1.4; color: var(--text-bright); }
-  .teaser-card p{ margin: 0; font-size: 12.5px; line-height: 1.65; color: var(--text-soft); }
+  .teaser-card h3{ margin: 0 0 0.5rem; font-size: 1.125rem; line-height: 1.35; }
+  .teaser-card p{ margin: 0; font-size: 0.875rem; line-height: 1.6; color: var(--text-mid); }
 
   .pro-strip{
     display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
     gap: 28px; align-items: center;
     margin-bottom: 8px;
   }
-  .pro-strip h3{ margin: 0 0 8px; color: var(--text-bright); font-size: 18px; }
-  .pro-strip p{ margin: 0; font-size: 13.5px; line-height: 1.7; }
+  .pro-strip h3{ margin: 0 0 0.5rem; }
+  .pro-strip p{ margin: 0; font-size: 1rem; line-height: 1.6; }
   .pro-strip-perks{
     list-style: none; margin: 0; padding: 0;
-    display: flex; flex-direction: column; gap: 8px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 12px; color: var(--green-lcd);
+    display: flex; flex-direction: column; gap: 0.5rem;
+    font-size: 0.9375rem; font-weight: 600; color: var(--positive);
   }
-  .pro-strip-perks li::before{ content: '» '; color: var(--amber-dim); }
+  .pro-strip-perks li::before{ content: '✓ '; color: var(--positive); }
 
   @media (max-width: 900px){
     .hero{ grid-template-columns: 1fr; gap: 32px; padding-top: 44px; }

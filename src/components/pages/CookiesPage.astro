@@ -1,0 +1,19 @@
+---
+import { useT, localeHref, fill, type Locale } from '../../i18n/ui';
+
+interface Props { locale: Locale; }
+const { locale } = Astro.props;
+const t = useT(locale);
+---
+<div class="page-head">
+  <p class="mono-label">{t.cookies.eyebrow}</p>
+  <h1>{t.cookies.h1}</h1>
+</div>
+
+<div class="prose">
+  <p set:html={t.cookies.p1} />
+  <h2>{t.cookies.h2Stored}</h2>
+  <p>{t.cookies.pStored}</p>
+  <h2>{t.cookies.h2Changes}</h2>
+  <p set:html={fill(t.cookies.pChanges, { privacyUrl: localeHref(locale, '/privacy/') })} />
+</div>

@@ -1,0 +1,179 @@
+---
+import { getCollection } from 'astro:content';
+import { useT, localeHref, type Locale } from '../../i18n/ui';
+
+interface Props { locale: Locale; }
+const { locale } = Astro.props;
+const t = useT(locale);
+
+/* Flat collection until the per-locale tips restructure (commit 3):
+   teaser shows EN articles for every locale for now. */
+const latestTips = (await getCollection('tips', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+---
+<section class="hero" aria-label={t.home.eyebrow}>
+  <div class="hero-copy">
+    <p class="mono-label">{t.home.eyebrow}</p>
+    <h1>{t.home.h1Pre}<em>{t.home.h1Accent}</em>{t.home.h1Post}</h1>
+    <p class="lede">{t.home.sub}</p>
+    <div class="hero-actions">
+      <a class="btn-link amber" href={localeHref(locale, '/calculator/')}>{t.home.ctaPrimary}</a>
+      <a class="btn-link ghost" href={localeHref(locale, '/tips/')}>{t.home.ctaSecondary}</a>
+    </div>
+  </div>
+  <div class="hero-demo" aria-hidden="true">
+    <div class="demo-panel">
+      <div class="demo-label">{t.home.lcd.label}</div>
+      <div class="demo-value">€12.43</div>
+      <div class="demo-row"><span>70.5 km</span><span>·</span><span>3.4 L/100km</span><span>·</span><span>€1.777/L</span></div>
+      <div class="demo-sub">{t.home.lcd.sub} <span class="demo-delta">+€0.58</span></div>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="how-title">
+  <h2 class="section-title" id="how-title">{t.home.how.title}</h2>
+  <div class="steps">
+    {t.home.how.steps.map((step, i) => (
+      <div class="site-card step">
+        <div class="step-num">{String(i + 1).padStart(2, '0')}</div>
+        <h3>{step.title}</h3>
+        <p>{step.body}</p>
+      </div>
+    ))}
+  </div>
+</section>
+
+<section aria-labelledby="why-title">
+  <h2 class="section-title" id="why-title">{t.home.why.title}</h2>
+  <div class="why-grid">
+    {t.home.why.items.map((item) => (
+      <div class="why-item">
+        <h3>{item.title}</h3>
+        <p>{item.body}</p>
+      </div>
+    ))}
+  </div>
+</section>
+
+<section aria-labelledby="tips-title">
+  <h2 class="section-title" id="tips-title">{t.home.teaser.title}</h2>
+  <p class="teaser-lead">{t.home.teaser.lead}</p>
+  <div class="teaser-grid">
+    {latestTips.map((post) => (
+      <a class="site-card teaser-card" href={localeHref(locale, `/tips/${post.id}/`)}>
+        <h3>{post.data.title}</h3>
+        <p>{post.data.description}</p>
+      </a>
+    ))}
+  </div>
+  <a class="btn-link ghost" href={localeHref(locale, '/tips/')}>{t.home.teaser.browse}</a>
+</section>
+
+<section aria-labelledby="pro-title">
+<h2 class="section-title" id="pro-title">{t.home.pro.title}</h2>
+<div class="pro-strip site-card">
+  <div class="pro-strip-copy">
+    <h3>{t.home.pro.h}</h3>
+    <p>{t.home.pro.body}</p>
+  </div>
+  <ul class="pro-strip-perks">
+    {t.home.pro.perks.map((perk) => <li>{perk}</li>)}
+  </ul>
+</div>
+</section>
+
+<style>
+  .hero{
+    display: grid; grid-template-columns: minmax(0, 55fr) minmax(0, 45fr);
+    gap: 3rem; align-items: center;
+    padding: 4rem 0 1.5rem;
+  }
+  .hero h1{
+    margin: 0.75rem 0 1rem;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    line-height: 1.05; letter-spacing: -0.02em;
+  }
+  .hero h1 em{ font-style: normal; color: var(--accent-text); }
+  .lede{ font-size: 1.125rem; line-height: 1.6; max-width: 34rem; margin: 0 0 2rem; }
+  .hero-actions{ display: flex; gap: 12px; flex-wrap: wrap; }
+
+  .demo-panel{
+    background: linear-gradient(180deg, var(--lcd-bg), var(--lcd-bg-2));
+    border: 1px solid var(--lcd-edge); border-radius: 14px;
+    padding: 2rem 1.5rem;
+    box-shadow: var(--lcd-halo);
+  }
+  .demo-label{
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem; letter-spacing: 2.5px; text-transform: uppercase;
+    color: var(--lcd-meta); margin-bottom: 0.5rem;
+  }
+  .demo-value{
+    font-family: 'Share Tech Mono', monospace; font-variant-numeric: tabular-nums;
+    font-size: clamp(3rem, 6vw, 5rem); line-height: 1.1;
+    color: var(--lcd-value);
+    text-shadow: var(--lcd-glow);
+    margin-bottom: 0.75rem;
+  }
+  .demo-row{
+    display: flex; gap: 0.5rem; flex-wrap: wrap;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8125rem; color: var(--lcd-meta); margin-bottom: 1rem;
+  }
+  .demo-sub{ font-size: 0.875rem; color: var(--lcd-meta); }
+  .demo-delta{ font-family: 'Share Tech Mono', monospace; color: var(--negative); }
+
+  .steps{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .step-num{
+    color: var(--text-lo); font-size: 0.875rem; font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+  .step h3{ margin: 0 0 0.5rem; }
+  .step p{ margin: 0; font-size: 1rem; line-height: 1.6; }
+
+  .why-grid{
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+  .why-item{
+    border-top: 2px solid var(--accent-2);
+    padding-top: 1rem;
+  }
+  .why-item h3{ margin: 0 0 0.5rem; }
+  .why-item p{ margin: 0; font-size: 1rem; line-height: 1.6; }
+
+  .teaser-lead{ margin: 0 0 1.5rem; font-size: 1.125rem; max-width: 36rem; }
+  .teaser-grid{
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 18px; margin-bottom: 20px;
+  }
+  .teaser-card{ display: block; text-decoration: none; transition: border-color .15s; }
+  .teaser-card:hover{ border-color: var(--amber-dim); }
+  .teaser-card h3{ margin: 0 0 0.5rem; font-size: 1.125rem; line-height: 1.35; }
+  .teaser-card p{ margin: 0; font-size: 0.875rem; line-height: 1.6; color: var(--text-mid); }
+
+  .pro-strip{
+    display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: 28px; align-items: center;
+    margin-bottom: 8px;
+  }
+  .pro-strip h3{ margin: 0 0 0.5rem; }
+  .pro-strip p{ margin: 0; font-size: 1rem; line-height: 1.6; }
+  .pro-strip-perks{
+    list-style: none; margin: 0; padding: 0;
+    display: flex; flex-direction: column; gap: 0.5rem;
+    font-size: 0.9375rem; font-weight: 600; color: var(--positive);
+  }
+  .pro-strip-perks li::before{ content: '✓ '; color: var(--positive); }
+
+  @media (max-width: 900px){
+    .hero{ grid-template-columns: 1fr; gap: 32px; padding-top: 44px; }
+    .hero-demo{ max-width: 420px; }
+    .steps{ grid-template-columns: 1fr; }
+    .why-grid{ grid-template-columns: 1fr; }
+    .teaser-grid{ grid-template-columns: 1fr; }
+    .pro-strip{ grid-template-columns: 1fr; }
+  }
+</style>

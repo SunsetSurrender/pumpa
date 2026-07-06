@@ -1,36 +1,70 @@
 ---
 import '../styles/site.css';
+import { locales, localeNames, useT, localeHref, stripLocale, type Locale } from '../i18n/ui';
 
 interface Props {
   title: string;
   description: string;
+  locale?: Locale;
   /** Set false on pages that bring their own <main> wrapper (the calculator). */
   container?: boolean;
   /** "reading" = warm paper surface for long-form pages (tips/about/privacy). */
   surface?: 'default' | 'reading';
+  /**
+   * Locale -> path for hreflang links. Defaults to this page's path in every
+   * locale. Pages whose translation doesn't exist (untranslated tips articles)
+   * pass only the locales that are real.
+   */
+  alternates?: Partial<Record<Locale, string>>;
+  /**
+   * Locale -> path the language switcher navigates to. Defaults to
+   * `alternates`, then to a locale-prefixed version of the current path.
+   * Article pages point missing translations at that locale's /tips/ index.
+   */
+  switchTargets?: Partial<Record<Locale, string>>;
 }
 
-const { title, description, container = true, surface = 'default' } = Astro.props;
+const {
+  title, description,
+  locale = 'en',
+  container = true,
+  surface = 'default',
+  alternates,
+  switchTargets,
+} = Astro.props;
+
+const t = useT(locale);
+const { path: basePath } = stripLocale(Astro.url.pathname);
+
+const defaultAlternates = Object.fromEntries(
+  locales.map((l) => [l, localeHref(l, basePath)])
+) as Record<Locale, string>;
+
+const hreflangs = alternates ?? defaultAlternates;
+const switcher = { ...defaultAlternates, ...(alternates ?? {}), ...(switchTargets ?? {}) };
 
 const navItems = [
-  { href: '/', label: 'Home' },
-  { href: '/calculator/', label: 'Calculator' },
-  { href: '/tips/', label: 'Tips' },
-  { href: '/about/', label: 'About' },
+  { href: localeHref(locale, '/'), label: t.chrome.nav.home, base: '/' },
+  { href: localeHref(locale, '/calculator/'), label: t.chrome.nav.calculator, base: '/calculator/' },
+  { href: localeHref(locale, '/tips/'), label: t.chrome.nav.tips, base: '/tips/' },
+  { href: localeHref(locale, '/about/'), label: t.chrome.nav.about, base: '/about/' },
 ];
 
-const current = Astro.url.pathname;
-const isCurrent = (href) =>
-  href === '/' ? current === '/' : current === href || current.startsWith(href);
+const isCurrent = (base: string) =>
+  base === '/' ? basePath === '/' : basePath === base || basePath.startsWith(base);
 ---
 <!doctype html>
-<html lang="en">
+<html lang={locale}>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{title}</title>
   <meta name="description" content={description}>
   <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)}>
+  {Object.entries(hreflangs).map(([l, path]) => (
+    <link rel="alternate" hreflang={l} href={new URL(path, Astro.site)} />
+  ))}
+  {hreflangs.en && <link rel="alternate" hreflang="x-default" href={new URL(hreflangs.en, Astro.site)} />}
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/theme.css">
   <script is:inline>
@@ -52,10 +86,10 @@ const isCurrent = (href) =>
   <slot name="head" />
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to content</a>
+  <a class="skip-link" href="#main">{t.chrome.skip}</a>
   <header class="site-nav">
     <div class="container">
-      <a class="nav-brand" href="/" aria-label="Pumpa home">
+      <a class="nav-brand" href={localeHref(locale, '/')} aria-label={t.chrome.brandHome}>
         <svg class="nav-gauge" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
           <path d="M6 22 A 11 11 0 1 1 26 22" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
           <line x1="16" y1="21" x2="22.5" y2="11.5" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
@@ -63,34 +97,59 @@ const isCurrent = (href) =>
         </svg>
         <span class="nav-word">Pumpa</span>
       </a>
-      <nav aria-label="Site">
+      <nav aria-label={t.chrome.navLabel}>
         <ul class="nav-links">
           {navItems.map((item) => (
             <li>
-              <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+              <a href={item.href} aria-current={isCurrent(item.base) ? 'page' : undefined}>
                 {item.label}
               </a>
             </li>
           ))}
         </ul>
       </nav>
-      <button type="button" id="themeToggle" class="theme-toggle">
-        <span aria-hidden="true">◐</span>
-        <span id="themeToggleLabel">Theme</span>
-      </button>
+      <div class="nav-tools">
+        <nav aria-label={t.chrome.langLabel}>
+          <ul class="lang-switch">
+            {locales.map((l) => (
+              <li>
+                <a
+                  href={switcher[l]}
+                  hreflang={l}
+                  lang={l}
+                  aria-current={l === locale ? 'true' : undefined}
+                  aria-label={localeNames[l]}
+                >{l.toUpperCase()}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <button
+          type="button" id="themeToggle" class="theme-toggle"
+          data-name-dark={t.chrome.theme.dark}
+          data-name-light={t.chrome.theme.light}
+          data-name-contrast={t.chrome.theme.contrast}
+          data-change-label={t.chrome.theme.change}
+        >
+          <span aria-hidden="true">◐</span>
+          <span id="themeToggleLabel">…</span>
+        </button>
+      </div>
     </div>
   </header>
 
   <script is:inline>
     (() => {
-      const names = { dark: 'Dark', light: 'Light', contrast: 'High contrast' };
-      const order = ['dark', 'light', 'contrast'];
       const btn = document.getElementById('themeToggle');
       const label = document.getElementById('themeToggleLabel');
+      const names = {
+        dark: btn.dataset.nameDark, light: btn.dataset.nameLight, contrast: btn.dataset.nameContrast,
+      };
+      const order = ['dark', 'light', 'contrast'];
       const sync = () => {
         const current = document.documentElement.dataset.theme;
         label.textContent = names[current] || 'Theme';
-        btn.setAttribute('aria-label', 'Change theme, current: ' + (names[current] || current));
+        btn.setAttribute('aria-label', btn.dataset.changeLabel + ' ' + (names[current] || current));
       };
       btn.addEventListener('click', () => {
         const current = document.documentElement.dataset.theme;
@@ -111,27 +170,27 @@ const isCurrent = (href) =>
     <div class="container">
       <div class="footer-col footer-about">
         <p class="footer-brand">Pumpa</p>
-        <p>A fuel &amp; commute cost tracker that lives in your browser — nothing uploaded, nothing to sign up for.</p>
+        <p>{t.chrome.footer.blurb}</p>
       </div>
       <div class="footer-col">
-        <h2>Product</h2>
+        <h2>{t.chrome.footer.product}</h2>
         <ul>
-          <li><a href="/calculator/">Calculator</a></li>
-          <li><a href="/tips/">Tips</a></li>
-          <li><a href="/about/">About</a></li>
+          <li><a href={localeHref(locale, '/calculator/')}>{t.chrome.nav.calculator}</a></li>
+          <li><a href={localeHref(locale, '/tips/')}>{t.chrome.nav.tips}</a></li>
+          <li><a href={localeHref(locale, '/about/')}>{t.chrome.nav.about}</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h2>Legal</h2>
+        <h2>{t.chrome.footer.legal}</h2>
         <ul>
-          <li><a href="/privacy/">Privacy</a></li>
-          <li><a href="/cookies/">Cookies</a></li>
+          <li><a href={localeHref(locale, '/privacy/')}>{t.chrome.footer.privacy}</a></li>
+          <li><a href={localeHref(locale, '/cookies/')}>{t.chrome.footer.cookies}</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
       <div class="container">
-        <span>© Pumpa. Made for people who'd rather keep their fuel money.</span>
+        <span>{t.chrome.footer.bottom}</span>
       </div>
     </div>
   </footer>

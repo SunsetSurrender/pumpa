@@ -6,24 +6,36 @@ Project context for Claude in VS Code. Read this before making changes.
 
 A client-side fuel & commute cost tracker. A driver enters a trip (distance, fuel
 consumption, fuel price) and sees what it costs, logs trips and fill-ups over time,
-sees spending reports, and exports the data. Currently a single-page tool; being
-restructured into a proper multi-page website around that tool.
+sees spending reports, and exports the data. Now a multi-page website (Astro) with
+the tool living at `/calculator`.
 
 ## Tech stack
 
-- **Vanilla HTML / CSS / JS. No framework, no build step (unless we deliberately add one).**
-- All application logic lives in one IIFE in the JS file.
+- **Astro (static output) for the site shell** — deliberately added July 2026 for the
+  multi-page restructure. `npm run dev` to work, `npm run build` to build; output is
+  pure static files, deployable to any static host.
+- **The tool itself stays vanilla JS**: all application logic lives in one IIFE in
+  `public/app.js`, served unbundled. Astro never processes it — don't convert it to
+  modules/components.
 - **All data is stored client-side in `localStorage`.** There is no backend, no
   accounts, no server. Do not add auth, servers, or databases unless explicitly asked.
-- Runs from static files; must work when hosted on any static host.
 
 ## File layout
 
 <!-- Keep this section accurate as the repo evolves. -->
-- `pumpa-fuel-tracker.html` — markup
-- `app.js` — all behaviour (single IIFE)
-- `app.css` — all styling
-- `report.css` — print-only styles for the exported PDF report (leave alone unless asked)
+- `src/layouts/SiteLayout.astro` — site-level chrome: top nav (Home / Calculator /
+  Tips / About), footer, head/meta
+- `src/styles/site.css` — site chrome styles; its `:root` tokens mirror
+  `public/app.css` — keep them in sync
+- `src/pages/` — `index` (home), `calculator` (the tool markup, wrapped in the site
+  layout), `about`, `privacy`, `tips/index` + `tips/[slug]` (blog)
+- `src/content/tips/*.md` — blog articles (content collection; schema in
+  `src/content.config.ts`). Each article = its own page + sitemap entry (SEO).
+- `public/app.js` — all tool behaviour (single IIFE)
+- `public/app.css` — all tool styling
+- `public/report.css` — print-only styles for the exported PDF report (leave alone
+  unless asked)
+- `astro.config.mjs` — `site` is a placeholder domain; set the real one before launch
 
 ## Core architecture — do not break these
 
@@ -64,10 +76,13 @@ introducing a different look.
 - **Comma decimals:** European locales show `1,777`. Confirm inputs parse comma decimals
   correctly — `parseFloat('1,777')` returns 1, not 1.777. This can silently corrupt
   calculations for a large part of the target market.
-- **`file://` quirks:** localStorage can behave oddly opened directly as a file. Test via
-  a local server (`python3 -m http.server`), not by double-clicking the HTML.
-- **Desktop layout:** currently one narrow centered column — it reads as a phone app
-  stretched onto desktop. Should use full width intelligently.
+- **Always test through a server** (`npm run dev`, or `npm run build && npm run preview`) —
+  there is no double-clickable HTML entry point anymore, and localStorage behaves oddly
+  over `file://` anyway.
+- **Desktop layout:** the site pages use full width; the tool widens to 960px at
+  ≥1000px via CSS-only rules at the bottom of `public/app.css` (Calculate inputs in one
+  row, Fuel Log form/reports side by side). The tool's internal layout can still be
+  pushed further, but do it with CSS only.
 
 ## Working preferences
 

@@ -30,6 +30,20 @@ const isCurrent = (href) =>
   <meta name="description" content={description}>
   <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)}>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/theme.css">
+  <script is:inline>
+    /* Theme boot — runs before paint to avoid a flash of wrong theme.
+       Order: saved choice → prefers-contrast → prefers-color-scheme. */
+    (() => {
+      let theme = null;
+      try { theme = localStorage.getItem('pumpaTheme'); } catch {}
+      if (theme !== 'dark' && theme !== 'light' && theme !== 'contrast'){
+        theme = matchMedia('(prefers-contrast: more)').matches ? 'contrast'
+          : matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+      }
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
@@ -53,8 +67,34 @@ const isCurrent = (href) =>
           ))}
         </ul>
       </nav>
+      <button type="button" id="themeToggle" class="theme-toggle">
+        <span aria-hidden="true">◐</span>
+        <span id="themeToggleLabel">Theme</span>
+      </button>
     </div>
   </header>
+
+  <script is:inline>
+    (() => {
+      const names = { dark: 'Dark', light: 'Light', contrast: 'High contrast' };
+      const order = ['dark', 'light', 'contrast'];
+      const btn = document.getElementById('themeToggle');
+      const label = document.getElementById('themeToggleLabel');
+      const sync = () => {
+        const current = document.documentElement.dataset.theme;
+        label.textContent = names[current] || 'Theme';
+        btn.setAttribute('aria-label', 'Change theme, current: ' + (names[current] || current));
+      };
+      btn.addEventListener('click', () => {
+        const current = document.documentElement.dataset.theme;
+        const next = order[(order.indexOf(current) + 1) % order.length];
+        document.documentElement.dataset.theme = next;
+        try { localStorage.setItem('pumpaTheme', next); } catch {}
+        sync();
+      });
+      sync();
+    })();
+  </script>
 
   <main class="site-main">
     {container ? <div class="container"><slot /></div> : <slot />}

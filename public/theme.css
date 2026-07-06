@@ -1,0 +1,183 @@
+/* ============================================================
+   Pumpa theme tokens — single source of truth for color.
+   Three modes on <html data-theme="dark|light|contrast">,
+   remembered in localStorage ("pumpaTheme").
+
+   Every text/background pair here is WCAG-AA validated
+   (contrast mode: AAA). If you change a value, re-check it —
+   muted tones fail contrast easily.
+
+   Layers:
+     1. Semantic tokens (--bg, --surface, --text-*, --accent…)
+     2. Reading-surface tokens (paper article pages)
+     3. Legacy aliases used by public/app.css (--panel, --amber…)
+   ============================================================ */
+
+:root{
+  color-scheme: dark;
+
+  /* --- surfaces (warm charcoal, never pure black) --- */
+  --bg: #1a1715;
+  --surface: #221e1b;
+  --surface-2: #262220;
+  --inset: #15120f;
+  --border: #2e2926;
+  --border-strong: #8d847b;   /* interactive borders — ≥3:1 on surface */
+
+  /* --- text --- */
+  --text-hi: #f4efe9;
+  --text-mid: #b3aaa1;
+  --text-lo: #8d847b;
+
+  /* --- accent: amber is seasoning, not surface --- */
+  --accent: #ffb238;
+  --accent-deep: #d9891a;
+  --accent-ink: #231a07;      /* text on amber */
+  --accent-muted: #b39a6d;    /* quiet warm tint for tags/dashed borders */
+
+  /* --- secondary accent: teal carries links + positive --- */
+  --accent-2: #4fb8a5;
+  --link: #4fb8a5;
+  --positive: #4fb8a5;
+  --negative: #e06a5c;
+
+  /* --- feedback --- */
+  --toast-bg: #4fb8a5;
+  --toast-text: #04211c;
+  --focus: #ffb238;
+
+  /* --- the one signature glow: the LCD readout --- */
+  --lcd-bg: #201a10;
+  --lcd-bg-2: #16130c;
+  --lcd-edge: #3a2c14;
+  --lcd-value: #ffb238;
+  --lcd-meta: #b3aaa1;
+  --lcd-glow: 0 0 14px rgba(255, 178, 56, 0.35);
+  --lcd-halo: 0 0 40px -18px rgba(255, 178, 56, 0.35);
+
+  --shadow-card: 0 1px 0 rgba(255,255,255,0.03) inset, 0 12px 32px -20px rgba(0,0,0,0.8);
+
+  /* --- reading surface (tips/about/privacy prose): warm paper
+         even in dark mode — dark chrome, light reading --- */
+  --reading-bg: #f7f3ee;
+  --reading-surface: #efe9e1;
+  --reading-text: #2a2521;
+  --reading-text-mid: #5b524a;
+  --reading-link: #1f6d5f;
+  --reading-border: #ddd4c8;
+}
+
+html[data-theme="light"]{
+  color-scheme: light;
+
+  --bg: #f7f3ee;
+  --surface: #efe9e1;
+  --surface-2: #e9e2d8;
+  --inset: #fffdf9;
+  --border: #ddd4c8;
+  --border-strong: #857a6e;
+
+  --text-hi: #2a2521;
+  --text-mid: #5b524a;
+  --text-lo: #6d635a;
+
+  --accent: #ffb238;
+  --accent-deep: #a05f06;
+  --accent-ink: #231a07;
+  --accent-muted: #77551a;
+
+  --accent-2: #1f6d5f;
+  --link: #1f6d5f;
+  --positive: #1f6d5f;
+  --negative: #b0402e;
+
+  --toast-bg: #1f6d5f;
+  --toast-text: #ffffff;
+  --focus: #a05f06;
+
+  /* LCD card stays a dark "device" panel on light pages —
+     amber on paper can't pass contrast, and the dark readout
+     is the signature anyway. */
+  --lcd-bg: #201a10;
+  --lcd-bg-2: #16130c;
+  --lcd-edge: #3a2c14;
+  --lcd-value: #ffb238;
+  --lcd-meta: #b3aaa1;
+  --lcd-glow: 0 0 14px rgba(255, 178, 56, 0.35);
+  --lcd-halo: 0 0 40px -18px rgba(0, 0, 0, 0.45);
+
+  --shadow-card: 0 1px 2px rgba(42,37,33,0.06), 0 10px 28px -20px rgba(42,37,33,0.25);
+
+  --reading-bg: #f7f3ee;
+  --reading-surface: #efe9e1;
+  --reading-text: #2a2521;
+  --reading-text-mid: #5b524a;
+  --reading-link: #1f6d5f;
+  --reading-border: #ddd4c8;
+}
+
+html[data-theme="contrast"]{
+  color-scheme: dark;
+
+  --bg: #0c0a09;
+  --surface: #161311;
+  --surface-2: #1c1815;
+  --inset: #000000;
+  --border: #5a5248;
+  --border-strong: #aaa096;
+
+  --text-hi: #ffffff;
+  --text-mid: #e9e3db;
+  --text-lo: #d3ccc3;
+
+  --accent: #ffc76b;
+  --accent-deep: #ffb238;
+  --accent-ink: #1c1405;
+  --accent-muted: #e8cf9d;
+
+  --accent-2: #7cdcc9;
+  --link: #7cdcc9;
+  --positive: #7cdcc9;
+  --negative: #ffa294;
+
+  --toast-bg: #7cdcc9;
+  --toast-text: #000000;
+  --focus: #ffffff;
+
+  /* accessibility mode: flat panel, no glow */
+  --lcd-bg: #000000;
+  --lcd-bg-2: #000000;
+  --lcd-edge: #aaa096;
+  --lcd-value: #ffc76b;
+  --lcd-meta: #e9e3db;
+  --lcd-glow: none;
+  --lcd-halo: none;
+
+  --shadow-card: none;
+
+  --reading-bg: #0c0a09;
+  --reading-surface: #161311;
+  --reading-text: #ffffff;
+  --reading-text-mid: #e9e3db;
+  --reading-link: #7cdcc9;
+  --reading-border: #5a5248;
+}
+
+/* ------------------------------------------------------------
+   Legacy aliases — public/app.css (the tool) was written against
+   these names. Keep them pointing at semantic tokens so the tool
+   follows all three themes without structural rewrites.
+   ------------------------------------------------------------ */
+:root, html[data-theme="light"], html[data-theme="contrast"]{
+  --dash-bg: var(--bg);
+  --panel: var(--surface);
+  --panel-2: var(--inset);
+  --panel-edge: var(--border);
+  --amber: var(--accent);
+  --amber-dim: var(--accent-muted);
+  --green-lcd: var(--positive);
+  --green-lcd-dim: var(--border-strong);
+  --red-warn: var(--negative);
+  --text-soft: var(--text-mid);
+  --text-bright: var(--text-hi);
+}

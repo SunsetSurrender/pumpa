@@ -121,7 +121,7 @@ a:focus-visible, button:focus-visible{ outline: 2px solid var(--focus); outline-
   margin: 0 0 0.75rem;
 }
 .footer-about p{ max-width: 26rem; }
-.footer-col h4{
+.footer-col h2{
   margin: 0 0 12px;
   font-family: inherit;
   font-size: 0.875rem; font-weight: 600;
@@ -160,7 +160,7 @@ a:focus-visible, button:focus-visible{ outline: 2px solid var(--focus); outline-
   background: var(--panel-2); border: 1px solid var(--panel-edge);
   border-radius: 4px; padding: 1px 5px; color: var(--green-lcd);
 }
-.prose a{ color: var(--link); }
+.prose a{ color: var(--link); text-decoration: underline; text-underline-offset: 2px; }
 .prose blockquote{
   margin: 20px 0; padding: 10px 18px;
   border-left: 2px solid var(--amber-dim);

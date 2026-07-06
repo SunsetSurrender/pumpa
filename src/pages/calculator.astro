@@ -193,7 +193,7 @@ import SiteLayout from '../layouts/SiteLayout.astro';
     <div class="card">
       <div class="price-hero">
         <div class="badge">Coming soon</div>
-        <h3>Live station prices near you</h3>
+        <h2>Live station prices near you</h2>
         <p>We'll pull real-time pump prices from official government open-data feeds (Germany, France, Italy, Spain, UK &amp; more) and show the cheapest stations on a map.</p>
       </div>
 
@@ -226,7 +226,7 @@ import SiteLayout from '../layouts/SiteLayout.astro';
 
       <div class="export-item">
         <div class="ei-info">
-          <h4>Trips (CSV)</h4>
+          <h3>Trips (CSV)</h3>
           <p id="exportTripsCount">0 trips logged</p>
         </div>
         <button type="button" class="export-btn" id="exportTripsCsv2">CSV</button>
@@ -234,7 +234,7 @@ import SiteLayout from '../layouts/SiteLayout.astro';
 
       <div class="export-item">
         <div class="ei-info">
-          <h4>Fuel log (CSV)</h4>
+          <h3>Fuel log (CSV)</h3>
           <p id="exportFuelCount">0 fill-ups logged</p>
         </div>
         <button type="button" class="export-btn" id="exportFuelCsv2">CSV</button>
@@ -242,7 +242,7 @@ import SiteLayout from '../layouts/SiteLayout.astro';
 
       <div class="export-item">
         <div class="ei-info">
-          <h4>Full report (PDF)</h4>
+          <h3>Full report (PDF)</h3>
           <p>Summary, reports &amp; both logs in one document</p>
         </div>
         <button type="button" class="export-btn pdf" id="exportPdf">PDF</button>
@@ -271,7 +271,7 @@ import SiteLayout from '../layouts/SiteLayout.astro';
     </ul>
     <div class="field full">
       <label for="proCode">Unlock code</label>
-      <input type="text" id="proCode" placeholder="PUMPA-XXXX-XXXX" autocomplete="off" autocapitalize="characters" spellcheck="false">
+      <input type="text" id="proCode" placeholder="PUMPA-XXXX-XXXX" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="proError">
     </div>
     <div class="pro-error" id="proError" hidden>Code not recognised — check and try again.</div>
     <div class="modal-actions">

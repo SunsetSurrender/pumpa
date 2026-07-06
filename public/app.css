@@ -18,7 +18,7 @@ input, select, button { font-family: inherit; }
 button:focus-visible,
 input:focus-visible,
 select:focus-visible{
-  outline: 2px solid var(--amber);
+  outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
 input[type=number]::-webkit-outer-spin-button,
@@ -227,7 +227,7 @@ input[type=number]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0
   background: transparent; border: 1px solid var(--panel-edge);
   color: var(--text-soft); font-weight: 400; margin-top: 10px;
 }
-.btn-ghost:hover{ border-color: var(--amber-dim); color: var(--amber); }
+.btn-ghost:hover{ border-color: var(--border-strong); color: var(--accent-text); }
 
 /* ---------- Lists (trips & fuel) ---------- */
 .log-list{ display:flex; flex-direction:column; gap: 6px; }
@@ -286,7 +286,7 @@ input[type=number]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0
   font-size: 0.75rem; font-weight: 600; color: var(--accent-ink); background: var(--amber);
   padding: 4px 10px; border-radius: 20px; margin-bottom: 14px; font-weight:700;
 }
-.price-hero h3{ margin: 0 0 8px; color: var(--text-bright); font-size: 16px; }
+.price-hero h2{ margin: 0 0 8px; color: var(--text-bright); font-size: 16px; }
 .price-hero p{ margin: 0 auto; max-width: 380px; font-size: 12.5px; line-height: 1.6; }
 
 .manual-price{
@@ -316,12 +316,12 @@ input[type=number]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0
   background: var(--panel-2); border: 1px solid var(--panel-edge);
   border-radius: 8px; padding: 14px 16px; margin-bottom: 10px;
 }
-.export-item .ei-info h4{ margin: 0 0 3px; font-size: 13px; color: var(--text-bright); }
+.export-item .ei-info h3{ margin: 0 0 3px; font-size: 13px; color: var(--text-bright); }
 .export-item .ei-info p{ margin:0; font-size: 10.5px; color: var(--text-soft); }
 .export-btn{
   flex: 0 0 auto; border:none; border-radius: 6px;
   font-size: 0.875rem; font-weight: 600; padding: 11px 16px; cursor:pointer;
-  background: var(--panel); border: 1px solid var(--amber-dim); color: var(--amber);
+  background: var(--panel); border: 1px solid var(--border-strong); color: var(--accent-text);
   transition: background .15s, color .15s;
 }
 .export-btn:hover{ background: var(--amber); color: var(--accent-ink); }
@@ -347,7 +347,7 @@ input[type=number]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0
   letter-spacing: 0.04em; padding: 7px 10px; border-radius: 999px; cursor:pointer;
   transition: color .15s, border-color .15s, background .15s;
 }
-.pro-badge:hover{ color: var(--amber); border-color: var(--amber); }
+.pro-badge:hover{ color: var(--accent-text); border-color: var(--accent-text); }
 .pro-badge.active{
   background: var(--amber); border-color: var(--amber); color: var(--accent-ink);
   
@@ -360,12 +360,12 @@ input[type=number]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0
   font-size: 0.8125rem; color: var(--amber-dim);
   transition: color .15s, border-color .15s;
 }
-.log-locked:hover{ color: var(--amber); border-color: var(--amber); }
+.log-locked:hover{ color: var(--accent-text); border-color: var(--accent-text); }
 
 .export-btn.locked{
   background: transparent; border-color: var(--panel-edge); color: var(--text-soft);
 }
-.export-btn.locked:hover{ background: transparent; border-color: var(--amber-dim); color: var(--amber); filter:none; }
+.export-btn.locked:hover{ background: transparent; border-color: var(--border-strong); color: var(--accent-text); filter:none; }
 
 .modal-backdrop{
   position: fixed; inset: 0; z-index: 60;

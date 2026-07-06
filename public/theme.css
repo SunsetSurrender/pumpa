@@ -33,6 +33,7 @@
   --accent: #ffb238;
   --accent-deep: #d9891a;
   --accent-ink: #231a07;      /* text on amber */
+  --accent-text: #ffb238;     /* amber AS TEXT — theme-shifted to pass AA */
   --accent-muted: #b39a6d;    /* quiet warm tint for tags/dashed borders */
 
   /* --- secondary accent: teal carries links + positive --- */
@@ -84,6 +85,7 @@ html[data-theme="light"]{
   --accent: #ffb238;
   --accent-deep: #a05f06;
   --accent-ink: #231a07;
+  --accent-text: #96590a;
   --accent-muted: #77551a;
 
   --accent-2: #1f6d5f;
@@ -133,6 +135,7 @@ html[data-theme="contrast"]{
   --accent: #ffc76b;
   --accent-deep: #ffb238;
   --accent-ink: #1c1405;
+  --accent-text: #ffc76b;
   --accent-muted: #e8cf9d;
 
   --accent-2: #7cdcc9;

@@ -31,8 +31,10 @@ the tool living at `/calculator`.
   layout), `about`, `privacy`, `tips/index` + `tips/[slug]` (blog)
 - `src/content/tips/*.md` — blog articles (content collection; schema in
   `src/content.config.ts`). Each article = its own page + sitemap entry (SEO).
+- `public/theme.css` — color tokens for all three themes (single source of color
+  truth; loaded before everything else). The tool consumes it via legacy aliases.
 - `public/app.js` — all tool behaviour (single IIFE)
-- `public/app.css` — all tool styling
+- `public/app.css` — all tool styling (tokens only, no hardcoded colors)
 - `public/report.css` — print-only styles for the exported PDF report (leave alone
   unless asked)
 - `astro.config.mjs` — `site` is a placeholder domain; set the real one before launch
@@ -45,6 +47,8 @@ the tool living at `/calculator`.
   - `pumpaPrefs` — unit system + currency preference
   - `pumpaManualPrice` — manual price override from the Prices tab
   - `pumpaPro` — Pro-unlock entitlement `{ code, ts }`
+  - `pumpaTheme` — theme mode (`dark` | `light` | `contrast`), written only when the
+    user toggles; first visit falls back to `prefers-contrast` then `prefers-color-scheme`
 - **Unit system:** Metric / US / UK. Switching live-CONVERTS current values, it does
   not just relabel. Conversions pivot through km / L-per-100km / price-per-liter.
   MPG↔L/100km is INVERSE, not linear — keep that intact.
@@ -64,12 +68,30 @@ Calculate · Trips · Fuel Log · Prices · Export. These are the tool's INTERNA
 When we add site-level nav (Home / Calculator / Tips / About), that is a SEPARATE outer
 layer — these tabs stay inside the calculator page.
 
-## Visual identity — keep it
+## Visual identity — the 2026 redesign direction
 
-Retro car trip-computer dashboard: amber LCD (`--amber`), green LCD readouts
-(`--green-lcd`), dark panels, `Share Tech Mono` for numbers/labels, `Space Grotesk` for
-prose. Mono + uppercase for labels. Extend this into any new website chrome rather than
-introducing a different look.
+Clean, warm, human — NOT terminal cosplay. Full specs in `pumpa-design-brief.md` and
+`pumpa-content-a11y-spec.md`; the short version:
+
+- **One signature LCD moment:** the amber trip-cost readout (hero demo card +
+  calculator result). It is the only element allowed to glow. Everything else is calm.
+- **Amber is seasoning, not surface** (~5–10% of any view: primary button, LCD number,
+  one highlighted word). **Teal (`--accent-2`) carries links and positive states.**
+  When amber appears AS TEXT, use `--accent-text` (theme-shifted to pass AA), never
+  raw `--accent`.
+- **Typography:** Bricolage Grotesque (600/700) for headlines, Figtree (400/600) for
+  everything readable, Share Tech Mono ONLY for the LCD readout and data values
+  (tabular numerals). No uppercase-mono labels, no mono body text — ever again.
+- **Three themes** on `html[data-theme]`: warm dark (default), light (warm paper),
+  high contrast (AAA, glows disabled). All color comes from tokens in
+  `public/theme.css` — never hardcode a hex in components. Every new text/background
+  pair must be contrast-checked in all three themes before shipping.
+- **Reading surfaces:** Tips/About/Privacy/Cookies render long-form content on warm
+  paper (`--reading-*` tokens) even in dark mode — deliberate "dark chrome, light
+  reading" split.
+- **Logo:** inline SVG gauge mark (amber needle) + "Pumpa" wordmark in Bricolage.
+- Lighthouse accessibility is at 100 across pages — keep it there; run Lighthouse
+  after presentation changes.
 
 ## Known issues / watch-outs
 

@@ -42,9 +42,11 @@ the tool living at `/calculator`.
 ## Core architecture — do not break these
 
 - **localStorage keys** (renaming/reformatting these silently wipes user data):
-  - `pumpaTrips` — logged trips
+  - `pumpaTrips` — logged trips. EV trips carry `kind: 'ev'`; entries WITHOUT a `kind`
+    field are petrol by definition — never backfill or rewrite old entries.
   - `pumpaRefuels` — logged fill-ups
-  - `pumpaPrefs` — unit system + currency preference
+  - `pumpaPrefs` — unit system + currency preference, plus optional `vehicle`
+    (`'fuel' | 'ev'`, additive — old prefs objects lack it and must keep working)
   - `pumpaManualPrice` — manual price override from the Prices tab
   - `pumpaPro` — Pro-unlock entitlement `{ code, ts }`
   - `pumpaTheme` — theme mode (`dark` | `light` | `contrast`), written only when the
@@ -52,6 +54,10 @@ the tool living at `/calculator`.
 - **Unit system:** Metric / US / UK. Switching live-CONVERTS current values, it does
   not just relabel. Conversions pivot through km / L-per-100km / price-per-liter.
   MPG↔L/100km is INVERSE, not linear — keep that intact.
+- **EV units:** consumption is kWh/100km (metric) or mi/kWh (US + UK) — also INVERSE,
+  pivoting through kWh/100km via `MI_PER_100KM = 100 / KM_PER_MILE` (≈62.137; e.g.
+  20 kWh/100km = 3.107 mi/kWh). **Energy price is per kWh in every system and is
+  never unit-converted** — only currency applies to it.
 - **Currency is fully decoupled from the unit system.** Any currency can pair with any
   measurement system. Don't recouple them.
 - **Per-entry units/currency:** every stored trip and fill-up records the system +
@@ -65,8 +71,17 @@ the tool living at `/calculator`.
 ## The tool's tabs (in-app navigation)
 
 Calculate · Trips · Fuel Log · Prices · Export. These are the tool's INTERNAL nav.
-When we add site-level nav (Home / Calculator / Tips / About), that is a SEPARATE outer
-layer — these tabs stay inside the calculator page.
+The site-level nav (Home / Calculator / Tips / About) is a SEPARATE outer layer —
+these tabs stay inside the calculator page. Within Calculate, a Petrol / Electric
+segmented toggle switches between the two peer calculators; both log into the same
+Trips history.
+
+## Tests
+
+`tests/app-behaviour.jxa.js` — 60-assertion behavioural suite that runs the real
+`public/app.js` against a stubbed DOM in JavaScriptCore (no browser/Node needed):
+`osascript -l JavaScript tests/app-behaviour.jxa.js`. Run it after ANY change to
+app.js and keep it at 60/60; extend it when adding behaviour.
 
 ## Visual identity — the 2026 redesign direction
 

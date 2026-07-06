@@ -262,6 +262,12 @@ input[type=number]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0
 }
 .log-info{ display:flex; flex-direction:column; gap: 2px; }
 .log-date{ color: var(--text-soft); font-size: 0.75rem; }
+.log-kind{
+  display:inline-block; margin-left: 4px;
+  border: 1px solid var(--positive); border-radius: 999px;
+  padding: 0 6px; font-size: 0.6875rem; font-weight: 600;
+  color: var(--positive); letter-spacing: 0.02em;
+}
 .log-detail{ color: var(--text-mid); font-size: 0.8125rem; font-family:'Share Tech Mono', monospace; }
 .log-eff{ color: var(--text-soft); font-size: 0.75rem; font-family:'Share Tech Mono', monospace; }
 .log-right{ display:flex; align-items:center; gap: 10px; }

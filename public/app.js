@@ -420,12 +420,13 @@ function renderTrips(){
   const hidden = sorted.length - visible.length;
   tripsListEl.innerHTML = visible.map(e => {
     const u = unitLabels(e.system);
+    const isEv = e.kind === 'ev';
     const cur = escapeHtml(e.currency || '€');
     const d = new Date(e.ts).toLocaleDateString(undefined, {day:'2-digit', month:'short', year:'2-digit'});
     return `<div class="log-row" data-id="${escapeHtml(e.id)}">
       <div class="log-info">
-        <div class="log-date">${escapeHtml(d)}</div>
-        <div class="log-detail">${escapeHtml(e.distance)} ${u.dist} · ${escapeHtml(e.consumption)} ${u.cons}</div>
+        <div class="log-date">${escapeHtml(d)}${isEv ? ' <span class="log-kind">EV</span>' : ''}</div>
+        <div class="log-detail">${escapeHtml(e.distance)} ${u.dist} · ${escapeHtml(e.consumption)} ${isEv ? u.evCons : u.cons}</div>
       </div>
       <div class="log-right">
         <div class="log-cost">${cur}${toFiniteNumber(e.cost).toFixed(2)}</div>
@@ -442,6 +443,22 @@ $('saveTripBtn').addEventListener('click', () => {
   const entries = loadTrips();
   entries.push({
     id: createId(),
+    ts: Date.now(), distance, consumption, price,
+    cost: trip.cost, system: currentSystem, currency: currentCurrency
+  });
+  saveTrips(entries);
+  renderTrips();
+  toast('Trip logged ✓');
+});
+
+/* EV trips share pumpaTrips; kind:'ev' is the only difference.
+   Entries without a kind are petrol — old data is never rewritten. */
+$('evSaveTripBtn').addEventListener('click', () => {
+  const distance = num(evDistanceEl), consumption = num(evConsumptionEl), price = num(evPriceEl);
+  const trip = computeEvTrip(distance, consumption, price, currentSystem);
+  const entries = loadTrips();
+  entries.push({
+    id: createId(), kind: 'ev',
     ts: Date.now(), distance, consumption, price,
     cost: trip.cost, system: currentSystem, currency: currentCurrency
   });
@@ -772,11 +789,13 @@ function downloadFile(filename, content, type){
 function exportTripsCsv(){
   const entries = loadTrips().slice().sort((a,b) => a.ts - b.ts);
   if (!entries.length){ toast('No trips to export'); return; }
-  const header = ['Date','Distance','Distance unit','Consumption','Consumption unit','Fuel price','Currency','Cost'];
+  /* 'Type' is appended last so pre-EV consumers of this CSV keep their column order. */
+  const header = ['Date','Distance','Distance unit','Consumption','Consumption unit','Fuel price','Currency','Cost','Type'];
   const rows = entries.map(e => {
     const u = unitLabels(e.system);
-    return [ new Date(e.ts).toISOString().slice(0,10), e.distance, u.dist, e.consumption, u.cons,
-             e.price, e.currency || '€', toFiniteNumber(e.cost).toFixed(2) ].map(csvEscape).join(',');
+    const isEv = e.kind === 'ev';
+    return [ new Date(e.ts).toISOString().slice(0,10), e.distance, u.dist, e.consumption, isEv ? u.evCons : u.cons,
+             e.price, e.currency || '€', toFiniteNumber(e.cost).toFixed(2), isEv ? 'EV' : 'Petrol' ].map(csvEscape).join(',');
   });
   downloadFile('pumpa-trips.csv', [header.join(','), ...rows].join('\n'), 'text/csv');
   toast('Trips CSV downloaded ✓');

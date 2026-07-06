@@ -30,6 +30,7 @@ const REFUEL_KEY = 'pumpaRefuels';
 const PREF_KEY   = 'pumpaPrefs';
 const MANUAL_PRICE_KEY = 'pumpaManualPrice';
 const PRO_KEY = 'pumpaPro';
+const TRIP_PLAN_KEY = 'pumpaTripPlan';   /* single draft, additive — see restorePlanDraft */
 
 /* Free-tier caps apply to what is DISPLAYED only — stored data is never truncated. */
 const FREE_TRIP_LIMIT = 10;
@@ -269,7 +270,16 @@ function switchSystem(newSystem){
   evConsumptionEl.value = round(kwh100kmToEvConsumption(evConsumptionToKwh100km(num(evConsumptionEl), oldSystem), newSystem), 1);
   /* evPrice: per kWh everywhere — no conversion */
 
+  planFuelConsEl.value = round(l100kmToConsumption(consumptionToL100km(num(planFuelConsEl), oldSystem), newSystem), 1);
+  planFuelPriceEl.value = round(priceFromPerLiter(priceToPerLiter(num(planFuelPriceEl), oldSystem), newSystem), 3);
+  planEvConsEl.value = round(kwh100kmToEvConsumption(evConsumptionToKwh100km(num(planEvConsEl), oldSystem), newSystem), 1);
+  planLegs = planLegs.map(v => {
+    const n = Number.parseFloat(v);
+    return Number.isFinite(n) && n > 0 ? String(round(kmToDistance(distanceToKm(n, oldSystem), newSystem), 1)) : v;
+  });
+
   currentSystem = newSystem;
+  renderPlanLegs();
   updateUnitToggle();
   refreshUi();
 }
@@ -487,6 +497,33 @@ function planCalc(){
   } else {
     planCompareEl.hidden = true;
   }
+  savePlanDraft();
+}
+
+/* One draft, pumpaManualPrice precedent: stamped with system+currency,
+   restored only when they match the current ones, ignored otherwise. */
+function savePlanDraft(){
+  writeJson(TRIP_PLAN_KEY, {
+    legs: planLegs,
+    tolls: planTollsEl.value, extras: planExtrasEl.value,
+    vehicle: planVehicle,
+    fuel: { cons: planFuelConsEl.value, price: planFuelPriceEl.value },
+    ev: { cons: planEvConsEl.value, price: planEvPriceEl.value },
+    system: currentSystem, currency: currentCurrency, ts: Date.now()
+  });
+}
+
+function restorePlanDraft(){
+  const saved = readJson(TRIP_PLAN_KEY, null);
+  if (!saved || saved.system !== currentSystem || saved.currency !== currentCurrency) return false;
+  if (!Array.isArray(saved.legs) || saved.legs.length === 0) return false;
+  planLegs = saved.legs.map(String);
+  planTollsEl.value = saved.tolls || '';
+  planExtrasEl.value = saved.extras || '';
+  if (saved.fuel){ planFuelConsEl.value = saved.fuel.cons || ''; planFuelPriceEl.value = saved.fuel.price || ''; }
+  if (saved.ev){ planEvConsEl.value = saved.ev.cons || ''; planEvPriceEl.value = saved.ev.price || ''; }
+  switchPlanVehicle(saved.vehicle === 'ev' ? 'ev' : 'fuel');
+  return true;
 }
 
 function switchPlanVehicle(mode){
@@ -533,13 +570,15 @@ planVehicleToggleEl.addEventListener('click', (ev) => {
 });
 
 function initPlan(){
-  /* prefill from the two calculators' current values */
-  planLegs = [distanceEl.value];
-  planFuelConsEl.value = consumptionEl.value;
-  planFuelPriceEl.value = priceEl.value;
-  planEvConsEl.value = evConsumptionEl.value;
-  planEvPriceEl.value = evPriceEl.value;
-  switchPlanVehicle(currentVehicle);
+  if (!restorePlanDraft()){
+    /* no usable draft: prefill from the two calculators' current values */
+    planLegs = [distanceEl.value];
+    planFuelConsEl.value = consumptionEl.value;
+    planFuelPriceEl.value = priceEl.value;
+    planEvConsEl.value = evConsumptionEl.value;
+    planEvPriceEl.value = evPriceEl.value;
+    switchPlanVehicle(currentVehicle);
+  }
   renderPlanLegs();
   planCalc();
 }

@@ -1,16 +1,16 @@
 ---
 import { getCollection } from 'astro:content';
-import SiteLayout from '../../layouts/SiteLayout.astro';
-import TipsArticlePage from '../../components/pages/TipsArticlePage.astro';
-import { useT, localeHref, locales, type Locale } from '../../i18n/ui';
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import TipsArticlePage from '../../../components/pages/TipsArticlePage.astro';
+import { useT, localeHref, locales, type Locale } from '../../../i18n/ui';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('tips', ({ id, data }) => !data.draft && id.startsWith('en/'));
+  const posts = await getCollection('tips', ({ id, data }) => !data.draft && id.startsWith('es/'));
   return posts.map((post) => ({ params: { slug: post.id.split('/')[1] }, props: { post } }));
 }
 
 const { post } = Astro.props;
-const t = useT('en');
+const t = useT('es');
 const slug = post.id.split('/')[1];
 
 /* hreflang only for translations that exist; the switcher falls back to
@@ -26,10 +26,10 @@ for (const l of locales) {
 <SiteLayout
   title={post.data.title + t.tips.articleTitleSuffix}
   description={post.data.description}
-  locale="en"
+  locale="es"
   surface="reading"
   alternates={alternates}
   switchTargets={switchTargets}
 >
-  <TipsArticlePage locale="en" post={post} />
+  <TipsArticlePage locale="es" post={post} />
 </SiteLayout>

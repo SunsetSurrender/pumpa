@@ -6,11 +6,13 @@ interface Props { locale: Locale; }
 const { locale } = Astro.props;
 const t = useT(locale);
 
-/* Flat collection until the per-locale tips restructure (commit 3):
-   teaser shows EN articles for every locale for now. */
-const latestTips = (await getCollection('tips', ({ data }) => !data.draft))
+const allTips = await getCollection('tips', ({ data }) => !data.draft);
+let pool = allTips.filter((p) => p.id.startsWith(locale + '/'));
+if (pool.length === 0) pool = allTips.filter((p) => p.id.startsWith('en/'));
+const latestTips = pool
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 3);
+const slugOf = (id: string) => id.split('/')[1];
 ---
 <section class="hero" aria-label={t.home.eyebrow}>
   <div class="hero-copy">
@@ -62,7 +64,7 @@ const latestTips = (await getCollection('tips', ({ data }) => !data.draft))
   <p class="teaser-lead">{t.home.teaser.lead}</p>
   <div class="teaser-grid">
     {latestTips.map((post) => (
-      <a class="site-card teaser-card" href={localeHref(locale, `/tips/${post.id}/`)}>
+      <a class="site-card teaser-card" href={localeHref(locale, `/tips/${slugOf(post.id)}/`)}>
         <h3>{post.data.title}</h3>
         <p>{post.data.description}</p>
       </a>

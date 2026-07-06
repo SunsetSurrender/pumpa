@@ -4,14 +4,282 @@ import SiteLayout from '../layouts/SiteLayout.astro';
 <SiteLayout
   title="Fuel cost calculator — Pumpa"
   description="Calculate the fuel cost of any trip, log fill-ups and track spending. Metric, US and UK units, any currency, stored on your device."
+  container={false}
 >
-  <div class="page-head">
-    <p class="mono-label">Calculator</p>
-    <h1>The tool moves in here next.</h1>
-    <p class="lede">
-      Phase 2 of the restructure migrates the existing calculator — tabs, data and
-      all — into this page. Until then it still lives in
-      <code>pumpa-fuel-tracker.html</code>.
-    </p>
+  <Fragment slot="head">
+    <meta name="theme-color" content="#14181a">
+    <link rel="stylesheet" href="/app.css">
+  </Fragment>
+
+<!-- ============================================================
+     The tool below is migrated verbatim from pumpa-fuel-tracker.html.
+     Its Calculate/Trips/Fuel Log/Prices/Export tabs are the tool's
+     INTERNAL navigation — the site nav above is a separate layer.
+     All behaviour lives in /public/app.js (single IIFE).
+     ============================================================ -->
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-mark">P</div>
+      <div class="brand-text">
+        <h1>Pumpa</h1>
+        <div class="tag">Fuel · Commute · Cost</div>
+      </div>
+    </div>
+    <div class="settings">
+      <div class="unit-seg" id="unitToggle" aria-label="Unit system">
+        <button type="button" data-system="metric" class="active" aria-pressed="true">Metric</button>
+        <button type="button" data-system="us" aria-pressed="false">US</button>
+        <button type="button" data-system="uk" aria-pressed="false">UK</button>
+      </div>
+      <select id="currencySelect" title="Currency" aria-label="Currency">
+        <option value="€">€</option>
+        <option value="$">$</option>
+        <option value="£">£</option>
+        <option value="¥">¥</option>
+        <option value="₹">₹</option>
+        <option value="R$">R$</option>
+        <option value="kr">kr</option>
+        <option value="zł">zł</option>
+        <option value="custom">…</option>
+      </select>
+      <input type="text" id="customCurrency" maxlength="4" placeholder="₩" aria-label="Custom currency symbol">
+      <button type="button" id="proBadge" class="pro-badge" title="Upgrade to Pumpa Pro">PRO</button>
+    </div>
+  </header>
+
+  <!-- TABS -->
+  <nav class="tabs" id="tabs" aria-label="Tool sections" role="tablist">
+    <button type="button" class="tab-btn active" id="tab-calc" data-tab="calc" role="tab" aria-controls="panel-calc" aria-selected="true">Calculate</button>
+    <button type="button" class="tab-btn" id="tab-trips" data-tab="trips" role="tab" aria-controls="panel-trips" aria-selected="false">Trips</button>
+    <button type="button" class="tab-btn" id="tab-fuel" data-tab="fuel" role="tab" aria-controls="panel-fuel" aria-selected="false">Fuel Log</button>
+    <button type="button" class="tab-btn" id="tab-prices" data-tab="prices" role="tab" aria-controls="panel-prices" aria-selected="false">Prices</button>
+    <button type="button" class="tab-btn" id="tab-export" data-tab="export" role="tab" aria-controls="panel-export" aria-selected="false">Export</button>
+  </nav>
+
+  <main>
+
+  <!-- ========== CALCULATE ========== -->
+  <section class="panel-view active" id="panel-calc" data-panel="calc" role="tabpanel" aria-labelledby="tab-calc">
+    <div class="card">
+      <div class="card-title">Trip Cost Readout</div>
+
+      <div class="odometer">
+        <div class="odo-label">Fuel Used</div>
+        <div class="odo-value"><span id="fuelUsedValue">0.00</span><span class="sub" id="fuelUnitLabel">L</span></div>
+      </div>
+
+      <div class="fields">
+        <div class="field">
+          <label for="distance">Distance <span class="unit-suffix" id="distUnitLabel">km</span></label>
+          <input type="number" id="distance" value="70.5" min="0" step="0.1" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="consumption">Consumption <span class="unit-suffix" id="consUnitLabel">L/100km</span></label>
+          <input type="number" id="consumption" value="3.4" min="0" step="0.1" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="price">Fuel price <span class="unit-suffix" id="priceUnitLabel">€/L</span></label>
+          <input type="number" id="price" value="1.777" min="0" step="0.001" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="baseline">Usual distance <span class="unit-suffix" id="baselineUnitLabel">km</span></label>
+          <input type="number" id="baseline" value="64" min="0" step="0.1" inputmode="decimal">
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="readout">
+        <div class="readout-label">Trip Cost</div>
+        <div class="readout-value" id="tripCost">€0.00</div>
+      </div>
+      <div class="baseline-note">
+        <span>Usual trip cost</span>
+        <span id="baselineCost">€0.00</span>
+      </div>
+      <div class="delta" id="deltaRow">
+        <span>Difference</span>
+        <span id="deltaValue">€0.00</span>
+      </div>
+
+      <button type="button" class="btn btn-amber" id="saveTripBtn">+ Log this trip</button>
+      <button type="button" class="btn btn-ghost" id="resetBtn">Reset values</button>
+    </div>
+  </section>
+
+  <!-- ========== TRIPS ========== -->
+  <section class="panel-view" id="panel-trips" data-panel="trips" role="tabpanel" aria-labelledby="tab-trips" hidden>
+    <div class="card">
+      <div class="list-head">
+        <div class="card-title">Trip History</div>
+        <div class="list-total" id="tripsTotal">€0.00 total</div>
+      </div>
+      <div class="log-list" id="tripsList">
+        <div class="log-empty">No trips logged yet.<br>Log one from the Calculate tab.</div>
+      </div>
+      <button type="button" class="btn btn-ghost" id="exportTripsCsv">Export trips CSV</button>
+    </div>
+  </section>
+
+  <!-- ========== FUEL LOG ========== -->
+  <section class="panel-view" id="panel-fuel" data-panel="fuel" role="tabpanel" aria-labelledby="tab-fuel" hidden>
+    <div class="card">
+      <div class="card-title">Log a Fill-up</div>
+      <div class="fields">
+        <div class="field">
+          <label for="refuelAmount">Amount filled <span class="unit-suffix" id="refuelAmountLabel">L</span></label>
+          <input type="number" id="refuelAmount" min="0" step="0.01" inputmode="decimal" placeholder="42.5">
+        </div>
+        <div class="field">
+          <label for="refuelCost">Total paid <span class="unit-suffix" id="refuelCostLabel">€</span></label>
+          <input type="number" id="refuelCost" min="0" step="0.01" inputmode="decimal" placeholder="75.50">
+        </div>
+        <div class="field">
+          <label for="refuelOdo">Odometer <span class="unit-suffix" id="refuelOdoLabel">km</span></label>
+          <input type="number" id="refuelOdo" min="0" step="1" inputmode="decimal" placeholder="optional">
+        </div>
+        <div class="field">
+          <label for="refuelDate">Date</label>
+          <input type="date" id="refuelDate">
+        </div>
+      </div>
+      <button type="button" class="btn btn-green refuel-save" id="refuelSaveBtn">+ Log fill-up</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Reports</div>
+      <div class="reports-grid">
+        <div class="report-card">
+          <div class="rc-label">This month</div>
+          <div class="rc-value" id="rptMonthSpend">€0.00</div>
+          <div class="rc-sub" id="rptMonthSub">0 fill-ups</div>
+        </div>
+        <div class="report-card">
+          <div class="rc-label">Avg / fill-up</div>
+          <div class="rc-value" id="rptAvgFill">€0.00</div>
+          <div class="rc-sub">all time</div>
+        </div>
+        <div class="report-card">
+          <div class="rc-label">Real consumption</div>
+          <div class="rc-value" id="rptRealCons">—</div>
+          <div class="rc-sub" id="rptRealConsSub">needs 2+ odometer</div>
+        </div>
+        <div class="report-card">
+          <div class="rc-label">Days between</div>
+          <div class="rc-value" id="rptDaysBetween">—</div>
+          <div class="rc-sub">avg refuel gap</div>
+        </div>
+      </div>
+      <div class="mc-title">Monthly spend</div>
+      <div class="mc-bars" id="monthlyBars" aria-label="Fuel spending for the last six months"></div>
+    </div>
+
+    <div class="card">
+      <div class="list-head">
+        <div class="card-title">Fill-up History</div>
+      </div>
+      <div class="log-list" id="refuelList">
+        <div class="log-empty">No fill-ups logged yet.</div>
+      </div>
+      <button type="button" class="btn btn-ghost" id="exportFuelCsv">Export fuel log CSV</button>
+    </div>
+  </section>
+
+  <!-- ========== PRICES (STUB) ========== -->
+  <section class="panel-view" id="panel-prices" data-panel="prices" role="tabpanel" aria-labelledby="tab-prices" hidden>
+    <div class="card">
+      <div class="price-hero">
+        <div class="badge">Coming soon</div>
+        <h3>Live station prices near you</h3>
+        <p>We'll pull real-time pump prices from official government open-data feeds (Germany, France, Italy, Spain, UK &amp; more) and show the cheapest stations on a map.</p>
+      </div>
+
+      <div class="card-title">Your local price</div>
+      <div class="manual-price">
+        <div class="field">
+          <label for="manualPrice">Set price manually <span class="unit-suffix" id="manualPriceLabel">€/L</span></label>
+          <input type="number" id="manualPrice" min="0" step="0.001" inputmode="decimal" placeholder="1.777">
+        </div>
+        <button type="button" class="btn btn-green" id="applyManualPrice">Use</button>
+      </div>
+      <div class="price-note">
+        Spotted a price that's fresher than the official feed? Set it here — it fills into the calculator and gets remembered. Community corrections like this keep prices accurate between government updates.
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="card-title">Station map</div>
+      <div class="map-placeholder">
+        <div class="pin">📍</div>
+        <div>MAP — WIRED UP IN PHASE 2</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== EXPORT ========== -->
+  <section class="panel-view" id="panel-export" data-panel="export" role="tabpanel" aria-labelledby="tab-export" hidden>
+    <div class="card">
+      <div class="card-title">Export your data</div>
+
+      <div class="export-item">
+        <div class="ei-info">
+          <h4>Trips (CSV)</h4>
+          <p id="exportTripsCount">0 trips logged</p>
+        </div>
+        <button type="button" class="export-btn" id="exportTripsCsv2">CSV</button>
+      </div>
+
+      <div class="export-item">
+        <div class="ei-info">
+          <h4>Fuel log (CSV)</h4>
+          <p id="exportFuelCount">0 fill-ups logged</p>
+        </div>
+        <button type="button" class="export-btn" id="exportFuelCsv2">CSV</button>
+      </div>
+
+      <div class="export-item">
+        <div class="ei-info">
+          <h4>Full report (PDF)</h4>
+          <p>Summary, reports &amp; both logs in one document</p>
+        </div>
+        <button type="button" class="export-btn pdf" id="exportPdf">PDF</button>
+      </div>
+
+      <div class="tips-note">
+        Everything is stored locally on this device. Exports let you keep a backup or move your data elsewhere.
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<div class="modal-backdrop" id="proModal" hidden>
+  <div class="modal card" role="dialog" aria-modal="true" aria-labelledby="proModalTitle">
+    <div class="card-title" id="proModalTitle">Pumpa Pro</div>
+    <p class="modal-lead" id="proModalReason">Unlock the full trip computer.</p>
+    <ul class="pro-perks">
+      <li>Unlimited trip &amp; fill-up history</li>
+      <li>Full PDF report export</li>
+      <li>No ads, ever</li>
+    </ul>
+    <div class="field full">
+      <label for="proCode">Unlock code</label>
+      <input type="text" id="proCode" placeholder="PUMPA-XXXX-XXXX" autocomplete="off" autocapitalize="characters" spellcheck="false">
+    </div>
+    <div class="pro-error" id="proError" hidden>Code not recognised — check and try again.</div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-amber" id="proUnlockBtn">Unlock</button>
+      <button type="button" class="btn btn-ghost" id="proModalClose">Not now</button>
+    </div>
   </div>
+</div>
+
+<script is:inline src="/app.js" defer></script>
 </SiteLayout>

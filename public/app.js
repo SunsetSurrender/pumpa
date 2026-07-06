@@ -726,7 +726,8 @@ function exportPdf(){
     return `<tr><td>${escapeHtml(e.date)}</td><td>${toFiniteNumber(e.amount)} ${u.fuel}</td><td>${escapeHtml(odometer)}</td><td>${escapeHtml(e.currency || '€')}${toFiniteNumber(e.cost).toFixed(2)}</td></tr>`;
   }).join('') || '<tr><td colspan="4" class="muted">No fill-ups logged</td></tr>';
 
-  const reportStylesUrl = new URL('report.css', document.baseURI).href;
+  // Root-absolute: the tool page lives at /calculator/ while report.css stays at the site root.
+  const reportStylesUrl = new URL('/report.css', document.baseURI).href;
   const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Pumpa Report</title>
   <link rel="stylesheet" href="${reportStylesUrl}"></head><body>
     <h1>Pumpa — Fuel &amp; Commute Report</h1>

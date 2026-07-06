@@ -426,3 +426,24 @@ input[type=number]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0
 @media (prefers-reduced-motion: reduce){
   *{ animation: none !important; transition: none !important; }
 }
+
+/* ---------- Desktop layout (multi-page site restructure) ---------- */
+/* Guard: panels get explicit display values below, which would otherwise
+   override the hidden attribute the tab switcher relies on. */
+.panel-view[hidden]{ display: none; }
+
+@media (min-width: 1000px){
+  .app{ max-width: 960px; }
+
+  /* Calculate: one row of four inputs instead of a 2x2 block */
+  .fields{ grid-template-columns: repeat(4, 1fr); }
+
+  /* Fuel Log: fill-up form and reports side by side, history full width */
+  #panel-fuel.active{
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 16px; align-items: start;
+  }
+  #panel-fuel.active > .card{ margin-bottom: 0; }
+  #panel-fuel.active > .card:last-child{ grid-column: 1 / -1; }
+  #panel-fuel .fields{ grid-template-columns: 1fr 1fr; }
+}

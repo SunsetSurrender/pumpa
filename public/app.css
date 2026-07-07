@@ -126,6 +126,16 @@ input[type=number]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0
 .vehicle-seg button.active[data-vehicle="ev"]{ background: var(--toast-bg); color: var(--toast-text); }
 .vehicle-seg button.active[data-vehicle="ev"] .leaf{ opacity: 1; }
 #calcEvCard{ border-top: 3px solid var(--positive); }
+/* EV mode is FULLY green, not just the chip: readout glow, primary button,
+   focus and unit accents all switch inside the EV card. Petrol stays amber. */
+#calcEvCard .readout-value{ color: var(--lcd-value-ev); text-shadow: var(--lcd-glow-ev); }
+#calcEvCard .btn-amber{ background: var(--toast-bg); color: var(--toast-text); }
+#calcEvCard .field input:focus{ border-color: var(--positive); }
+#calcEvCard .unit-suffix{ color: var(--positive); }
+/* Trip Plan estimate follows its own vehicle selector (CSS-only via :has) */
+.card:has(#planVehicleToggle button.active[data-vehicle="ev"]) .readout-value{
+  color: var(--lcd-value-ev); text-shadow: var(--lcd-glow-ev);
+}
 .vehicle-seg button.active{ background: var(--amber); color: var(--accent-ink); font-weight: 700; }
 
 /* ---------- Tabs ---------- */

@@ -55,6 +55,9 @@
   --lcd-meta: #b3aaa1;
   --lcd-glow: 0 0 14px rgba(255, 178, 56, 0.35);
   --lcd-halo: 0 0 40px -18px rgba(255, 178, 56, 0.35);
+  /* EV mode: the readout goes green (validated 10.7:1+ on the LCD panel) */
+  --lcd-value-ev: #6fe0bc;
+  --lcd-glow-ev: 0 0 14px rgba(111, 224, 188, 0.35);
 
   --shadow-card: 0 1px 0 rgba(255,255,255,0.03) inset, 0 12px 32px -20px rgba(0,0,0,0.8);
 
@@ -122,6 +125,8 @@ html[data-theme="light"]{
   --lcd-meta: #b3aaa1;
   --lcd-glow: 0 0 14px rgba(255, 178, 56, 0.35);
   --lcd-halo: 0 0 40px -18px rgba(0, 0, 0, 0.45);
+  --lcd-value-ev: #6fe0bc;
+  --lcd-glow-ev: 0 0 14px rgba(111, 224, 188, 0.35);
 
   --shadow-card: 0 2px 4px rgba(42,37,33,0.08), 0 14px 32px -16px rgba(42,37,33,0.35);
 
@@ -183,6 +188,8 @@ html[data-theme="contrast"]{
   --lcd-meta: #e9e3db;
   --lcd-glow: none;
   --lcd-halo: none;
+  --lcd-value-ev: #7cdcc9;
+  --lcd-glow-ev: none;
 
   --shadow-card: none;
 

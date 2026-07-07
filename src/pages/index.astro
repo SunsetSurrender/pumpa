@@ -4,6 +4,6 @@ import HomePage from '../components/pages/HomePage.astro';
 import { useT } from '../i18n/ui';
 const t = useT('en');
 ---
-<SiteLayout title={t.home.metaTitle} description={t.home.metaDescription} locale="en">
+<SiteLayout title={t.home.metaTitle} description={t.home.metaDescription} locale="en" container={false}>
   <HomePage locale="en" />
 </SiteLayout>

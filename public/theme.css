@@ -58,6 +58,21 @@
 
   --shadow-card: 0 1px 0 rgba(255,255,255,0.03) inset, 0 12px 32px -20px rgba(0,0,0,0.8);
 
+  /* --- section bands (home-page depth rhythm) --- */
+  --band-bg: #141110;
+  --band-text-hi: #f4efe9;
+  --band-text-mid: #b3aaa1;
+  --band-border: #2e2926;
+  --band-link: #4fb8a5;
+
+  /* --- hero over image: FIXED dark values in every theme (the image
+         is dark + scrimmed; validated vs worst-case composite #413e3b) --- */
+  --hero-bg: #16130f;
+  --hero-text-hi: #f4efe9;
+  --hero-text-mid: #b3aaa1;
+  --hero-accent: #ffb238;
+  --hero-border: #b3aaa1;
+
   /* --- reading surface (tips/about/privacy prose): warm paper
          even in dark mode — dark chrome, light reading --- */
   --reading-bg: #f7f3ee;
@@ -75,7 +90,7 @@ html[data-theme="light"]{
   --surface: #efe9e1;
   --surface-2: #e9e2d8;
   --inset: #fffdf9;
-  --border: #ddd4c8;
+  --border: #cfc2b0;
   --border-strong: #857a6e;
 
   --text-hi: #2a2521;
@@ -108,7 +123,20 @@ html[data-theme="light"]{
   --lcd-glow: 0 0 14px rgba(255, 178, 56, 0.35);
   --lcd-halo: 0 0 40px -18px rgba(0, 0, 0, 0.45);
 
-  --shadow-card: 0 1px 2px rgba(42,37,33,0.06), 0 10px 28px -20px rgba(42,37,33,0.25);
+  --shadow-card: 0 2px 4px rgba(42,37,33,0.08), 0 14px 32px -16px rgba(42,37,33,0.35);
+
+  /* the ink-as-real-background moment: warm charcoal bands on light pages */
+  --band-bg: #221e1b;
+  --band-text-hi: #f4efe9;
+  --band-text-mid: #b3aaa1;
+  --band-border: #3a332e;
+  --band-link: #4fb8a5;
+
+  --hero-bg: #16130f;
+  --hero-text-hi: #f4efe9;
+  --hero-text-mid: #b3aaa1;
+  --hero-accent: #ffb238;
+  --hero-border: #b3aaa1;
 
   --reading-bg: #f7f3ee;
   --reading-surface: #efe9e1;
@@ -157,6 +185,18 @@ html[data-theme="contrast"]{
   --lcd-halo: none;
 
   --shadow-card: none;
+
+  --band-bg: #000000;
+  --band-text-hi: #ffffff;
+  --band-text-mid: #e9e3db;
+  --band-border: #aaa096;
+  --band-link: #7cdcc9;
+
+  --hero-bg: #000000;
+  --hero-text-hi: #ffffff;
+  --hero-text-mid: #e9e3db;
+  --hero-accent: #ffc76b;
+  --hero-border: #ffffff;
 
   --reading-bg: #0c0a09;
   --reading-surface: #161311;

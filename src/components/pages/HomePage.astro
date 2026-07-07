@@ -14,7 +14,9 @@ const latestTips = pool
   .slice(0, 3);
 const slugOf = (id: string) => id.split('/')[1];
 ---
-<section class="hero" aria-label={t.home.eyebrow}>
+<section class="hero-band" aria-label={t.home.eyebrow}>
+  <div class="hero-scrim" aria-hidden="true"></div>
+  <div class="container hero">
   <div class="hero-copy">
     <p class="mono-label">{t.home.eyebrow}</p>
     <h1>{t.home.h1Pre}<em>{t.home.h1Accent}</em>{t.home.h1Post}</h1>
@@ -32,9 +34,11 @@ const slugOf = (id: string) => id.split('/')[1];
       <div class="demo-sub">{t.home.lcd.sub} <span class="demo-delta">+€0.58</span></div>
     </div>
   </div>
+  </div>
 </section>
 
-<section aria-labelledby="how-title">
+<section class="band" aria-labelledby="how-title">
+  <div class="container">
   <h2 class="section-title" id="how-title">{t.home.how.title}</h2>
   <div class="steps">
     {t.home.how.steps.map((step, i) => (
@@ -45,9 +49,11 @@ const slugOf = (id: string) => id.split('/')[1];
       </div>
     ))}
   </div>
+  </div>
 </section>
 
-<section aria-labelledby="why-title">
+<section class="band band-ink" aria-labelledby="why-title">
+  <div class="container">
   <h2 class="section-title" id="why-title">{t.home.why.title}</h2>
   <div class="why-grid">
     {t.home.why.items.map((item) => (
@@ -57,9 +63,11 @@ const slugOf = (id: string) => id.split('/')[1];
       </div>
     ))}
   </div>
+  </div>
 </section>
 
-<section aria-labelledby="tips-title">
+<section class="band band-tint" aria-labelledby="tips-title">
+  <div class="container">
   <h2 class="section-title" id="tips-title">{t.home.teaser.title}</h2>
   <p class="teaser-lead">{t.home.teaser.lead}</p>
   <div class="teaser-grid">
@@ -71,9 +79,11 @@ const slugOf = (id: string) => id.split('/')[1];
     ))}
   </div>
   <a class="btn-link ghost" href={localeHref(locale, '/tips/')}>{t.home.teaser.browse}</a>
+  </div>
 </section>
 
-<section aria-labelledby="pro-title">
+<section class="band" aria-labelledby="pro-title">
+<div class="container">
 <h2 class="section-title" id="pro-title">{t.home.pro.title}</h2>
 <div class="pro-strip site-card">
   <div class="pro-strip-copy">
@@ -84,22 +94,29 @@ const slugOf = (id: string) => id.split('/')[1];
     {t.home.pro.perks.map((perk) => <li>{perk}</li>)}
   </ul>
 </div>
+</div>
 </section>
 
 <style>
   .hero{
     display: grid; grid-template-columns: minmax(0, 55fr) minmax(0, 45fr);
     gap: 3rem; align-items: center;
-    padding: 4rem 0 1.5rem;
+    padding: 6rem 24px;
   }
+  /* hero sits on a dark image/scrim in every theme: fixed light-on-dark tokens */
+  .hero .mono-label{ color: var(--hero-text-mid); }
   .hero h1{
     margin: 0.75rem 0 1rem;
     font-size: clamp(2.5rem, 5vw, 4.5rem);
     line-height: 1.05; letter-spacing: -0.02em;
+    color: var(--hero-text-hi);
   }
-  .hero h1 em{ font-style: normal; color: var(--accent-text); }
-  .lede{ font-size: 1.125rem; line-height: 1.6; max-width: 34rem; margin: 0 0 2rem; }
+  .hero h1 em{ font-style: normal; color: var(--hero-accent); }
+  .lede{ font-size: 1.125rem; line-height: 1.6; max-width: 34rem; margin: 0 0 2rem; color: var(--hero-text-mid); }
   .hero-actions{ display: flex; gap: 12px; flex-wrap: wrap; }
+  .hero .btn-link.ghost{ border-color: var(--hero-border); color: var(--hero-text-hi); }
+  .hero .btn-link.ghost:hover{ border-color: var(--hero-text-hi); }
+  .hero .btn-link.amber{ background: var(--hero-accent); color: #231a07; }
 
   .demo-panel{
     background: linear-gradient(180deg, var(--lcd-bg), var(--lcd-bg-2));
@@ -151,8 +168,8 @@ const slugOf = (id: string) => id.split('/')[1];
     display: grid; grid-template-columns: repeat(3, 1fr);
     gap: 18px; margin-bottom: 20px;
   }
-  .teaser-card{ display: block; text-decoration: none; transition: border-color .15s; }
-  .teaser-card:hover{ border-color: var(--amber-dim); }
+  .teaser-card{ display: block; text-decoration: none; background: var(--inset); }
+  .teaser-card:hover{ border-color: var(--border-strong); }
   .teaser-card h3{ margin: 0 0 0.5rem; font-size: 1.125rem; line-height: 1.35; }
   .teaser-card p{ margin: 0; font-size: 0.875rem; line-height: 1.6; color: var(--text-mid); }
 
@@ -171,7 +188,7 @@ const slugOf = (id: string) => id.split('/')[1];
   .pro-strip-perks li::before{ content: '✓ '; color: var(--positive); }
 
   @media (max-width: 900px){
-    .hero{ grid-template-columns: 1fr; gap: 32px; padding-top: 44px; }
+    .hero{ grid-template-columns: 1fr; gap: 32px; padding: 3.5rem 24px; }
     .hero-demo{ max-width: 420px; }
     .steps{ grid-template-columns: 1fr; }
     .why-grid{ grid-template-columns: 1fr; }

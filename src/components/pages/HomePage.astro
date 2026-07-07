@@ -1,5 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
+import { Picture } from 'astro:assets';
+import heroImage from '../../assets/hero.jpg';
 import { useT, localeHref, type Locale } from '../../i18n/ui';
 
 interface Props { locale: Locale; }
@@ -15,6 +17,20 @@ const latestTips = pool
 const slugOf = (id: string) => id.split('/')[1];
 ---
 <section class="hero-band" aria-label={t.home.eyebrow}>
+  <div class="hero-media" aria-hidden="true">
+    <Picture
+      src={heroImage}
+      formats={['webp']}
+      fallbackFormat="webp"
+      width={2048}
+      widths={[640, 1024, 1600, 2048]}
+      sizes="100vw"
+      alt=""
+      loading="eager"
+      fetchpriority="high"
+      decoding="async"
+    />
+  </div>
   <div class="hero-scrim" aria-hidden="true"></div>
   <div class="container hero">
   <div class="hero-copy">

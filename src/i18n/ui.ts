@@ -26,6 +26,7 @@ const en = {
     brandHome: 'Pumpa home',
     nav: { home: 'Home', calculator: 'Calculator', tips: 'Tips', about: 'About' },
     langLabel: 'Language',
+    adLabel: 'Advertisement',
     theme: {
       dark: 'Dark', light: 'Light', contrast: 'High contrast',
       change: 'Change theme, current:',
@@ -84,6 +85,7 @@ const en = {
     metaTitle: 'About Pumpa',
     metaDescription: 'Why Pumpa exists: an honest, private fuel cost tracker that runs entirely in your browser.',
     eyebrow: 'About',
+    imgAlt: 'Fuel gauge with the needle resting near empty, glowing amber in a dark dashboard',
     h1: 'A trip computer for the rest of us.',
     lede: 'Most cars tell you how much fuel you’re burning. Very few tell you what it costs — in your money, for your commute, over a month of real driving.',
     p1: 'Pumpa started as a single question: <em>“what does this drive actually cost me?”</em> Answering it shouldn’t need an account, an app store or a data-hungry service. So Pumpa is a plain web tool: open it, type three numbers, get an answer. Log your trips and fill-ups and it becomes a running record of what your driving costs — with reports, real-consumption stats and exports.',
@@ -151,6 +153,7 @@ const it: Dict = {
     brandHome: 'Pumpa — pagina iniziale',
     nav: { home: 'Home', calculator: 'Calcolatore', tips: 'Consigli', about: 'Chi siamo' },
     langLabel: 'Lingua',
+    adLabel: 'Pubblicità',
     theme: {
       dark: 'Scuro', light: 'Chiaro', contrast: 'Contrasto elevato',
       change: 'Cambia tema, attuale:',
@@ -209,6 +212,7 @@ const it: Dict = {
     metaTitle: 'Chi siamo — Pumpa',
     metaDescription: 'Perché esiste Pumpa: un tracker onesto e privato dei costi del carburante che gira interamente nel tuo browser.',
     eyebrow: 'Chi siamo',
+    imgAlt: 'Indicatore del carburante con la lancetta vicino alla riserva, illuminato d’ambra in un cruscotto scuro',
     h1: 'Un computer di bordo per tutti gli altri.',
     lede: 'Quasi tutte le auto ti dicono quanto carburante stai bruciando. Pochissime ti dicono quanto ti costa — nella tua valuta, per il tuo tragitto, su un mese di guida vera.',
     p1: 'Pumpa è nato da una sola domanda: <em>“quanto mi costa davvero questo viaggio?”</em> Rispondere non dovrebbe richiedere un account, un app store o un servizio affamato di dati. Così Pumpa è un semplice strumento web: aprilo, digita tre numeri, ottieni una risposta. Registra viaggi e rifornimenti e diventa un registro continuo di quanto ti costa guidare — con report, statistiche sul consumo reale ed esportazioni.',
@@ -274,6 +278,7 @@ const es: Dict = {
     brandHome: 'Pumpa — página de inicio',
     nav: { home: 'Inicio', calculator: 'Calculadora', tips: 'Consejos', about: 'Acerca de' },
     langLabel: 'Idioma',
+    adLabel: 'Publicidad',
     theme: {
       dark: 'Oscuro', light: 'Claro', contrast: 'Contraste alto',
       change: 'Cambiar tema, actual:',
@@ -332,6 +337,7 @@ const es: Dict = {
     metaTitle: 'Acerca de Pumpa',
     metaDescription: 'Por qué existe Pumpa: un registro honesto y privado de costes de combustible que funciona por completo en tu navegador.',
     eyebrow: 'Acerca de',
+    imgAlt: 'Indicador de combustible con la aguja cerca de la reserva, iluminado en ámbar en un salpicadero oscuro',
     h1: 'Un ordenador de a bordo para el resto de nosotros.',
     lede: 'Casi todos los coches te dicen cuánto combustible estás quemando. Muy pocos te dicen cuánto te cuesta — en tu moneda, para tu trayecto, a lo largo de un mes de conducción real.',
     p1: 'Pumpa nació de una sola pregunta: <em>«¿cuánto me cuesta de verdad este viaje?»</em> Responderla no debería exigir una cuenta, una tienda de apps ni un servicio hambriento de datos. Así que Pumpa es una herramienta web sencilla: ábrela, teclea tres números y obtén una respuesta. Registra tus viajes y repostajes y se convierte en un registro continuo de lo que te cuesta conducir — con informes, estadísticas de consumo real y exportaciones.',

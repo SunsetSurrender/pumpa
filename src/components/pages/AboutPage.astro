@@ -1,4 +1,6 @@
 ---
+import { Picture } from 'astro:assets';
+import gaugeImage from '../../assets/gauge.jpg';
 import { useT, type Locale } from '../../i18n/ui';
 
 interface Props { locale: Locale; }
@@ -11,12 +13,79 @@ const t = useT(locale);
   <p class="lede">{t.about.lede}</p>
 </div>
 
-<div class="prose">
-  <p set:html={t.about.p1} />
-  <h2>{t.about.h2Privacy}</h2>
-  <p>{t.about.pPrivacy}</p>
-  <h2>{t.about.h2Units}</h2>
-  <p>{t.about.pUnits}</p>
+<div class="about-intro">
+  <div class="prose">
+    <p set:html={t.about.p1} />
+  </div>
+  <figure class="about-figure">
+    <Picture
+      src={gaugeImage}
+      formats={['webp']}
+      fallbackFormat="webp"
+      width={800}
+      widths={[480, 800]}
+      sizes="(max-width: 900px) 100vw, 360px"
+      alt={t.about.imgAlt}
+      loading="lazy"
+      decoding="async"
+    />
+  </figure>
+</div>
+
+<div class="about-features">
+  <div class="feature-block">
+    <h2>{t.about.h2Privacy}</h2>
+    <p>{t.about.pPrivacy}</p>
+  </div>
+  <div class="feature-block">
+    <h2>{t.about.h2Units}</h2>
+    <p>{t.about.pUnits}</p>
+  </div>
+</div>
+
+<div class="prose about-contact">
   <h2 id="contact">{t.about.h2Contact}</h2>
   <p set:html={t.about.pContact} />
 </div>
+
+<style>
+  .about-intro{
+    display: grid; grid-template-columns: minmax(0, 1fr) 360px;
+    gap: 3rem; align-items: start;
+    margin-top: 2rem;
+  }
+  .about-figure{ margin: 0; }
+  .about-figure img{
+    width: 100%; height: auto; display: block;
+    border-radius: 14px;
+    border: 1px solid var(--reading-border);
+    box-shadow: 0 16px 40px -24px rgba(42, 37, 33, 0.5);
+  }
+
+  .about-features{
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin: 3rem 0;
+    max-width: 60rem;
+  }
+  .feature-block{
+    background: var(--reading-surface);
+    border: 1px solid var(--reading-border);
+    border-left: 3px solid var(--reading-link);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  .feature-block h2{
+    font-size: 1.25rem; margin: 0 0 0.5rem;
+    color: var(--reading-text);
+  }
+  .feature-block p{ margin: 0; font-size: 0.9375rem; line-height: 1.7; color: var(--reading-text-mid); }
+
+  .about-contact{ margin-bottom: 2rem; }
+
+  @media (max-width: 900px){
+    .about-intro{ grid-template-columns: 1fr; gap: 2rem; }
+    .about-figure{ max-width: 26rem; }
+    .about-features{ grid-template-columns: 1fr; }
+  }
+</style>

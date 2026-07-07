@@ -1,11 +1,11 @@
 ---
 /* The tool. All behaviour lives in /public/app.js (single IIFE); static
    labels come from toolUi, runtime strings are injected via PUMPA_I18N. */
-import { toolUi, toolRuntime, type Locale } from '../../i18n/ui';
+import { toolUi, toolRuntime, useT, type Locale } from '../../i18n/ui';
 
 interface Props { locale?: Locale; }
 const { locale = 'en' } = Astro.props;
-const tt = toolUi[locale];
+const tt = { ...toolUi[locale], adLabel: useT(locale).chrome.adLabel };
 const i18nPayload = JSON.stringify({ locale, strings: toolRuntime[locale] });
 ---
 
@@ -65,7 +65,7 @@ const i18nPayload = JSON.stringify({ locale, strings: toolRuntime[locale] });
 
     <div class="vehicle-seg" id="vehicleToggle" aria-label={tt.vehicleSeg}>
       <button type="button" data-vehicle="fuel" class="active" aria-pressed="true">{tt.petrol}</button>
-      <button type="button" data-vehicle="ev" aria-pressed="false">{tt.electric}</button>
+      <button type="button" data-vehicle="ev" aria-pressed="false"><svg class="leaf" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M13.2 2.2c-4.8.2-8.6 2.3-9.6 6.2-.4 1.5-.2 3 .4 4.3l.9-.4c1-3.4 3.4-5.9 6.3-7.2-2.6 1.9-4.7 4.4-5.5 7.6.8.4 1.7.6 2.7.6 3.3 0 5.3-2.9 5.3-7.3 0-1.2-.2-2.5-.5-3.8z" fill="currentColor"/></svg>{tt.electric}</button>
     </div>
 
     <div class="card" id="calcFuelCard">
@@ -211,7 +211,7 @@ const i18nPayload = JSON.stringify({ locale, strings: toolRuntime[locale] });
       <div class="card-title">{tt.estimateTitle}</div>
       <div class="vehicle-seg" id="planVehicleToggle" aria-label={tt.planVehicleSeg}>
         <button type="button" data-vehicle="fuel" class="active" aria-pressed="true">{tt.petrol}</button>
-        <button type="button" data-vehicle="ev" aria-pressed="false">{tt.electric}</button>
+        <button type="button" data-vehicle="ev" aria-pressed="false"><svg class="leaf" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M13.2 2.2c-4.8.2-8.6 2.3-9.6 6.2-.4 1.5-.2 3 .4 4.3l.9-.4c1-3.4 3.4-5.9 6.3-7.2-2.6 1.9-4.7 4.4-5.5 7.6.8.4 1.7.6 2.7.6 3.3 0 5.3-2.9 5.3-7.3 0-1.2-.2-2.5-.5-3.8z" fill="currentColor"/></svg>{tt.electric}</button>
       </div>
       <div class="readout">
         <div class="readout-label">{tt.tripTotal}</div>
@@ -373,6 +373,8 @@ const i18nPayload = JSON.stringify({ locale, strings: toolRuntime[locale] });
   </section>
 
   </main>
+
+  <div class="ad-slot"><span>{tt.adLabel}</span></div>
 
 </div>
 

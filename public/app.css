@@ -118,6 +118,14 @@ input[type=number]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0
   transition: background .15s, color .15s;
 }
 .vehicle-seg button:hover:not(.active){ color: var(--text-bright); }
+.vehicle-seg button{ display: flex; align-items: center; justify-content: center; gap: 6px; }
+.vehicle-seg .leaf{ opacity: 0.7; flex: 0 0 auto; }
+/* Electric mode signals in teal-green — a deliberate mode shift, not a recolor:
+   active chip flips to the validated positive surface pair and the EV card
+   carries a matching top edge. Petrol stays amber. */
+.vehicle-seg button.active[data-vehicle="ev"]{ background: var(--toast-bg); color: var(--toast-text); }
+.vehicle-seg button.active[data-vehicle="ev"] .leaf{ opacity: 1; }
+#calcEvCard{ border-top: 3px solid var(--positive); }
 .vehicle-seg button.active{ background: var(--amber); color: var(--accent-ink); font-weight: 700; }
 
 /* ---------- Tabs ---------- */

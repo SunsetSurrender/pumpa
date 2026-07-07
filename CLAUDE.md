@@ -129,6 +129,15 @@ Clean, warm, human — NOT terminal cosplay. Full specs in `pumpa-design-brief.m
   high contrast (AAA, glows disabled). All color comes from tokens in
   `public/theme.css` — never hardcode a hex in components. Every new text/background
   pair must be contrast-checked in all three themes before shipping.
+- **Depth comes from bands**, not new colors: home sections are full-bleed bands
+  (`--band-*` tokens — warm charcoal even in the light theme; footer uses them too).
+  The hero is a scrimmed photo with FIXED `--hero-*` light-on-dark tokens in every
+  theme; contrast mode drops the image. Images go through astro:assets (WebP only,
+  responsive widths) from `src/assets/` — never ship raw multi-MB files from public/.
+- **EV mode cue:** the active Electric segment + EV card edge use the teal positive
+  pair; petrol stays amber. Visual only — no environmental claims in copy.
+- **Ad slots:** `.ad-slot` placeholders (below calculator, tips index) are reserved
+  for AdSense post-launch; keep them empty and unobtrusive until then.
 - **Reading surfaces:** Tips/About/Privacy/Cookies render long-form content on warm
   paper (`--reading-*` tokens) even in dark mode — deliberate "dark chrome, light
   reading" split.
@@ -144,6 +153,9 @@ Clean, warm, human — NOT terminal cosplay. Full specs in `pumpa-design-brief.m
 - **Always test through a server** (`npm run dev`, or `npm run build && npm run preview`) —
   there is no double-clickable HTML entry point anymore, and localStorage behaves oddly
   over `file://` anyway.
+- **Stale content-collection cache:** after moving/renaming files under `src/content/`,
+  a running dev server can keep serving the old collection state (looks like "the blog
+  broke"). Restart the dev server (or delete `.astro/`) — builds are unaffected.
 - **Desktop layout:** the site pages use full width; the tool widens to 960px at
   ≥1000px via CSS-only rules at the bottom of `public/app.css` (Calculate inputs in one
   row, Fuel Log form/reports side by side). The tool's internal layout can still be

@@ -134,11 +134,22 @@ const slugOf = (id: string) => id.split('/')[1];
   .hero .btn-link.ghost:hover{ border-color: var(--hero-text-hi); }
   .hero .btn-link.amber{ background: var(--hero-accent); color: #231a07; }
 
+  /* HUD over the road: translucent panel, the image reads through faintly.
+     Alpha 0.85/0.90 validated vs the image's brightest patch (composite
+     #38332a): amber 6.97, meta 5.48, delta (lightened below) 6.25. */
   .demo-panel{
-    background: linear-gradient(180deg, var(--lcd-bg), var(--lcd-bg-2));
+    background: linear-gradient(180deg, rgba(32, 26, 16, 0.85), rgba(22, 19, 12, 0.9));
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
     border: 1px solid var(--lcd-edge); border-radius: 14px;
     padding: 2rem 1.5rem;
     box-shadow: var(--lcd-halo);
+  }
+  /* accessibility mode: fully opaque, no translucency games */
+  :global(html[data-theme="contrast"]) .demo-panel{
+    background: var(--lcd-bg);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
   .demo-label{
     font-family: 'Share Tech Mono', monospace;
@@ -158,7 +169,7 @@ const slugOf = (id: string) => id.split('/')[1];
     font-size: 0.8125rem; color: var(--lcd-meta); margin-bottom: 1rem;
   }
   .demo-sub{ font-size: 0.875rem; color: var(--lcd-meta); }
-  .demo-delta{ font-family: 'Share Tech Mono', monospace; color: var(--negative); }
+  .demo-delta{ font-family: 'Share Tech Mono', monospace; color: #ff9d90; /* lifted coral: 6.25:1 on worst-case translucent composite */ }
 
   .steps{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
   .step-num{

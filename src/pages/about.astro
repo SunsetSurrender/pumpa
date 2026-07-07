@@ -4,6 +4,6 @@ import AboutPage from '../components/pages/AboutPage.astro';
 import { useT } from '../i18n/ui';
 const t = useT('en');
 ---
-<SiteLayout title={t.about.metaTitle} description={t.about.metaDescription} locale="en" surface="reading">
+<SiteLayout title={t.about.metaTitle} description={t.about.metaDescription} locale="en" surface="reading" container={false}>
   <AboutPage locale="en" />
 </SiteLayout>

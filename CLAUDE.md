@@ -54,6 +54,9 @@ the tool living at `/calculator`.
   - `pumpaTripPlan` — single Trip Plan draft (legs, tolls/extras, both vehicles'
     values, selected vehicle), stamped with system+currency and restored only when
     they match (pumpaManualPrice precedent). Not a log — one draft, overwritten.
+  - `pumpaLangSuggest` — which language suggestion the user dismissed (banner only
+    OFFERS the alternate-locale link when browser language differs from the page;
+    the URL is the source of truth — NEVER auto-redirect by language/IP).
 - **Unit system:** Metric / US / UK. Switching live-CONVERTS current values, it does
   not just relabel. Conversions pivot through km / L-per-100km / price-per-liter.
   MPG↔L/100km is INVERSE, not linear — keep that intact.
@@ -76,6 +79,9 @@ the tool living at `/calculator`.
 - **Per-locale routing:** EN at the unprefixed URLs (unchanged, already indexed);
   IT/ES under `/it`, `/es`. Astro i18n config in astro.config.mjs. Every page sets
   `<html lang>`, per-locale canonical and hreflang alternates (+ x-default -> EN).
+  The language switcher lives in the FOOTER (crawlable links); a dismissible
+  fixed-position banner suggests the browser-language version — suggestion only,
+  never a redirect.
 - **Dictionaries:** `src/i18n/ui.ts` — EN is the source; IT/ES are typed against it
   (missing key = build error). Page content lives in shared components under
   `src/components/pages/` with thin per-locale wrappers. Tips articles live in

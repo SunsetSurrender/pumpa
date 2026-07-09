@@ -43,6 +43,18 @@ const defaultAlternates = Object.fromEntries(
 const hreflangs = alternates ?? defaultAlternates;
 const switcher = { ...defaultAlternates, ...(alternates ?? {}), ...(switchTargets ?? {}) };
 
+/* Suggestion-banner payload: each TARGET locale's own strings + the same
+   alternate URL the footer links to. The URL stays the source of truth —
+   this powers a dismissible suggestion, never a redirect. */
+const bannerTargets = Object.fromEntries(
+  locales
+    .filter((l) => l !== locale)
+    .map((l) => {
+      const lt = useT(l).chrome.langSuggest;
+      return [l, { url: switcher[l], text: lt.text, cta: lt.cta, dismiss: lt.dismiss }];
+    })
+);
+
 const navItems = [
   { href: localeHref(locale, '/'), label: t.chrome.nav.home, base: '/' },
   { href: localeHref(locale, '/calculator/'), label: t.chrome.nav.calculator, base: '/calculator/' },
@@ -109,21 +121,6 @@ const isCurrent = (base: string) =>
         </ul>
       </nav>
       <div class="nav-tools">
-        <nav aria-label={t.chrome.langLabel}>
-          <ul class="lang-switch">
-            {locales.map((l) => (
-              <li>
-                <a
-                  href={switcher[l]}
-                  hreflang={l}
-                  lang={l}
-                  aria-current={l === locale ? 'true' : undefined}
-                  aria-label={localeNames[l]}
-                >{l.toUpperCase()}</a>
-              </li>
-            ))}
-          </ul>
-        </nav>
         <button
           type="button" id="themeToggle" class="theme-toggle"
           data-name-dark={t.chrome.theme.dark}
@@ -187,6 +184,21 @@ const isCurrent = (base: string) =>
           <li><a href={localeHref(locale, '/cookies/')}>{t.chrome.footer.cookies}</a></li>
         </ul>
       </div>
+      <nav class="footer-col" aria-label={t.chrome.langLabel}>
+        <h2>{t.chrome.langLabel}</h2>
+        <ul class="footer-lang">
+          {locales.map((l) => (
+            <li>
+              <a
+                href={switcher[l]}
+                hreflang={l}
+                lang={l}
+                aria-current={l === locale ? 'true' : undefined}
+              >{localeNames[l]}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
     </div>
     <div class="footer-bottom">
       <div class="container">
@@ -194,5 +206,41 @@ const isCurrent = (base: string) =>
       </div>
     </div>
   </footer>
+
+  <!-- Language suggestion banner: URL is the source of truth; this only
+       OFFERS a link when the browser language differs from the page.
+       Never redirects. Fixed position = zero layout shift. -->
+  <div class="lang-banner" id="langBanner" role="region" aria-label={t.chrome.langLabel} hidden>
+    <span id="langBannerText"></span>
+    <a id="langBannerLink" href="#"></a>
+    <button type="button" id="langBannerClose" class="lang-banner-close" aria-label={t.chrome.langSuggest.dismiss}>
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <script is:inline set:html={`window.__PUMPA_LANG = ${JSON.stringify({ current: locale, targets: bannerTargets })};`}></script>
+  <script is:inline>
+    (() => {
+      const cfg = window.__PUMPA_LANG;
+      const banner = document.getElementById('langBanner');
+      if (!cfg || !banner) return;
+      let dismissed = null;
+      try { dismissed = localStorage.getItem('pumpaLangSuggest'); } catch {}
+      const nav = (navigator.language || '').slice(0, 2).toLowerCase();
+      if (nav === cfg.current || !cfg.targets[nav] || dismissed === nav) return;
+      const target = cfg.targets[nav];
+      banner.setAttribute('lang', nav);
+      document.getElementById('langBannerText').textContent = target.text;
+      const link = document.getElementById('langBannerLink');
+      link.href = target.url;
+      link.hreflang = nav;
+      link.textContent = target.cta;
+      const close = document.getElementById('langBannerClose');
+      close.setAttribute('aria-label', target.dismiss);
+      const remember = () => { try { localStorage.setItem('pumpaLangSuggest', nav); } catch {} };
+      close.addEventListener('click', () => { banner.hidden = true; remember(); });
+      link.addEventListener('click', remember);
+      banner.hidden = false;
+    })();
+  </script>
 </body>
 </html>

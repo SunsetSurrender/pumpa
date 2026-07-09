@@ -27,6 +27,11 @@ const en = {
     nav: { home: 'Home', calculator: 'Calculator', tips: 'Tips', about: 'About' },
     langLabel: 'Language',
     adLabel: 'Advertisement',
+    langSuggest: {
+      text: 'Pumpa is available in English.',
+      cta: 'Switch to English',
+      dismiss: 'Dismiss',
+    },
     theme: {
       dark: 'Dark', light: 'Light', contrast: 'High contrast',
       change: 'Change theme, current:',
@@ -159,6 +164,11 @@ const it: Dict = {
     nav: { home: 'Home', calculator: 'Calcolatore', tips: 'Consigli', about: 'Chi siamo' },
     langLabel: 'Lingua',
     adLabel: 'Pubblicità',
+    langSuggest: {
+      text: 'Pumpa è disponibile in italiano.',
+      cta: 'Passa all’italiano',
+      dismiss: 'Chiudi',
+    },
     theme: {
       dark: 'Scuro', light: 'Chiaro', contrast: 'Contrasto elevato',
       change: 'Cambia tema, attuale:',
@@ -289,6 +299,11 @@ const es: Dict = {
     nav: { home: 'Inicio', calculator: 'Calculadora', tips: 'Consejos', about: 'Acerca de' },
     langLabel: 'Idioma',
     adLabel: 'Publicidad',
+    langSuggest: {
+      text: 'Pumpa está disponible en español.',
+      cta: 'Cambiar a español',
+      dismiss: 'Cerrar',
+    },
     theme: {
       dark: 'Oscuro', light: 'Claro', contrast: 'Contraste alto',
       change: 'Cambiar tema, actual:',

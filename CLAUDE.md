@@ -148,6 +148,13 @@ Clean, warm, human — NOT terminal cosplay. Full specs in `pumpa-design-brief.m
   paper (`--reading-*` tokens) even in dark mode — deliberate "dark chrome, light
   reading" split.
 - **Logo:** inline SVG gauge mark (amber needle) + "Pumpa" wordmark in Bricolage.
+- **Motion reveals, it does not perform:** scroll-reveal (data-reveal + one
+  IntersectionObserver, once per element), 1px hover lifts, and the LCD count-up
+  (setLcdValue in app.js — display-only wrapper, never touches calculation; the
+  test harness exercises the instant path since it has no rAF). All motion is
+  transform/opacity only and gated on html.motion-ok, which is absent when JS
+  fails or prefers-reduced-motion is set — content must never depend on JS to
+  be visible.
 - Lighthouse accessibility is at 100 across pages — keep it there; run Lighthouse
   after presentation changes.
 

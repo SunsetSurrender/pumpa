@@ -240,7 +240,10 @@ const isCurrent = (base: string) =>
           io.unobserve(entry.target);
           i++;
         }
-      }, { rootMargin: '0px 0px -8% 0px' });
+      /* Huge top margin: anything the user has already scrolled PAST counts
+         as intersecting, so fast scrolls/anchor jumps can't leave content
+         hidden or make it reveal on the way back up. */
+      }, { rootMargin: '100000px 0px -8% 0px' });
       els.forEach((el) => io.observe(el));
     })();
   </script>

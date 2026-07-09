@@ -256,6 +256,7 @@ input[type=number]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0
   padding: 12px; cursor:pointer;
   transition: filter .15s, transform .1s, border-color .15s, color .15s;
 }
+.btn:hover{ transform: translateY(-1px); }
 .btn:active{ transform: translateY(1px); }
 .btn-amber{ background: var(--amber); color: var(--accent-ink); margin-top: 16px; }
 .btn-amber:hover{ filter: brightness(1.08); }
@@ -414,9 +415,9 @@ input[type=number]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0
   flex: 0 0 auto; border:none; border-radius: 6px;
   font-size: 0.875rem; font-weight: 600; padding: 11px 16px; cursor:pointer;
   background: var(--panel); border: 1px solid var(--border-strong); color: var(--accent-text);
-  transition: background .15s, color .15s;
+  transition: background .15s, color .15s, transform .15s;
 }
-.export-btn:hover{ background: var(--amber); color: var(--accent-ink); }
+.export-btn:hover{ background: var(--amber); color: var(--accent-ink); transform: translateY(-1px); }
 .export-btn.pdf{ background: var(--amber); color: var(--accent-ink); border-color: var(--amber); }
 .export-btn.pdf:hover{ filter: brightness(1.08); }
 

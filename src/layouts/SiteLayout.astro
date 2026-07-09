@@ -90,6 +90,11 @@ const isCurrent = (base: string) =>
           : matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
       }
       document.documentElement.dataset.theme = theme;
+      /* motion gate: reveal/hidden states only exist when JS runs AND the
+         user has not requested reduced motion (progressive enhancement) */
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches){
+        document.documentElement.classList.add('motion-ok');
+      }
     })();
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -217,6 +222,28 @@ const isCurrent = (base: string) =>
       <span aria-hidden="true">×</span>
     </button>
   </div>
+  <script is:inline>
+    /* Scroll reveal: once per element, never re-triggers. Unsupported
+       browsers get everything visible (gate removed). */
+    (() => {
+      const root = document.documentElement;
+      if (!root.classList.contains('motion-ok')) return;
+      if (!('IntersectionObserver' in window)){ root.classList.remove('motion-ok'); return; }
+      const els = document.querySelectorAll('[data-reveal]');
+      if (!els.length) return;
+      const io = new IntersectionObserver((entries) => {
+        let i = 0;
+        for (const entry of entries){
+          if (!entry.isIntersecting) continue;
+          entry.target.style.animationDelay = Math.min(i * 60, 180) + 'ms';
+          entry.target.classList.add('revealed');
+          io.unobserve(entry.target);
+          i++;
+        }
+      }, { rootMargin: '0px 0px -8% 0px' });
+      els.forEach((el) => io.observe(el));
+    })();
+  </script>
   <script is:inline set:html={`window.__PUMPA_LANG = ${JSON.stringify({ current: locale, targets: bannerTargets })};`}></script>
   <script is:inline>
     (() => {

@@ -55,10 +55,10 @@ const slugOf = (id: string) => id.split('/')[1];
 
 <section class="band" aria-labelledby="how-title">
   <div class="container">
-  <h2 class="section-title" id="how-title">{t.home.how.title}</h2>
+  <h2 class="section-title" id="how-title" data-reveal>{t.home.how.title}</h2>
   <div class="steps">
     {t.home.how.steps.map((step, i) => (
-      <div class="site-card step">
+      <div class="site-card step" data-reveal>
         <div class="step-num">{String(i + 1).padStart(2, '0')}</div>
         <h3>{step.title}</h3>
         <p>{step.body}</p>
@@ -70,10 +70,10 @@ const slugOf = (id: string) => id.split('/')[1];
 
 <section class="band band-ink" aria-labelledby="why-title">
   <div class="container">
-  <h2 class="section-title" id="why-title">{t.home.why.title}</h2>
+  <h2 class="section-title" id="why-title" data-reveal>{t.home.why.title}</h2>
   <div class="why-grid">
     {t.home.why.items.map((item) => (
-      <div class="why-item">
+      <div class="why-item" data-reveal>
         <h3>{item.title}</h3>
         <p>{item.body}</p>
       </div>
@@ -84,11 +84,11 @@ const slugOf = (id: string) => id.split('/')[1];
 
 <section class="band band-tint" aria-labelledby="tips-title">
   <div class="container">
-  <h2 class="section-title" id="tips-title">{t.home.teaser.title}</h2>
-  <p class="teaser-lead">{t.home.teaser.lead}</p>
+  <h2 class="section-title" id="tips-title" data-reveal>{t.home.teaser.title}</h2>
+  <p class="teaser-lead" data-reveal>{t.home.teaser.lead}</p>
   <div class="teaser-grid">
     {latestTips.map((post) => (
-      <a class="site-card teaser-card" href={localeHref(locale, `/tips/${slugOf(post.id)}/`)}>
+      <a class="site-card teaser-card" data-reveal href={localeHref(locale, `/tips/${slugOf(post.id)}/`)}>
         <h3>{post.data.title}</h3>
         <p>{post.data.description}</p>
       </a>
@@ -100,8 +100,8 @@ const slugOf = (id: string) => id.split('/')[1];
 
 <section class="band" aria-labelledby="pro-title">
 <div class="container">
-<h2 class="section-title" id="pro-title">{t.home.pro.title}</h2>
-<div class="pro-strip site-card">
+<h2 class="section-title" id="pro-title" data-reveal>{t.home.pro.title}</h2>
+<div class="pro-strip site-card" data-reveal>
   <div class="pro-strip-copy">
     <h3>{t.home.pro.h}</h3>
     <p>{t.home.pro.body}</p>

@@ -40,7 +40,7 @@ const t = useT(locale);
 </section>
 
 <div class="container about-body">
-  <div class="about-intro">
+  <div class="about-intro" data-reveal>
     <div class="prose">
       <p set:html={t.about.p1} />
     </div>
@@ -60,17 +60,17 @@ const t = useT(locale);
   </div>
 
   <div class="about-features">
-    <div class="feature-block">
+    <div class="feature-block" data-reveal>
       <h2>{t.about.h2Privacy}</h2>
       <p>{t.about.pPrivacy}</p>
     </div>
-    <div class="feature-block">
+    <div class="feature-block" data-reveal>
       <h2>{t.about.h2Units}</h2>
       <p>{t.about.pUnits}</p>
     </div>
   </div>
 
-  <div class="prose about-contact">
+  <div class="prose about-contact" data-reveal>
     <h2 id="contact">{t.about.h2Contact}</h2>
     <p set:html={t.about.pContact} />
   </div>

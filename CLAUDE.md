@@ -155,6 +155,10 @@ Clean, warm, human — NOT terminal cosplay. Full specs in `pumpa-design-brief.m
   transform/opacity only and gated on html.motion-ok, which is absent when JS
   fails or prefers-reduced-motion is set — content must never depend on JS to
   be visible.
+- **Gauge loader** (`src/components/GaugeLoader.astro` + `.gauge-loader` in site.css):
+  the standard loading indicator for REAL latency only (PDF prep now; map/price
+  lookups later). NEVER wrap instant client-side math in it — no artificial delay.
+  Needle is static under prefers-reduced-motion.
 - Lighthouse accessibility is at 100 across pages — keep it there; run Lighthouse
   after presentation changes.
 

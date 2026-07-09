@@ -1,6 +1,7 @@
 ---
 /* The tool. All behaviour lives in /public/app.js (single IIFE); static
    labels come from toolUi, runtime strings are injected via PUMPA_I18N. */
+import GaugeLoader from '../GaugeLoader.astro';
 import { toolUi, toolRuntime, useT, type Locale } from '../../i18n/ui';
 
 interface Props { locale?: Locale; }
@@ -363,6 +364,7 @@ const i18nPayload = JSON.stringify({ locale, strings: toolRuntime[locale] });
           <h3>{tt.fullReport}</h3>
           <p>{tt.fullReportSub}</p>
         </div>
+        <GaugeLoader id="pdfLoader" label={tt.preparingPdf} />
         <button type="button" class="export-btn pdf" id="exportPdf">PDF</button>
       </div>
 

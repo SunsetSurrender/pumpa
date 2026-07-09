@@ -315,6 +315,22 @@ html.motion-ok [data-reveal].revealed{ animation: reveal-rise 0.4s ease-out back
   html.motion-ok [data-reveal]{ opacity: 1 !important; transform: none !important; animation: none !important; }
 }
 
+/* ---------- Gauge loader (real latency only — never instant math) ---------- */
+.gauge-loader{ display: inline-flex; align-items: center; color: inherit; }
+.gauge-loader[hidden]{ display: none; }
+.gauge-loader svg{ display: block; }
+.gauge-loader .gauge-needle{
+  transform-origin: 16px 21px;
+  animation: gauge-sweep 1.1s ease-in-out infinite alternate;
+}
+@keyframes gauge-sweep{
+  from{ transform: rotate(-64deg); }  /* full */
+  to{ transform: rotate(64deg); }     /* empty */
+}
+@media (prefers-reduced-motion: reduce){
+  .gauge-loader .gauge-needle{ animation: none; }
+}
+
 /* ---------- Language suggestion banner (fixed: zero layout shift) ---------- */
 .lang-banner{
   position: fixed; left: 50%; transform: translateX(-50%);

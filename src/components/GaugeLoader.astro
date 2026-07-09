@@ -1,0 +1,23 @@
+---
+/* Fuel-gauge loading indicator — the standard Pumpa loader for REAL
+   latency only (PDF preparation now; map/price lookups later). Never
+   wrap instant client-side math in it: calculations must stay instant.
+   The needle sweep is transform-only and goes static under
+   prefers-reduced-motion (plus the global kill-switch). Starts hidden;
+   show by removing [hidden]. */
+interface Props {
+  id?: string;
+  label: string;
+  hidden?: boolean;
+}
+const { id, label, hidden = true } = Astro.props;
+---
+<span class="gauge-loader" id={id} role="img" aria-label={label} hidden={hidden}>
+  <svg viewBox="0 0 32 32" width="20" height="20" aria-hidden="true">
+    <path d="M6 22 A 11 11 0 1 1 26 22" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity="0.35"/>
+    <g class="gauge-needle">
+      <line x1="16" y1="21" x2="16" y2="11.5" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="16" cy="21" r="2.6" fill="currentColor"/>
+    </g>
+  </svg>
+</span>

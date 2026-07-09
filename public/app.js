@@ -1131,6 +1131,15 @@ $('exportPdf').addEventListener('click', () => {
     openProModal(t('proMsgPdf', 'PDF reports are a Pumpa Pro feature.'));
     return;
   }
+  /* presentation only: the gauge sweeps during the real ~400ms window
+     between opening the report window and the print dialog firing */
+  const pdfLoader = $('pdfLoader');
+  const pdfBtn = $('exportPdf');
+  if (pdfLoader){
+    pdfLoader.hidden = false;
+    pdfBtn.setAttribute('aria-busy', 'true');
+    setTimeout(() => { pdfLoader.hidden = true; pdfBtn.removeAttribute('aria-busy'); }, 500);
+  }
   exportPdf();
 });
 

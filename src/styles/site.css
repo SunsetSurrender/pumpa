@@ -41,18 +41,25 @@ a:focus-visible, button:focus-visible{ outline: 2px solid var(--focus); outline-
 }
 .skip-link:focus{ left: 0; }
 
+.sr-only{
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
 /* Top-right control: just the theme toggle now (language lives in the footer) */
 .nav-tools{
   display: flex; align-items: stretch; gap: 0.5rem;
   margin-left: auto; flex: 0 0 auto;
 }
 
+/* Icon-only utility button: state lives in the aria-label + sr-only text */
 .theme-toggle{
-  display: inline-flex; align-items: center; gap: 8px;
-  min-height: 44px; padding: 8px 14px;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; min-height: 44px; padding: 0;
   background: var(--surface); border: 1px solid var(--border-strong);
   border-radius: 10px; cursor: pointer;
-  font-family: inherit; font-size: 0.8125rem; font-weight: 600; color: var(--text-mid);
+  font-family: inherit; font-size: 1.125rem; color: var(--text-mid);
   transition: color .15s, border-color .15s;
 }
 .theme-toggle:hover{ color: var(--text-hi); border-color: var(--text-hi); }
@@ -114,15 +121,22 @@ a:focus-visible, button:focus-visible{ outline: 2px solid var(--focus); outline-
 
 /* ---------- Footer ---------- */
 .site-footer{
+  position: relative;
   border-top: 1px solid var(--band-border);
   background: var(--band-bg);
   color: var(--band-text-mid);
   margin-top: 0;
 }
+/* deliberate top treatment: a quiet amber-to-teal hairline */
+.site-footer::before{
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 45%, transparent 80%);
+  opacity: 0.65;
+}
 .site-footer .container{
-  display: grid; grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr));
-  gap: 3rem; width: 100%;
-  padding-top: 4rem; padding-bottom: 3rem;
+  display: grid; grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr));
+  gap: 2.5rem; width: 100%;
+  padding-top: 2.75rem; padding-bottom: 2rem;
 }
 .footer-lang a[aria-current="true"]{
   color: var(--band-text-hi); font-weight: 600;
@@ -131,11 +145,13 @@ a:focus-visible, button:focus-visible{ outline: 2px solid var(--focus); outline-
   content: ' ✓'; color: var(--band-link);
 }
 .footer-brand{
+  display: flex; align-items: center; gap: 10px;
   font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: 1.5rem; font-weight: 700; color: var(--band-text-hi);
+  font-size: 1.25rem; font-weight: 700; color: var(--band-text-hi);
   margin: 0 0 0.75rem;
 }
-.footer-about p{ max-width: 26rem; font-size: 0.9375rem; line-height: 1.7; margin: 0; }
+.footer-gauge{ color: var(--band-text-hi); flex: 0 0 auto; }
+.footer-about p{ max-width: 24rem; font-size: 0.875rem; line-height: 1.65; margin: 0; }
 .footer-col h2{
   margin: 0 0 1rem;
   font-family: inherit;
@@ -144,10 +160,10 @@ a:focus-visible, button:focus-visible{ outline: 2px solid var(--focus); outline-
 }
 .footer-col p{ margin: 0; font-size: 0.875rem; line-height: 1.7; }
 .footer-col ul{ list-style: none; margin: 0; padding: 0; }
-.footer-col li{ margin-bottom: 0.5rem; }
+.footer-col li{ margin-bottom: 0.25rem; }
 .footer-col a{
   color: var(--band-text-mid); text-decoration: none; font-size: 0.9375rem;
-  display: inline-block; padding: 6px 0;
+  display: inline-block; padding: 4px 0;
 }
 .footer-col a:hover{ color: var(--band-link); text-decoration: underline; }
 .footer-bottom{
@@ -155,7 +171,7 @@ a:focus-visible, button:focus-visible{ outline: 2px solid var(--focus); outline-
 }
 .footer-bottom .container{
   display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
-  padding-top: 1.25rem; padding-bottom: 1.25rem;
+  padding-top: 1rem; padding-bottom: 1rem;
   font-size: 0.875rem;
   color: var(--band-text-mid);
 }

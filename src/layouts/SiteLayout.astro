@@ -134,7 +134,7 @@ const isCurrent = (base: string) =>
           data-change-label={t.chrome.theme.change}
         >
           <span aria-hidden="true">◐</span>
-          <span id="themeToggleLabel">…</span>
+          <span id="themeToggleLabel" class="sr-only">…</span>
         </button>
       </div>
     </div>
@@ -171,7 +171,14 @@ const isCurrent = (base: string) =>
   <footer class="site-footer">
     <div class="container">
       <div class="footer-col footer-about">
-        <p class="footer-brand">Pumpa</p>
+        <p class="footer-brand">
+          <svg class="footer-gauge" viewBox="0 0 32 32" width="26" height="26" aria-hidden="true">
+            <path d="M6 22 A 11 11 0 1 1 26 22" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <line x1="16" y1="21" x2="22.5" y2="11.5" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="16" cy="21" r="2.6" fill="var(--accent)"/>
+          </svg>
+          <span>Pumpa</span>
+        </p>
         <p>{t.chrome.footer.blurb}</p>
       </div>
       <div class="footer-col">

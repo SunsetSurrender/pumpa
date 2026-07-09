@@ -54,6 +54,47 @@ function fmt(value, decimals){
   catch { return v.toFixed(decimals); }
 }
 
+/* ---- LCD count-up (display layer ONLY — never touches calculation) ----
+   Rolls the readout toward each new value like a trip computer. The value
+   is computed instantly by calc()/evCalc()/planCalc(); this only paces the
+   DISPLAYED text, always landing exactly on the final formatted value.
+   Skipped (instant set) when: reduced motion is requested; rAF/matchMedia
+   are unavailable (the test harness); or it is the element's first render.
+   Previous values are tracked as raw numbers in dataset — formatted text
+   is never parsed back (comma-decimal safety). Tabular figures in CSS keep
+   the width stable while rolling. */
+function setLcdValue(el, prefix, value){
+  const target = Number(value) || 0;
+  const hadPrev = el.dataset.lcdValue !== undefined;
+  const prev = hadPrev ? Number(el.dataset.lcdValue) : 0;
+  el.dataset.lcdValue = String(target);
+
+  const animatable = typeof requestAnimationFrame === 'function'
+    && typeof matchMedia === 'function'
+    && !matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!animatable || !hadPrev || prev === target){
+    if (el._lcdRaf){ cancelAnimationFrame(el._lcdRaf); el._lcdRaf = null; }
+    el._lcdShown = target;
+    el.textContent = prefix + fmt(target, 2);
+    return;
+  }
+
+  if (el._lcdRaf) cancelAnimationFrame(el._lcdRaf);
+  const from = el._lcdShown !== undefined ? el._lcdShown : prev;  /* re-target mid-roll */
+  const start = performance.now();
+  const duration = 550;
+  const step = (now) => {
+    const p = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - p, 3);
+    const current = from + (target - from) * eased;
+    el._lcdShown = p >= 1 ? target : current;
+    el.textContent = prefix + fmt(el._lcdShown, 2);
+    el._lcdRaf = p < 1 ? requestAnimationFrame(step) : null;
+  };
+  el._lcdRaf = requestAnimationFrame(step);
+}
+
 /* Free-tier caps apply to what is DISPLAYED only — stored data is never truncated. */
 const FREE_TRIP_LIMIT = 10;
 const FREE_REFUEL_LIMIT = 3;
@@ -358,7 +399,7 @@ function calc(){
   const delta = trip.cost - base.cost;
 
   fuelUsedValueEl.textContent = fmt(trip.fuelUsedNative, 2);
-  tripCostEl.textContent = cur + fmt(trip.cost, 2);
+  setLcdValue(tripCostEl, cur, trip.cost);
   baselineCostEl.textContent = cur + fmt(base.cost, 2);
 
   deltaRowEl.classList.remove('up','down');
@@ -401,7 +442,7 @@ function evCalc(){
   const delta = trip.cost - base.cost;
 
   energyUsedValueEl.textContent = fmt(trip.energyUsed, 2);
-  evTripCostEl.textContent = cur + fmt(trip.cost, 2);
+  setLcdValue(evTripCostEl, cur, trip.cost);
   evBaselineCostEl.textContent = cur + fmt(base.cost, 2);
 
   evDeltaRowEl.classList.remove('up','down');
@@ -499,7 +540,7 @@ function planCalc(){
   planEnergyCostEl.textContent = cur + fmt(chosen, 2);
   planTollsCostEl.textContent = cur + fmt(tolls, 2);
   planExtrasCostEl.textContent = cur + fmt(extras, 2);
-  planTotalEl.textContent = cur + fmt(chosenTotal, 2);
+  setLcdValue(planTotalEl, cur, chosenTotal);
 
   /* Bidirectional, neutral comparison against the vehicle NOT selected,
      using the values the user entered (tolls/extras apply to both). */

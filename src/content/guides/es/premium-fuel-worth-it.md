@@ -8,9 +8,8 @@ tags: ["precios", "mitos"]
 
 En casi cualquier gasolinera, la manguera prémium cuesta 0,15–0,20 € más por
 litro que la normal. En un depósito de 45 litros son **7–9 € extra en cada
-llenado**. La pregunta es simple: ¿los recuperas? Para la mayoría de los
-conductores la respuesta es no — y el motivo es que la gasolina prémium no
-hace lo que casi todo el mundo cree que hace.
+llenado**. ¿Los recuperas? Para la mayoría de los conductores, no — porque la
+gasolina prémium no hace lo que casi todo el mundo cree que hace.
 
 ## Qué es en realidad el octanaje
 
@@ -78,6 +77,6 @@ precio de unos cuantos depósitos. Haz tres o cuatro llenados completos con la
 normal, registrando cada repostaje con el cuentakilómetros. Cambia a la
 prémium otros tres o cuatro. El registro de Pumpa calcula tu consumo real de
 ambos periodos a partir del cuentakilómetros — no la estimación del
-salpicadero, no la opinión del foro: tu coche en tus carreteras. Si la prémium
-no mueve tu número más que la diferencia de precio, ya tienes la respuesta,
+salpicadero, no la opinión del foro: tu coche, tus carreteras. Si la prémium
+no mueve tu número más que la diferencia de precio, ahí tienes la respuesta,
 impresa en tus propios datos.

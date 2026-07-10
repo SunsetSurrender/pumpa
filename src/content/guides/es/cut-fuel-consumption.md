@@ -1,16 +1,15 @@
 ---
-title: "Cómo reducir de verdad tu consumo (clasificado con honestidad)"
-description: "Casi todas las listas de ahorro de combustible tienen treinta consejos de los que importan tres. Esto es lo que de verdad mueve la aguja, lo que apenas la mueve y los mitos — por orden."
+title: "Cómo reducir de verdad tu consumo, por orden de impacto"
+description: "Lo que de verdad mueve la aguja, lo que apenas la mueve y los mitos — por orden, con porcentajes orientativos para cada punto."
 category: economy
 pubDate: 2026-07-06
 tags: ["consumo", "guías"]
 ---
 
-Casi todos los consejos para ahorrar combustible son listas de treinta puntos
-donde tres importan, cinco son errores de redondeo y unos cuantos son mitos
-directamente. Ordenarlos con honestidad es más útil que enumerarlos, así que
-aquí va el orden de lo que de verdad mueve la aguja — con porcentajes
-orientativos, porque «ahorra combustible» sin un número es solo una sensación.
+Casi todas las listas para ahorrar combustible tienen treinta puntos: tres
+importan, cinco son errores de redondeo y unos cuantos son mitos. Así que aquí
+van por orden — con porcentajes orientativos, porque un consejo sin un número
+es solo una sensación.
 
 Para tener escala: un coche de 6,5 L/100km que hace 15.000 km al año a
 1,80 €/L cuesta unos **1.755 € en combustible**. Cada 10% que recortes son
@@ -73,9 +72,8 @@ titular.
 
 ## Cómo saber si funciona: mide
 
-Aquí está la parte que casi todas las listas se saltan: sin medir, no
-distingues un ahorro real del 10% de un deseo — el consumo varía de forma
-natural semana a semana con el clima, el tráfico y las rutas.
+Sin medir, no distingues un ahorro real del 10% de un deseo — el consumo varía
+de todos modos semana a semana con el clima, el tráfico y las rutas.
 
 El remedio es el registro de repostajes. Apunta el cuentakilómetros en cada
 llenado durante unas semanas de conducción normal y tendrás tu línea base.

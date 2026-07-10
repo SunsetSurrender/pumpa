@@ -8,9 +8,8 @@ tags: ["prezzi", "miti"]
 
 In quasi tutti i distributori, la pistola "premium" costa 0,15–0,20 € al litro
 più della verde normale. Su un serbatoio da 45 litri sono **7–9 € in più a
-ogni pieno**. La domanda è semplice: li recuperi? Per la maggior parte degli
-automobilisti la risposta è no — e il motivo è che la benzina premium non fa
-quello che quasi tutti pensano faccia.
+ogni pieno**. Li recuperi? Per la maggior parte degli automobilisti no —
+perché la benzina premium non fa quello che quasi tutti pensano faccia.
 
 ## Cos'è davvero il numero di ottano
 
@@ -77,5 +76,5 @@ costo di qualche pieno. Fai tre o quattro pieni completi di verde, registrando
 ogni rifornimento con i chilometri. Passa alla premium per altri tre o quattro.
 Il registro di Pumpa calcola il tuo consumo reale per entrambi i periodi dal
 contachilometri — non la stima del cruscotto, non l'opinione del forum: la tua
-auto sulle tue strade. Se la premium non sposta il tuo numero più del divario
-di prezzo, hai la risposta, stampata sui tuoi dati.
+auto, le tue strade. Se la premium non sposta il tuo numero più del divario di
+prezzo, ecco la risposta, stampata sui tuoi dati.

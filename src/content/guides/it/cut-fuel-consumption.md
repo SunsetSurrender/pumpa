@@ -1,16 +1,15 @@
 ---
-title: "Come ridurre davvero i consumi (classifica onesta)"
-description: "Quasi tutte le liste di consigli per risparmiare carburante hanno trenta voci di cui tre contano. Ecco cosa sposta davvero l'ago, cosa lo sposta appena e i miti — in classifica."
+title: "Come ridurre davvero i consumi, in classifica"
+description: "Cosa sposta davvero l'ago, cosa lo sposta appena e i miti — in classifica, con percentuali indicative per ogni voce."
 category: economy
 pubDate: 2026-07-06
 tags: ["consumi", "guide"]
 ---
 
-Quasi tutti i consigli per risparmiare carburante sono liste di trenta voci in
-cui tre contano, cinque sono errori di arrotondamento e alcune sono miti veri e
-propri. Metterle in classifica onestamente è più utile che elencarle, quindi
-ecco l'ordine di chi sposta davvero l'ago — con percentuali indicative, perché
-"fa risparmiare" senza un numero è solo una sensazione.
+Quasi tutte le liste per risparmiare carburante hanno trenta voci: tre
+contano, cinque sono errori di arrotondamento e alcune sono miti. Quindi
+eccole in classifica — con percentuali indicative, perché un consiglio senza
+un numero è solo una sensazione.
 
 Per avere una scala: un'auto da 6,5 L/100km su 15.000 km l'anno a 1,80 €/L
 costa circa **1.755 € di carburante**. Ogni 10% tagliato vale ~175 €.
@@ -22,8 +21,7 @@ Ogni frenata converte in calore carburante che hai già pagato. Leggere la
 strada — alzare il piede in anticipo, arrivare ai semafori in rilascio, tenere
 una distanza che non ti costringa a copiare le frenate di chi ti precede —
 taglia lo spreco alla fonte. La guida aggressiva costa fino al 20% in più su
-strada aperta e anche di più in città; la guida calma è la tecnologia di
-risparmio più economica che esista.
+strada aperta e anche di più in città; la guida calma è la tecnologia di risparmio più economica che ci sia.
 
 **2. La velocità in autostrada (10–20% tra 130 e 110).** La resistenza
 dell'aria cresce con il quadrato della velocità. La differenza tra viaggiare a
@@ -71,9 +69,9 @@ clima senza sensi di colpa. In ogni caso è un effetto del 2–5%, non un titolo
 
 ## Come sapere se funziona: misura
 
-Ecco la parte che quasi tutte le liste saltano: senza misurare, non distingui
-un risparmio vero del 10% da un pio desiderio — i consumi variano naturalmente
-di settimana in settimana con meteo, traffico e percorsi.
+Senza misurare, non distingui un risparmio vero del 10% da un pio desiderio —
+i consumi variano comunque di settimana in settimana con meteo, traffico e
+percorsi.
 
 Il rimedio è il registro dei rifornimenti. Annota i chilometri a ogni pieno per
 qualche settimana di guida normale e hai la tua base. Cambia **una** abitudine,

@@ -7,9 +7,9 @@ tags: ["fuel-prices", "myths"]
 ---
 
 At most pumps, the premium nozzle costs €0.15–0.20 more per litre than
-regular. On a 45-litre tank that's **€7–9 extra, every fill**. The question is
-simple: do you get it back? For most drivers the answer is no — and the reason
-is that premium fuel doesn't do what most people think it does.
+regular. On a 45-litre tank that's **€7–9 extra, every fill**. Do you get it
+back? For most drivers, no — because premium fuel doesn't do what most people
+think it does.
 
 ## What octane actually is
 
@@ -18,10 +18,10 @@ the fuel's ability to withstand compression without igniting on its own,
 before the spark plug fires. That's it.
 
 Higher octane does **not** mean more energy. Petrol at 98 RON contains
-essentially the same energy per litre as 95 RON. It doesn't burn "cleaner" or
+essentially the same energy per litre as 95. It doesn't burn "cleaner" or
 "stronger"; it burns *more controllably* under high compression. If your
-engine doesn't generate the conditions where knock is a risk, the extra octane
-does precisely nothing — the fuel never gets to use its one talent.
+engine doesn't create the conditions where knock is a risk, the extra octane
+does nothing — the fuel never gets to use its one talent.
 
 ## Which cars actually benefit
 
@@ -39,8 +39,8 @@ or economy on 98. The gains are real but modest — typically low single digits
 
 **Everything else — most cars on the road.** An engine designed for 95 and
 driven normally gains nothing measurable from 98. Independent tests on
-regular-spec cars keep finding the same result: no meaningful difference in
-consumption or power. The engine simply can't use the headroom.
+regular-spec cars keep landing on the same result: no meaningful difference in
+consumption or power. The engine can't use the headroom.
 
 ## The break-even maths
 
@@ -69,10 +69,10 @@ extra** — for, in most cars, nothing.
 
 ## Don't argue — measure
 
-This is the rare car debate you can settle yourself for the cost of a few
+This is the rare car debate you can settle yourself for the price of a few
 tanks. Run three or four full tanks of regular, logging every fill-up with the
 odometer reading. Switch to premium for three or four more. Pumpa's Fuel Log
 computes your real consumption for both stretches from the odometer — not the
-dashboard's estimate, not the forum's opinion, your car on your roads. If
-premium doesn't move your number by more than the price gap, you have your
+dashboard's estimate, not the forum's opinion: your car, your roads. If
+premium doesn't move your number by more than the price gap, there's your
 answer, printed on your own data.

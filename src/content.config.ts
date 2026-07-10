@@ -8,6 +8,8 @@ const tips = defineCollection({
     description: z.string(),
     pubDate: z.coerce.date(),
     tags: z.array(z.string()).default([]),
+    /* hub filter category — additive; every article gets exactly one */
+    category: z.enum(['economy', 'ev', 'prices', 'commuting']).default('economy'),
     draft: z.boolean().default(false),
   }),
 });

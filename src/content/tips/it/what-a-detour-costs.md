@@ -1,6 +1,7 @@
 ---
 title: "Quanto costa davvero una deviazione (e quando la benzina economica non lo è)"
 description: "Dieci minuti di strada per risparmiare 4 centesimi al litro possono farti perdere soldi. Come dare un prezzo onesto a una deviazione — e lasciare che giudichi il percorso abituale."
+category: commuting
 pubDate: 2026-06-12
 tags: ["pendolarismo", "prezzi"]
 ---

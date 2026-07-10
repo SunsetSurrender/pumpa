@@ -1,6 +1,7 @@
 ---
 title: "MPG vs L/100km: one of these numbers is lying to you"
 description: "Miles per gallon feels intuitive, but its inverse scale distorts how much fuel you actually save. Here's why L/100km tells the truth."
+category: economy
 pubDate: 2026-07-01
 tags: ["fuel-economy", "units"]
 ---

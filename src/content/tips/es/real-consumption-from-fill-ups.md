@@ -1,6 +1,7 @@
 ---
 title: "El consumo real de tu coche: mídelo con los repostajes, no con el salpicadero"
 description: "Los ordenadores de a bordo halagan. El método depósito-a-depósito te da tu consumo real solo con los litros repostados y el cuentakilómetros."
+category: economy
 pubDate: 2026-06-24
 tags: ["consumo", "guías"]
 ---

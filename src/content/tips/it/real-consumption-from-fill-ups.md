@@ -1,6 +1,7 @@
 ---
 title: "Il consumo reale della tua auto: misuralo dai rifornimenti, non dal cruscotto"
 description: "I computer di bordo adulano. Il metodo serbatoio-a-serbatoio ti dà il consumo vero usando solo i litri riforniti e il contachilometri."
+category: economy
 pubDate: 2026-06-24
 tags: ["consumi", "guide"]
 ---

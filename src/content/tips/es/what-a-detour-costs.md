@@ -1,6 +1,7 @@
 ---
 title: "Lo que cuesta de verdad un desvío (y cuándo la gasolina barata no lo es)"
 description: "Diez minutos de coche para ahorrar 4 céntimos por litro pueden hacerte perder dinero. Cómo poner un precio honesto a un desvío — y dejar que tu ruta habitual juzgue."
+category: commuting
 pubDate: 2026-06-12
 tags: ["trayectos", "precios"]
 ---

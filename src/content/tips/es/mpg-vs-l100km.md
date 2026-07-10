@@ -1,6 +1,7 @@
 ---
 title: "MPG vs L/100km: uno de estos números te está mintiendo"
 description: "Las millas por galón parecen intuitivas, pero su escala inversa distorsiona cuánto combustible ahorras de verdad. Por qué los L/100km dicen la verdad."
+category: economy
 pubDate: 2026-07-01
 tags: ["consumo", "unidades"]
 ---

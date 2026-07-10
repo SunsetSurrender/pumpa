@@ -1,6 +1,7 @@
 ---
 title: "Your car's real consumption: measure it from fill-ups, not the dashboard"
 description: "Trip computers flatter. The tank-to-tank method gives you your true fuel consumption with nothing but fill-up amounts and odometer readings."
+category: economy
 pubDate: 2026-06-24
 tags: ["fuel-economy", "how-to"]
 ---

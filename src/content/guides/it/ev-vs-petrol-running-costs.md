@@ -2,6 +2,7 @@
 title: "Elettrica o benzina: quanto costa davvero il tragitto quotidiano"
 description: "Niente dibattito sul prezzo d'acquisto e niente argomenti sul clima — solo il costo di marcia per 100 km, calcolato per benzina, ricarica a casa e ricarica pubblica."
 category: ev
+chart: ev-cost
 pubDate: 2026-07-08
 tags: ["elettrico", "pendolarismo"]
 ---

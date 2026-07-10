@@ -1,6 +1,7 @@
 ---
 import { render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+import CostBarChart from '../CostBarChart.astro';
 import { useT, localeHref, type Locale } from '../../i18n/ui';
 
 interface Props { locale: Locale; post: CollectionEntry<'tips'>; }
@@ -21,6 +22,8 @@ const fmt = (d: Date) =>
     <h1>{post.data.title}</h1>
     <p class="lede">{post.data.description}</p>
   </div>
+
+  {post.data.chart === 'ev-cost' && <CostBarChart locale={locale} />}
 
   <div class="prose">
     <Content />

@@ -1,0 +1,86 @@
+---
+/* Cost comparison chart for the EV-vs-petrol guide: the article's core
+   argument in one glance. Pure HTML/CSS (no chart library, no image) —
+   labels and values are real text, widths are proportional bars.
+   Colors are the paper-safe deep pair (the guide sits on the reading
+   surface in dark+light themes) with a contrast-mode override; every
+   bar carries its printed value, so color never carries meaning alone.
+   The whole visual is a single role="img" with a full-sentence label. */
+import { useT, type Locale } from '../i18n/ui';
+
+interface Props { locale: Locale; }
+const { locale } = Astro.props;
+const t = useT(locale).guides.chart;
+
+const rows = [
+  { label: t.petrol, value: 11.7, kind: 'petrol' },
+  { label: t.evHome, value: 4.76, kind: 'ev' },
+  { label: t.evAc, value: 8.5, kind: 'ev' },
+  { label: t.evDc, value: 11.9, kind: 'ev' },
+];
+const max = Math.max(...rows.map((r) => r.value));
+const fmtV = (v: number) =>
+  v.toLocaleString(locale === 'en' ? 'en-GB' : locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const ariaText = `${t.title}: ` + rows.map((r) => `${r.label} €${fmtV(r.value)}`).join(', ') + '.';
+---
+<figure class="cost-chart">
+  <div role="img" aria-label={ariaText}>
+    <p class="cc-title" aria-hidden="true">{t.title}</p>
+    <div class="cc-rows" aria-hidden="true">
+      {rows.map((r) => (
+        <div class="cc-row">
+          <span class="cc-label">{r.label}</span>
+          <span class="cc-track"><span class:list={['cc-bar', r.kind]} style={`width:${((r.value / max) * 100).toFixed(1)}%`}></span></span>
+          <span class="cc-value">€{fmtV(r.value)}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+  <figcaption>{t.caption}</figcaption>
+</figure>
+
+<style>
+  .cost-chart{
+    margin: 2rem 0 2.5rem; padding: 1.5rem;
+    max-width: 46rem;
+    background: var(--reading-surface);
+    border: 1px solid var(--reading-border);
+    border-radius: 12px;
+  }
+  .cc-title{
+    margin: 0 0 1rem;
+    font-size: 0.9375rem; font-weight: 600;
+    color: var(--reading-text);
+  }
+  .cc-rows{ display: flex; flex-direction: column; gap: 0.75rem; }
+  .cc-row{
+    display: grid; grid-template-columns: minmax(8rem, 13rem) 1fr auto;
+    gap: 0.75rem; align-items: center;
+  }
+  .cc-label{ font-size: 0.875rem; line-height: 1.3; color: var(--reading-text-mid); }
+  .cc-track{
+    display: block; height: 1.25rem;
+    background: var(--reading-bg);
+    border: 1px solid var(--reading-border);
+    border-radius: 5px; overflow: hidden;
+  }
+  .cc-bar{ display: block; height: 100%; border-radius: 4px 0 0 4px; }
+  .cc-bar.petrol{ background: #a05f06; }   /* amber-deep: 4.2:1 vs paper track */
+  .cc-bar.ev{ background: #1f6d5f; }       /* reading teal: 5.1:1 vs paper track */
+  :global(html[data-theme="contrast"]) .cc-bar.petrol{ background: #ffc76b; }
+  :global(html[data-theme="contrast"]) .cc-bar.ev{ background: #7cdcc9; }
+  .cc-value{
+    font-family: 'Share Tech Mono', monospace; font-variant-numeric: tabular-nums;
+    font-size: 0.875rem; color: var(--reading-text);
+    min-width: 4.5rem; text-align: right;
+  }
+  figcaption{
+    margin-top: 1rem;
+    font-size: 0.8125rem; line-height: 1.5;
+    color: var(--reading-text-mid);
+  }
+  @media (max-width: 560px){
+    .cc-row{ grid-template-columns: 1fr auto; }
+    .cc-label{ grid-column: 1 / -1; }
+  }
+</style>

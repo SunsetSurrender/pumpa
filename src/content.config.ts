@@ -10,6 +10,8 @@ const guides = defineCollection({
     tags: z.array(z.string()).default([]),
     /* hub filter category — additive; every article gets exactly one */
     category: z.enum(['economy', 'ev', 'prices', 'commuting']).default('economy'),
+    /* optional inline visual rendered by GuidesArticlePage */
+    chart: z.enum(['ev-cost']).optional(),
     draft: z.boolean().default(false),
   }),
 });

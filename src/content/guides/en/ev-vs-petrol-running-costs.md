@@ -2,6 +2,7 @@
 title: "EV vs petrol: what a commute actually costs to run"
 description: "Not a purchase-price debate and not a climate argument — just the running cost per 100 km, worked for petrol, home charging and public charging."
 category: ev
+chart: ev-cost
 pubDate: 2026-07-08
 tags: ["ev", "commuting"]
 ---

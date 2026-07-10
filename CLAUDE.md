@@ -29,8 +29,11 @@ the tool living at `/calculator`.
   `public/app.css` — keep them in sync
 - `src/pages/` — thin per-locale wrappers (`/`, `/it`, `/es`) around shared page
   components in `src/components/pages/`; `src/i18n/ui.ts` holds the dictionaries
-- `src/content/guides/*.md` — blog articles (content collection; schema in
+- `src/content/guides/*.md` — guide articles (content collection; schema in
   `src/content.config.ts`). Each article = its own page + sitemap entry (SEO).
+  Frontmatter: `category` ('economy' | 'costs') drives the index filter
+  (progressive enhancement — no JS shows the full list); optional
+  `chart: ev-cost` renders CostBarChart under the article header.
 - `public/theme.css` — color tokens for all three themes (single source of color
   truth; loaded before everything else). The tool consumes it via legacy aliases.
 - `public/app.js` — all tool behaviour (single IIFE)

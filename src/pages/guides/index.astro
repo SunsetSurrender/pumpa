@@ -1,0 +1,9 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import GuidesIndexPage from '../../components/pages/GuidesIndexPage.astro';
+import { useT } from '../../i18n/ui';
+const t = useT('en');
+---
+<SiteLayout title={t.guides.metaTitle} description={t.guides.metaDescription} locale="en" surface="reading">
+  <GuidesIndexPage locale="en" />
+</SiteLayout>

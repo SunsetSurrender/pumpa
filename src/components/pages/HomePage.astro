@@ -8,10 +8,10 @@ interface Props { locale: Locale; }
 const { locale } = Astro.props;
 const t = useT(locale);
 
-const allTips = await getCollection('tips', ({ data }) => !data.draft);
-let pool = allTips.filter((p) => p.id.startsWith(locale + '/'));
-if (pool.length === 0) pool = allTips.filter((p) => p.id.startsWith('en/'));
-const latestTips = pool
+const allGuides = await getCollection('guides', ({ data }) => !data.draft);
+let pool = allGuides.filter((p) => p.id.startsWith(locale + '/'));
+if (pool.length === 0) pool = allGuides.filter((p) => p.id.startsWith('en/'));
+const latestGuides = pool
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 3);
 const slugOf = (id: string) => id.split('/')[1];
@@ -39,7 +39,7 @@ const slugOf = (id: string) => id.split('/')[1];
     <p class="lede">{t.home.sub}</p>
     <div class="hero-actions">
       <a class="btn-link amber" href={localeHref(locale, '/calculator/')}>{t.home.ctaPrimary}</a>
-      <a class="btn-link ghost" href={localeHref(locale, '/tips/')}>{t.home.ctaSecondary}</a>
+      <a class="btn-link ghost" href={localeHref(locale, '/guides/')}>{t.home.ctaSecondary}</a>
     </div>
   </div>
   <div class="hero-demo" aria-hidden="true">
@@ -87,14 +87,14 @@ const slugOf = (id: string) => id.split('/')[1];
   <h2 class="section-title" id="tips-title" data-reveal>{t.home.teaser.title}</h2>
   <p class="teaser-lead" data-reveal>{t.home.teaser.lead}</p>
   <div class="teaser-grid">
-    {latestTips.map((post) => (
-      <a class="site-card teaser-card" data-reveal href={localeHref(locale, `/tips/${slugOf(post.id)}/`)}>
+    {latestGuides.map((post) => (
+      <a class="site-card teaser-card" data-reveal href={localeHref(locale, `/guides/${slugOf(post.id)}/`)}>
         <h3>{post.data.title}</h3>
         <p>{post.data.description}</p>
       </a>
     ))}
   </div>
-  <a class="btn-link ghost" href={localeHref(locale, '/tips/')}>{t.home.teaser.browse}</a>
+  <a class="btn-link ghost" href={localeHref(locale, '/guides/')}>{t.home.teaser.browse}</a>
   </div>
 </section>
 

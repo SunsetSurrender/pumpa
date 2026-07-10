@@ -1,35 +1,35 @@
 ---
 import { getCollection } from 'astro:content';
 import SiteLayout from '../../../layouts/SiteLayout.astro';
-import TipsArticlePage from '../../../components/pages/TipsArticlePage.astro';
+import GuidesArticlePage from '../../../components/pages/GuidesArticlePage.astro';
 import { useT, localeHref, locales, type Locale } from '../../../i18n/ui';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('tips', ({ id, data }) => !data.draft && id.startsWith('it/'));
+  const posts = await getCollection('guides', ({ id, data }) => !data.draft && id.startsWith('es/'));
   return posts.map((post) => ({ params: { slug: post.id.split('/')[1] }, props: { post } }));
 }
 
 const { post } = Astro.props;
-const t = useT('it');
+const t = useT('es');
 const slug = post.id.split('/')[1];
 
 /* hreflang only for translations that exist; the switcher falls back to
    the target locale's tips index when an article isn't translated. */
-const all = await getCollection('tips', ({ data }) => !data.draft);
+const all = await getCollection('guides', ({ data }) => !data.draft);
 const alternates: Partial<Record<Locale, string>> = {};
 const switchTargets: Partial<Record<Locale, string>> = {};
 for (const l of locales) {
-  if (all.some((p) => p.id === `${l}/${slug}`)) alternates[l] = localeHref(l, `/tips/${slug}/`);
-  else switchTargets[l] = localeHref(l, '/tips/');
+  if (all.some((p) => p.id === `${l}/${slug}`)) alternates[l] = localeHref(l, `/guides/${slug}/`);
+  else switchTargets[l] = localeHref(l, '/guides/');
 }
 ---
 <SiteLayout
-  title={post.data.title + t.tips.articleTitleSuffix}
+  title={post.data.title + t.guides.articleTitleSuffix}
   description={post.data.description}
-  locale="it"
+  locale="es"
   surface="reading"
   alternates={alternates}
   switchTargets={switchTargets}
 >
-  <TipsArticlePage locale="it" post={post} />
+  <GuidesArticlePage locale="es" post={post} />
 </SiteLayout>

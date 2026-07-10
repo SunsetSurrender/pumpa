@@ -69,7 +69,7 @@ titular.
   muerto el motor quema combustible de ralentí para mantenerse vivo. El punto
   muerto es la opción peor — y pierdes margen de control.
 - **Gasolina prémium en un coche que no la exige.** Esa tiene [su propia
-  guía](/es/tips/premium-fuel-worth-it/), porque las cuentas se la merecen.
+  guía](/es/guides/premium-fuel-worth-it/), porque las cuentas se la merecen.
 
 ## Cómo saber si funciona: mide
 

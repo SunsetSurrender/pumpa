@@ -12,10 +12,10 @@ const dateLocale = locale === 'en' ? 'en-GB' : locale;
 const fmt = (d: Date) =>
   d.toLocaleDateString(dateLocale, { day: '2-digit', month: 'long', year: 'numeric' });
 ---
-<article class="tip-article">
+<article class="guide-article">
   <div class="page-head">
     <p class="mono-label">
-      <a href={localeHref(locale, '/tips/')} class="crumb">{t.tips.crumb}</a> ·
+      <a href={localeHref(locale, '/guides/')} class="crumb">{t.guides.crumb}</a> ·
       <time datetime={post.data.pubDate.toISOString()}>{fmt(post.data.pubDate)}</time>
     </p>
     <h1>{post.data.title}</h1>
@@ -26,24 +26,24 @@ const fmt = (d: Date) =>
     <Content />
   </div>
 
-  <aside class="tip-cta site-card">
+  <aside class="guide-cta site-card">
     <div>
-      <h2>{t.tips.cta.h}</h2>
-      <p>{t.tips.cta.body}</p>
+      <h2>{t.guides.cta.h}</h2>
+      <p>{t.guides.cta.body}</p>
     </div>
-    <a class="btn-link amber" href={localeHref(locale, '/calculator/')}>{t.tips.cta.button}</a>
+    <a class="btn-link amber" href={localeHref(locale, '/calculator/')}>{t.guides.cta.button}</a>
   </aside>
 </article>
 
 <style>
   .crumb{ color: var(--reading-link); text-decoration: underline; text-underline-offset: 2px; }
   .crumb:hover{ text-decoration: underline; }
-  .tip-article :global(.prose){ margin-top: 8px; }
-  .tip-cta{
+  .guide-article :global(.prose){ margin-top: 8px; }
+  .guide-cta{
     margin: 48px 0 8px; max-width: 680px;
     display: flex; align-items: center; justify-content: space-between;
     gap: 24px; flex-wrap: wrap;
   }
-  .tip-cta h2{ margin: 0 0 6px; font-size: 1.25rem; color: var(--text-hi); }
-  .tip-cta p{ margin: 0; font-size: 0.9375rem; line-height: 1.6; max-width: 420px; color: var(--text-mid); }
+  .guide-cta h2{ margin: 0 0 6px; font-size: 1.25rem; color: var(--text-hi); }
+  .guide-cta p{ margin: 0; font-size: 0.9375rem; line-height: 1.6; max-width: 420px; color: var(--text-mid); }
 </style>

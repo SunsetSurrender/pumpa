@@ -6,7 +6,7 @@ interface Props { locale: Locale; }
 const { locale } = Astro.props;
 const t = useT(locale);
 
-const posts = (await getCollection('tips', ({ id, data }) => !data.draft && id.startsWith(locale + '/')))
+const posts = (await getCollection('guides', ({ id, data }) => !data.draft && id.startsWith(locale + '/')))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 const [featured, ...rest] = posts;
@@ -15,41 +15,41 @@ const dateLocale = locale === 'en' ? 'en-GB' : locale;
 const fmt = (d: Date) =>
   d.toLocaleDateString(dateLocale, { day: '2-digit', month: 'short', year: 'numeric' });
 const slugOf = (id: string) => id.split('/')[1];
-const catLabel = (c: keyof typeof t.tips.categories) => t.tips.categories[c];
+const catLabel = (c: keyof typeof t.guides.categories) => t.guides.categories[c];
 ---
 <div class="page-head">
-  <p class="mono-label">{t.tips.eyebrow}</p>
-  <h1>{t.tips.h1}</h1>
-  <p class="lede">{t.tips.lede}</p>
+  <p class="mono-label">{t.guides.eyebrow}</p>
+  <h1>{t.guides.h1}</h1>
+  <p class="lede">{t.guides.lede}</p>
 </div>
 
 <section class="hub-intro" data-reveal>
-  <h2>{t.tips.introTitle}</h2>
-  <p>{t.tips.introBody}</p>
+  <h2>{t.guides.introTitle}</h2>
+  <p>{t.guides.introBody}</p>
 </section>
 
 {featured && (
-  <a class="site-card tip-card tip-featured" href={localeHref(locale, `/tips/${slugOf(featured.id)}/`)} data-category={featured.data.category}>
-    <div class="tip-meta">
-      <span class="tip-cat">{catLabel(featured.data.category)}</span>
+  <a class="site-card guide-card guide-featured" href={localeHref(locale, `/guides/${slugOf(featured.id)}/`)} data-category={featured.data.category}>
+    <div class="guide-meta">
+      <span class="guide-cat">{catLabel(featured.data.category)}</span>
       <time datetime={featured.data.pubDate.toISOString()}>{fmt(featured.data.pubDate)}</time>
     </div>
     <h2>{featured.data.title}</h2>
     <p>{featured.data.description}</p>
-    <span class="tip-more">{t.tips.readMore}</span>
+    <span class="guide-more">{t.guides.readMore}</span>
   </a>
 )}
 
-<div class="tips-list">
+<div class="guides-list">
   {rest.map((post) => (
-    <a class="site-card tip-card" href={localeHref(locale, `/tips/${slugOf(post.id)}/`)} data-category={post.data.category}>
-      <div class="tip-meta">
-        <span class="tip-cat">{catLabel(post.data.category)}</span>
+    <a class="site-card guide-card" href={localeHref(locale, `/guides/${slugOf(post.id)}/`)} data-category={post.data.category}>
+      <div class="guide-meta">
+        <span class="guide-cat">{catLabel(post.data.category)}</span>
         <time datetime={post.data.pubDate.toISOString()}>{fmt(post.data.pubDate)}</time>
       </div>
       <h2>{post.data.title}</h2>
       <p>{post.data.description}</p>
-      <span class="tip-more">{t.tips.readMore}</span>
+      <span class="guide-more">{t.guides.readMore}</span>
     </a>
   ))}
 </div>
@@ -72,43 +72,43 @@ const catLabel = (c: keyof typeof t.tips.categories) => t.tips.categories[c];
   }
   .hub-intro p{ margin: 0; font-size: 0.9375rem; line-height: 1.7; color: var(--reading-text-mid); }
 
-  .tip-card{
+  .guide-card{
     display: block; text-decoration: none; color: inherit;
     background: var(--reading-surface);
     border-color: var(--reading-border);
     box-shadow: none;
     transition: border-color .15s, transform .15s;
   }
-  .tip-card:hover{ border-color: var(--reading-link); }
+  .guide-card:hover{ border-color: var(--reading-link); }
 
-  .tip-featured{ margin-bottom: 18px; padding: 2rem; }
-  .tip-featured h2{ font-size: 1.5rem; max-width: 34rem; }
-  .tip-featured p{ max-width: 46rem; }
+  .guide-featured{ margin-bottom: 18px; padding: 2rem; }
+  .guide-featured h2{ font-size: 1.5rem; max-width: 34rem; }
+  .guide-featured p{ max-width: 46rem; }
 
-  .tips-list{
+  .guides-list{
     display: grid; grid-template-columns: repeat(2, 1fr);
     gap: 18px;
   }
-  .tip-meta{
+  .guide-meta{
     display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
     font-size: 0.8125rem;
     color: var(--reading-text-mid); margin-bottom: 0.75rem;
   }
-  .tip-cat{
+  .guide-cat{
     border: 1px solid var(--reading-link); border-radius: 999px;
     padding: 2px 10px; color: var(--reading-link); font-weight: 600;
   }
-  .tip-card h2{
+  .guide-card h2{
     margin: 0 0 0.5rem; font-size: 1.25rem; line-height: 1.3;
     color: var(--reading-text);
   }
-  .tip-card p{ margin: 0 0 1rem; font-size: 0.9375rem; line-height: 1.6; color: var(--reading-text-mid); }
-  .tip-more{
+  .guide-card p{ margin: 0 0 1rem; font-size: 0.9375rem; line-height: 1.6; color: var(--reading-text-mid); }
+  .guide-more{
     font-size: 0.9375rem; font-weight: 600;
     color: var(--reading-link);
   }
   @media (max-width: 760px){
-    .tips-list{ grid-template-columns: 1fr; }
-    .tip-featured{ padding: 1.5rem; }
+    .guides-list{ grid-template-columns: 1fr; }
+    .guide-featured{ padding: 1.5rem; }
   }
 </style>

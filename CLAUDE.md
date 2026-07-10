@@ -24,12 +24,12 @@ the tool living at `/calculator`.
 
 <!-- Keep this section accurate as the repo evolves. -->
 - `src/layouts/SiteLayout.astro` — site-level chrome: top nav (Home / Calculator /
-  Tips / About), footer, head/meta
+  Guides / About), footer, head/meta
 - `src/styles/site.css` — site chrome styles; its `:root` tokens mirror
   `public/app.css` — keep them in sync
 - `src/pages/` — thin per-locale wrappers (`/`, `/it`, `/es`) around shared page
   components in `src/components/pages/`; `src/i18n/ui.ts` holds the dictionaries
-- `src/content/tips/*.md` — blog articles (content collection; schema in
+- `src/content/guides/*.md` — blog articles (content collection; schema in
   `src/content.config.ts`). Each article = its own page + sitemap entry (SEO).
 - `public/theme.css` — color tokens for all three themes (single source of color
   truth; loaded before everything else). The tool consumes it via legacy aliases.
@@ -85,9 +85,9 @@ the tool living at `/calculator`.
 - **Dictionaries:** `src/i18n/ui.ts` — EN is the source; IT/ES are typed against it
   (missing key = build error). Page content lives in shared components under
   `src/components/pages/` with thin per-locale wrappers. Tips articles live in
-  `src/content/tips/{en,it,es}/` — same filename = linked translation; slugs stay
+  `src/content/guides/{en,it,es}/` — same filename = linked translation; slugs stay
   stable across locales. Untranslated articles: hreflang omitted, language switcher
-  falls back to that locale's /tips/ index.
+  falls back to that locale's /guides/ index.
 - **Tool runtime strings:** the calculator page injects `window.PUMPA_I18N` before
   app.js; `t(key, fallback)` in app.js falls back to the English literal at the call
   site (EN injects an empty map — the fallbacks ARE the EN source). `fmt()` localises
@@ -104,7 +104,7 @@ the tool living at `/calculator`.
 ## The tool's tabs (in-app navigation)
 
 Calculate · Trips · Fuel Log · Prices · Export. These are the tool's INTERNAL nav.
-The site-level nav (Home / Calculator / Tips / About) is a SEPARATE outer layer —
+The site-level nav (Home / Calculator / Guides / About) is a SEPARATE outer layer —
 these tabs stay inside the calculator page (plus Trip Plan, the manual road-trip
 estimator — its cost math is DELEGATED to computeTrip/computeEvTrip, never forked).
 Within Calculate, a Petrol / Electric segmented toggle switches between the two peer
@@ -142,9 +142,9 @@ Clean, warm, human — NOT terminal cosplay. Full specs in `pumpa-design-brief.m
   responsive widths) from `src/assets/` — never ship raw multi-MB files from public/.
 - **EV mode cue:** the active Electric segment + EV card edge use the teal positive
   pair; petrol stays amber. Visual only — no environmental claims in copy.
-- **Ad slots:** `.ad-slot` placeholders (below calculator, tips index) are reserved
+- **Ad slots:** `.ad-slot` placeholders (below calculator, guides index) are reserved
   for AdSense post-launch; keep them empty and unobtrusive until then.
-- **Reading surfaces:** Tips/About/Privacy/Cookies render long-form content on warm
+- **Reading surfaces:** Guides/About/Privacy/Cookies render long-form content on warm
   paper (`--reading-*` tokens) even in dark mode — deliberate "dark chrome, light
   reading" split.
 - **Logo:** inline SVG gauge mark (amber needle) + "Pumpa" wordmark in Bricolage.
@@ -191,7 +191,7 @@ Clean, warm, human — NOT terminal cosplay. Full specs in `pumpa-design-brief.m
 ## Roadmap (context, not a to-do list to action unprompted)
 
 - Restructure into a multi-page website: Home (landing) · Calculator (the tool) ·
-  Tips (SEO blog, each article its own URL) · About. Site-level nav + footer as an outer
+  Guides (SEO articles, each its own URL) · About. Site-level nav + footer as an outer
   layer around the existing tabbed tool.
 - Phase 2 backend: live station-price map (official government open-data feeds, one
   country first) + shared crowdsourced price corrections. This is the only part that

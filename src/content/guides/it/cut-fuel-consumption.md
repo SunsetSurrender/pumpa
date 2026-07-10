@@ -67,7 +67,7 @@ clima senza sensi di colpa. In ogni caso è un effetto del 2–5%, non un titolo
   motore brucia carburante al minimo per restare acceso. La folle è l'opzione
   peggiore — e perdi margine di controllo.
 - **La benzina premium su un'auto che non la richiede.** Quella ha [una guida
-  tutta sua](/it/tips/premium-fuel-worth-it/), perché i conti se la meritano.
+  tutta sua](/it/guides/premium-fuel-worth-it/), perché i conti se la meritano.
 
 ## Come sapere se funziona: misura
 

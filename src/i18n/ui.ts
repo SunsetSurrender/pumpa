@@ -24,7 +24,7 @@ const en = {
     skip: 'Skip to content',
     navLabel: 'Site',
     brandHome: 'Pumpa home',
-    nav: { home: 'Home', calculator: 'Calculator', tips: 'Tips', about: 'About' },
+    nav: { home: 'Home', calculator: 'Calculator', guides: 'Guides', about: 'About' },
     langLabel: 'Language',
     adLabel: 'Advertisement',
     langSuggest: {
@@ -55,7 +55,7 @@ const en = {
     h1Post: ' costs.',
     sub: 'Enter your distance, your car’s consumption and the price at the pump — Pumpa turns them into a number you can actually act on. Log trips and fill-ups, watch what you spend each month, and switch freely between metric, US and UK units. No account, no upload: everything stays on your device.',
     ctaPrimary: 'Open the calculator',
-    ctaSecondary: 'Read the tips',
+    ctaSecondary: 'Read the guides',
     lcd: { label: 'Trip cost', sub: 'vs your usual route' },
     how: {
       title: 'How it works',
@@ -76,7 +76,7 @@ const en = {
     teaser: {
       title: 'Save at the pump',
       lead: 'Small changes, real savings. Practical, no-nonsense guides to spending less on fuel.',
-      browse: 'Browse all tips',
+      browse: 'Browse all guides',
     },
     pro: {
       title: 'Pumpa Pro',
@@ -132,10 +132,10 @@ const en = {
     pChanges: 'If advertising is added to the free tier in the future, this page and the <a href="{privacyUrl}">privacy page</a> will describe exactly what it involves before it ships.',
   },
 
-  tips: {
-    metaTitle: 'Tips — Pumpa',
+  guides: {
+    metaTitle: 'Guides — Pumpa',
     metaDescription: 'Practical articles on fuel economy, fuel prices and commute costs — the math behind cheaper driving.',
-    eyebrow: 'Tips',
+    eyebrow: 'Guides',
     h1: 'Drive the same. Pay less.',
     lede: 'Short, practical reads on fuel economy, pricing quirks and commute math — each one something you can act on before your next fill-up.',
     introTitle: 'Guides that pay for themselves',
@@ -143,8 +143,8 @@ const en = {
     filterLabel: 'Filter by topic',
     categories: { all: 'All', economy: 'Fuel economy', ev: 'Electric', prices: 'Prices', commuting: 'Commuting' },
     readMore: 'Read →',
-    crumb: 'Tips',
-    articleTitleSuffix: ' — Pumpa Tips',
+    crumb: 'Guides',
+    articleTitleSuffix: ' — Pumpa Guides',
     cta: {
       h: 'Put it to the numbers',
       body: 'The calculator prices your trips, logs fill-ups and computes your real consumption — free, in your browser, stored on your device.',
@@ -165,7 +165,7 @@ const it: Dict = {
     skip: 'Salta al contenuto',
     navLabel: 'Sito',
     brandHome: 'Pumpa — pagina iniziale',
-    nav: { home: 'Home', calculator: 'Calcolatore', tips: 'Consigli', about: 'Chi siamo' },
+    nav: { home: 'Home', calculator: 'Calcolatore', guides: 'Guide', about: 'Chi siamo' },
     langLabel: 'Lingua',
     adLabel: 'Pubblicità',
     langSuggest: {
@@ -196,7 +196,7 @@ const it: Dict = {
     h1Post: ' ogni viaggio.',
     sub: 'Inserisci la distanza, il consumo della tua auto e il prezzo alla pompa — Pumpa li trasforma in un numero su cui puoi davvero ragionare. Registra viaggi e rifornimenti, osserva quanto spendi ogni mese e passa liberamente tra unità metriche, US e UK. Nessun account, nessun upload: tutto resta sul tuo dispositivo.',
     ctaPrimary: 'Apri il calcolatore',
-    ctaSecondary: 'Leggi i consigli',
+    ctaSecondary: 'Leggi le guide',
     lcd: { label: 'Costo viaggio', sub: 'rispetto al tuo percorso abituale' },
     how: {
       title: 'Come funziona',
@@ -217,7 +217,7 @@ const it: Dict = {
     teaser: {
       title: 'Risparmia alla pompa',
       lead: 'Piccoli cambiamenti, risparmi veri. Guide pratiche e senza fronzoli per spendere meno in carburante.',
-      browse: 'Tutti i consigli',
+      browse: 'Tutte le guide',
     },
     pro: {
       title: 'Pumpa Pro',
@@ -273,10 +273,10 @@ const it: Dict = {
     pChanges: 'Se in futuro verrà aggiunta pubblicità al piano gratuito, questa pagina e la <a href="{privacyUrl}">pagina privacy</a> descriveranno esattamente cosa comporta prima che succeda.',
   },
 
-  tips: {
-    metaTitle: 'Consigli — Pumpa',
+  guides: {
+    metaTitle: 'Guide — Pumpa',
     metaDescription: 'Articoli pratici su consumi, prezzi del carburante e costi del pendolarismo — la matematica per guidare spendendo meno.',
-    eyebrow: 'Consigli',
+    eyebrow: 'Guide',
     h1: 'Guida come sempre. Paga meno.',
     lede: 'Letture brevi e pratiche su consumi, stranezze dei prezzi e matematica del pendolarismo — ognuna qualcosa su cui agire prima del prossimo rifornimento.',
     introTitle: 'Guide che si ripagano da sole',
@@ -284,8 +284,8 @@ const it: Dict = {
     filterLabel: 'Filtra per argomento',
     categories: { all: 'Tutte', economy: 'Consumi', ev: 'Elettrico', prices: 'Prezzi', commuting: 'Pendolarismo' },
     readMore: 'Leggi →',
-    crumb: 'Consigli',
-    articleTitleSuffix: ' — Consigli Pumpa',
+    crumb: 'Guide',
+    articleTitleSuffix: ' — Guide Pumpa',
     cta: {
       h: 'Mettilo alla prova dei numeri',
       body: 'Il calcolatore prezza i tuoi viaggi, registra i rifornimenti e calcola il tuo consumo reale — gratis, nel tuo browser, salvato sul tuo dispositivo.',
@@ -304,7 +304,7 @@ const es: Dict = {
     skip: 'Saltar al contenido',
     navLabel: 'Sitio',
     brandHome: 'Pumpa — página de inicio',
-    nav: { home: 'Inicio', calculator: 'Calculadora', tips: 'Consejos', about: 'Acerca de' },
+    nav: { home: 'Inicio', calculator: 'Calculadora', guides: 'Guías', about: 'Acerca de' },
     langLabel: 'Idioma',
     adLabel: 'Publicidad',
     langSuggest: {
@@ -335,7 +335,7 @@ const es: Dict = {
     h1Post: ' cuesta cada viaje.',
     sub: 'Introduce la distancia, el consumo de tu coche y el precio en el surtidor — Pumpa los convierte en un número con el que puedes decidir de verdad. Registra viajes y repostajes, observa cuánto gastas cada mes y cambia libremente entre unidades métricas, US y UK. Sin cuenta, sin subir nada: todo se queda en tu dispositivo.',
     ctaPrimary: 'Abrir la calculadora',
-    ctaSecondary: 'Leer los consejos',
+    ctaSecondary: 'Leer las guías',
     lcd: { label: 'Coste del viaje', sub: 'frente a tu ruta habitual' },
     how: {
       title: 'Cómo funciona',
@@ -356,7 +356,7 @@ const es: Dict = {
     teaser: {
       title: 'Ahorra en el surtidor',
       lead: 'Pequeños cambios, ahorros reales. Guías prácticas y sin rodeos para gastar menos en combustible.',
-      browse: 'Ver todos los consejos',
+      browse: 'Ver todas las guías',
     },
     pro: {
       title: 'Pumpa Pro',
@@ -412,10 +412,10 @@ const es: Dict = {
     pChanges: 'Si en el futuro se añade publicidad al plan gratuito, esta página y la <a href="{privacyUrl}">página de privacidad</a> describirán exactamente qué implica antes de que ocurra.',
   },
 
-  tips: {
-    metaTitle: 'Consejos — Pumpa',
+  guides: {
+    metaTitle: 'Guías — Pumpa',
     metaDescription: 'Artículos prácticos sobre consumo, precios del combustible y costes de los trayectos — las matemáticas de conducir gastando menos.',
-    eyebrow: 'Consejos',
+    eyebrow: 'Guías',
     h1: 'Conduce igual. Paga menos.',
     lede: 'Lecturas breves y prácticas sobre consumo, rarezas de los precios y matemáticas del trayecto diario — cada una con algo que aplicar antes de tu próximo repostaje.',
     introTitle: 'Guías que se pagan solas',
@@ -423,8 +423,8 @@ const es: Dict = {
     filterLabel: 'Filtrar por tema',
     categories: { all: 'Todas', economy: 'Consumo', ev: 'Eléctrico', prices: 'Precios', commuting: 'Trayectos' },
     readMore: 'Leer →',
-    crumb: 'Consejos',
-    articleTitleSuffix: ' — Consejos Pumpa',
+    crumb: 'Guías',
+    articleTitleSuffix: ' — Guías Pumpa',
     cta: {
       h: 'Ponlo a prueba con números',
       body: 'La calculadora pone precio a tus viajes, registra repostajes y calcula tu consumo real — gratis, en tu navegador, guardado en tu dispositivo.',

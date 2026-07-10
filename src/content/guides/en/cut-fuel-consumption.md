@@ -61,7 +61,7 @@ headline.
   (engine braking uses zero fuel); in neutral the engine burns idle fuel to
   keep itself alive. Neutral is the worse option — and you lose control margin.
 - **Premium fuel in a car that doesn't require it.** That one gets [its own
-  guide](/tips/premium-fuel-worth-it/), because the maths deserves it.
+  guide](/guides/premium-fuel-worth-it/), because the maths deserves it.
 
 ## How to know it's working: measure
 

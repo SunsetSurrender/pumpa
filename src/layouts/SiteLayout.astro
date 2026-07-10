@@ -58,7 +58,7 @@ const bannerTargets = Object.fromEntries(
 const navItems = [
   { href: localeHref(locale, '/'), label: t.chrome.nav.home, base: '/' },
   { href: localeHref(locale, '/calculator/'), label: t.chrome.nav.calculator, base: '/calculator/' },
-  { href: localeHref(locale, '/tips/'), label: t.chrome.nav.tips, base: '/tips/' },
+  { href: localeHref(locale, '/guides/'), label: t.chrome.nav.guides, base: '/guides/' },
   { href: localeHref(locale, '/about/'), label: t.chrome.nav.about, base: '/about/' },
 ];
 
@@ -185,7 +185,7 @@ const isCurrent = (base: string) =>
         <h2>{t.chrome.footer.product}</h2>
         <ul>
           <li><a href={localeHref(locale, '/calculator/')}>{t.chrome.nav.calculator}</a></li>
-          <li><a href={localeHref(locale, '/tips/')}>{t.chrome.nav.tips}</a></li>
+          <li><a href={localeHref(locale, '/guides/')}>{t.chrome.nav.guides}</a></li>
           <li><a href={localeHref(locale, '/about/')}>{t.chrome.nav.about}</a></li>
         </ul>
       </div>

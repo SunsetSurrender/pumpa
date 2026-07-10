@@ -1,7 +1,7 @@
 ---
 title: "¿Eléctrico o gasolina? Lo que de verdad cuesta el trayecto diario"
 description: "Sin debate sobre el precio de compra y sin argumentos climáticos — solo el coste de uso por 100 km, calculado para gasolina, carga en casa y carga pública."
-category: ev
+category: costs
 chart: ev-cost
 pubDate: 2026-07-08
 tags: ["eléctrico", "trayectos"]

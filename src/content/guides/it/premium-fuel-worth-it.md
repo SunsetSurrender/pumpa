@@ -1,7 +1,7 @@
 ---
 title: "La benzina premium vale la pena? Ecco cosa stai pagando davvero"
 description: "L'ottano non è energia, la maggior parte dei motori non sa usarlo e i conti del pareggio sono brutali. Cosa fa davvero la benzina premium — e i tre casi in cui vale i soldi."
-category: prices
+category: costs
 pubDate: 2026-07-03
 tags: ["prezzi", "miti"]
 ---

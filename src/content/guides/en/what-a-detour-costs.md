@@ -1,7 +1,7 @@
 ---
 title: "What a detour actually costs (and when the cheap fuel isn't)"
 description: "A 10-minute drive to save 4 cents a litre can lose you money. How to price a detour honestly — and let the baseline do the judging."
-category: commuting
+category: costs
 pubDate: 2026-06-12
 tags: ["commuting", "fuel-prices"]
 ---

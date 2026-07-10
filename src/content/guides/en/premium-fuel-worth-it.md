@@ -1,7 +1,7 @@
 ---
 title: "Is premium fuel worth it? What you're actually paying for"
 description: "Octane isn't energy, most engines can't use it, and the break-even maths is brutal. What premium fuel actually does — and the three cases where it's worth paying for."
-category: prices
+category: costs
 pubDate: 2026-07-03
 tags: ["fuel-prices", "myths"]
 ---

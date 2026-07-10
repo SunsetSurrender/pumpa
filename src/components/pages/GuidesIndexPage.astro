@@ -11,6 +11,12 @@ const posts = (await getCollection('guides', ({ id, data }) => !data.draft && id
 
 const [featured, ...rest] = posts;
 
+const counts = {
+  all: posts.length,
+  economy: posts.filter((p) => p.data.category === 'economy').length,
+  costs: posts.filter((p) => p.data.category === 'costs').length,
+};
+
 const dateLocale = locale === 'en' ? 'en-GB' : locale;
 const fmt = (d: Date) =>
   d.toLocaleDateString(dateLocale, { day: '2-digit', month: 'short', year: 'numeric' });
@@ -27,6 +33,15 @@ const catLabel = (c: keyof typeof t.guides.categories) => t.guides.categories[c]
   <h2>{t.guides.introTitle}</h2>
   <p>{t.guides.introBody}</p>
 </section>
+
+<div class="guide-filter" id="guideFilter" hidden>
+  <span class="gf-label" id="guideFilterLabel">{t.guides.filterLabel}</span>
+  <div class="gf-pills" role="group" aria-labelledby="guideFilterLabel">
+    <button type="button" data-filter="all" aria-pressed="true">{t.guides.categories.all} <span class="gf-n">({counts.all})</span></button>
+    <button type="button" data-filter="economy" aria-pressed="false">{t.guides.categories.economy} <span class="gf-n">({counts.economy})</span></button>
+    <button type="button" data-filter="costs" aria-pressed="false">{t.guides.categories.costs} <span class="gf-n">({counts.costs})</span></button>
+  </div>
+</div>
 
 {featured && (
   <a class="site-card guide-card guide-featured" href={localeHref(locale, `/guides/${slugOf(featured.id)}/`)} data-category={featured.data.category}>
@@ -56,6 +71,27 @@ const catLabel = (c: keyof typeof t.guides.categories) => t.guides.categories[c]
 
 <div class="ad-slot"><span>{t.chrome.adLabel}</span></div>
 
+<script is:inline>
+  /* Category filter: pure progressive enhancement. Server renders the
+     full list; without JS this row stays hidden and everything is
+     visible. Filtering toggles [hidden] — no layout animation, no CLS. */
+  (() => {
+    const bar = document.getElementById('guideFilter');
+    if (!bar) return;
+    const cards = document.querySelectorAll('[data-category]');
+    if (!cards.length) return;
+    bar.hidden = false;
+    const buttons = bar.querySelectorAll('button[data-filter]');
+    bar.addEventListener('click', (ev) => {
+      const btn = ev.target.closest('button[data-filter]');
+      if (!btn) return;
+      const filter = btn.dataset.filter;
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      cards.forEach((card) => { card.hidden = filter !== 'all' && card.dataset.category !== filter; });
+    });
+  })();
+</script>
+
 <style>
   .hub-intro{
     max-width: 46rem;
@@ -80,6 +116,28 @@ const catLabel = (c: keyof typeof t.guides.categories) => t.guides.categories[c]
     transition: border-color .15s, transform .15s;
   }
   .guide-card:hover{ border-color: var(--reading-link); }
+
+  .guide-filter{
+    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+    margin: 0 0 1.25rem;
+  }
+  .gf-label{ font-size: 0.875rem; font-weight: 600; color: var(--reading-text-mid); }
+  .gf-pills{ display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .gf-pills button{
+    min-height: 44px; padding: 8px 16px;
+    background: transparent;
+    border: 1px solid var(--reading-border); border-radius: 999px;
+    font-family: inherit; font-size: 0.875rem; font-weight: 600;
+    color: var(--reading-text-mid); cursor: pointer;
+    transition: color .15s, border-color .15s, background .15s;
+  }
+  .gf-pills button:hover{ border-color: var(--reading-link); color: var(--reading-text); }
+  .gf-pills button[aria-pressed="true"]{
+    background: var(--reading-link);
+    border-color: var(--reading-link);
+    color: var(--reading-bg);
+  }
+  .gf-n{ font-weight: 400; }
 
   .guide-featured{ margin-bottom: 18px; padding: 2rem; }
   .guide-featured h2{ font-size: 1.5rem; max-width: 34rem; }

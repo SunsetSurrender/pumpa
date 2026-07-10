@@ -9,7 +9,7 @@ const guides = defineCollection({
     pubDate: z.coerce.date(),
     tags: z.array(z.string()).default([]),
     /* hub filter category — additive; every article gets exactly one */
-    category: z.enum(['economy', 'ev', 'prices', 'commuting']).default('economy'),
+    category: z.enum(['economy', 'costs']).default('economy'),
     /* optional inline visual rendered by GuidesArticlePage */
     chart: z.enum(['ev-cost']).optional(),
     draft: z.boolean().default(false),

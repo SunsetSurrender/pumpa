@@ -1,7 +1,7 @@
 ---
 title: "¿Merece la pena la gasolina prémium? Esto es lo que pagas en realidad"
 description: "El octanaje no es energía, la mayoría de los motores no puede aprovecharlo y las cuentas del punto de equilibrio son brutales. Qué hace de verdad la prémium — y los tres casos en los que sí compensa."
-category: prices
+category: costs
 pubDate: 2026-07-03
 tags: ["precios", "mitos"]
 ---
